@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 import { UserPreferences, Source } from './types';
 
 // Default preferences
@@ -10,21 +10,26 @@ const defaultPreferences: UserPreferences = {
 
 const PREFS_KEY = 'user_preferences';
 
+// Initialize Redis client
+// It automatically looks for UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
+// Also falls back to KV_REST_API_URL if that's set
+const redis = Redis.fromEnv();
+
 export async function getPreferences(): Promise<UserPreferences> {
     try {
-        const prefs = await kv.get<UserPreferences>(PREFS_KEY);
+        const prefs = await redis.get<UserPreferences>(PREFS_KEY);
         return prefs || defaultPreferences;
     } catch (error) {
-        console.error('Error reading preferences from KV:', error);
+        console.error('Error reading preferences from Redis:', error);
         return defaultPreferences;
     }
 }
 
 export async function savePreferences(prefs: UserPreferences): Promise<void> {
     try {
-        await kv.set(PREFS_KEY, prefs);
+        await redis.set(PREFS_KEY, prefs);
     } catch (error) {
-        console.error('Error saving preferences to KV:', error);
+        console.error('Error saving preferences to Redis:', error);
         throw error;
     }
 }
