@@ -11,14 +11,18 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
     try {
         const feed = await parser.parseURL(url);
 
-        return feed.items.map(item => ({
-            title: item.title || 'No title',
-            description: item.contentSnippet || item.content || item.description || '',
-            link: item.link || '',
-            pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
-            source: sourceName,
-            sourceType
-        }));
+        return feed.items.map(item => {
+            // Type assertion for RSS item properties
+            const rssItem = item as any;
+            return {
+                title: item.title || 'No title',
+                description: item.contentSnippet || item.content || rssItem.description || '',
+                link: item.link || '',
+                pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
+                source: sourceName,
+                sourceType
+            };
+        });
     } catch (error) {
         console.error(`Error parsing RSS feed ${url}:`, error);
         return [];
