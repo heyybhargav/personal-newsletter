@@ -11,9 +11,11 @@ const defaultPreferences: UserPreferences = {
 const PREFS_KEY = 'user_preferences';
 
 // Initialize Redis client
-// It automatically looks for UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
-// Also falls back to KV_REST_API_URL if that's set
-const redis = Redis.fromEnv();
+// Supports both Upstash native env vars and Vercel KV env vars
+const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '',
+    token: process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '',
+});
 
 export async function getPreferences(): Promise<UserPreferences> {
     try {
