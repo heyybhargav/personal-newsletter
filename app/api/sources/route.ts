@@ -3,7 +3,7 @@ import { getPreferences, addSource, removeSource, updateSource } from '@/lib/db'
 
 export async function GET() {
     try {
-        const prefs = getPreferences();
+        const prefs = await getPreferences();
         return NextResponse.json({ sources: prefs.sources });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch sources' }, { status: 500 });
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const newSource = addSource({
+        const newSource = await addSource({
             name,
             url,
             type,
@@ -41,7 +41,7 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: 'Missing source ID' }, { status: 400 });
         }
 
-        removeSource(id);
+        await removeSource(id);
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete source' }, { status: 500 });
@@ -57,7 +57,7 @@ export async function PATCH(request: Request) {
             return NextResponse.json({ error: 'Missing source ID' }, { status: 400 });
         }
 
-        updateSource(id, updates);
+        await updateSource(id, updates);
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update source' }, { status: 500 });

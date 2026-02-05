@@ -3,7 +3,7 @@ import { getPreferences, savePreferences } from '@/lib/db';
 
 export async function GET() {
     try {
-        const prefs = getPreferences();
+        const prefs = await getPreferences();
         return NextResponse.json(prefs);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
@@ -13,7 +13,7 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const prefs = getPreferences();
+        const prefs = await getPreferences();
 
         // Update email and delivery time
         if (body.email !== undefined) {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
             prefs.deliveryTime = body.deliveryTime;
         }
 
-        savePreferences(prefs);
+        await savePreferences(prefs);
         return NextResponse.json(prefs);
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });

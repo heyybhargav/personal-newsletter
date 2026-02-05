@@ -6,13 +6,7 @@ import { sendDigestEmail } from '@/lib/email';
 
 export async function GET() {
     try {
-        // Verify cron secret (optional security)
-        // const authHeader = request.headers.get('authorization');
-        // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        // }
-
-        const prefs = getPreferences();
+        const prefs = await getPreferences();
 
         if (!prefs.email) {
             return NextResponse.json({

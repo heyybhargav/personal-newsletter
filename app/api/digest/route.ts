@@ -6,7 +6,7 @@ import { sendDigestEmail } from '@/lib/email';
 
 export async function GET() {
     try {
-        const prefs = getPreferences();
+        const prefs = await getPreferences();
 
         if (prefs.sources.length === 0) {
             return NextResponse.json({
@@ -40,7 +40,7 @@ export async function GET() {
 
 export async function POST() {
     try {
-        const prefs = getPreferences();
+        const prefs = await getPreferences();
 
         if (!prefs.email) {
             return NextResponse.json({

@@ -1,14 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import { kv } from '@vercel/kv';
 import { UserPreferences, Source } from './types';
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-const PREFS_FILE = path.join(DATA_DIR, 'preferences.json');
-
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-}
 
 // Default preferences
 const defaultPreferences: UserPreferences = {
@@ -17,50 +8,50 @@ const defaultPreferences: UserPreferences = {
     sources: []
 };
 
-export function getPreferences(): UserPreferences {
+const PREFS_KEY = 'user_preferences';
+
+export async function getPreferences(): Promise<UserPreferences> {
     try {
-        if (fs.existsSync(PREFS_FILE)) {
-            const data = fs.readFileSync(PREFS_FILE, 'utf-8');
-            return JSON.parse(data);
-        }
+        const prefs = await kv.get<UserPreferences>(PREFS_KEY);
+        return prefs || defaultPreferences;
     } catch (error) {
-        console.error('Error reading preferences:', error);
+        console.error('Error reading preferences from KV:', error);
+        return defaultPreferences;
     }
-    return defaultPreferences;
 }
 
-export function savePreferences(prefs: UserPreferences): void {
+export async function savePreferences(prefs: UserPreferences): Promise<void> {
     try {
-        fs.writeFileSync(PREFS_FILE, JSON.stringify(prefs, null, 2));
+        await kv.set(PREFS_KEY, prefs);
     } catch (error) {
-        console.error('Error saving preferences:', error);
+        console.error('Error saving preferences to KV:', error);
         throw error;
     }
 }
 
-export function addSource(source: Omit<Source, 'id' | 'addedAt'>): Source {
-    const prefs = getPreferences();
+export async function addSource(source: Omit<Source, 'id' | 'addedAt'>): Promise<Source> {
+    const prefs = await getPreferences();
     const newSource: Source = {
         ...source,
         id: Date.now().toString(),
         addedAt: new Date().toISOString(),
     };
     prefs.sources.push(newSource);
-    savePreferences(prefs);
+    await savePreferences(prefs);
     return newSource;
 }
 
-export function removeSource(id: string): void {
-    const prefs = getPreferences();
+export async function removeSource(id: string): Promise<void> {
+    const prefs = await getPreferences();
     prefs.sources = prefs.sources.filter(s => s.id !== id);
-    savePreferences(prefs);
+    await savePreferences(prefs);
 }
 
-export function updateSource(id: string, updates: Partial<Source>): void {
-    const prefs = getPreferences();
+export async function updateSource(id: string, updates: Partial<Source>): Promise<void> {
+    const prefs = await getPreferences();
     const index = prefs.sources.findIndex(s => s.id === id);
     if (index !== -1) {
         prefs.sources[index] = { ...prefs.sources[index], ...updates };
-        savePreferences(prefs);
+        await savePreferences(prefs);
     }
 }
