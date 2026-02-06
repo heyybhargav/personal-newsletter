@@ -4,14 +4,14 @@ import { Source } from '@/lib/types';
 
 export async function POST(request: Request) {
     try {
-        const { email, topics } = await request.json();
+        const { email, topics, timezone } = await request.json();
 
         if (!email || !topics || !Array.isArray(topics)) {
             return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
         }
 
         // 1. Create User
-        await createUser(email);
+        await createUser(email, { timezone });
 
         // 2. Add Sources based on Topics
         // For MVP, we'll map topics to 1-2 hardcoded high-quality sources

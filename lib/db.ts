@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis';
-import { UserProfile, Source } from './types';
+import { UserProfile, Source, UserPreferences } from './types';
 
 // Initialize Redis
 const redis = new Redis({
@@ -26,7 +26,7 @@ export async function getUser(email: string): Promise<UserProfile | null> {
     }
 }
 
-export async function createUser(email: string): Promise<UserProfile> {
+export async function createUser(email: string, initialPrefs?: Partial<UserPreferences>): Promise<UserProfile> {
     const existing = await getUser(email);
     if (existing) return existing;
 
@@ -34,7 +34,7 @@ export async function createUser(email: string): Promise<UserProfile> {
         email,
         preferences: {
             deliveryTime: '08:00',
-            timezone: 'Asia/Kolkata', // Default to IST for now, will make dynamic later
+            timezone: initialPrefs?.timezone || 'Asia/Kolkata', // Default to IST if not provided
             digestFormat: 'comprehensive'
         },
         sources: [], // Start empty
@@ -105,6 +105,7 @@ export async function getPreferences() {
     return {
         email: user.email,
         deliveryTime: user.preferences.deliveryTime,
+        timezone: user.preferences.timezone,
         sources: user.sources
     };
 }
@@ -112,6 +113,7 @@ export async function getPreferences() {
 export async function savePreferences(legacyPrefs: any) {
     const user = await getUser(ADMIN_EMAIL) || await createUser(ADMIN_EMAIL);
     user.preferences.deliveryTime = legacyPrefs.deliveryTime || '08:00';
+    user.preferences.timezone = legacyPrefs.timezone || 'Asia/Kolkata';
     user.sources = legacyPrefs.sources || [];
     await saveUser(user);
 }

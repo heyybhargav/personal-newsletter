@@ -32,10 +32,11 @@ export default function SubscribePage() {
     const handleComplete = async () => {
         setLoading(true);
         try {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const res = await fetch('/api/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, topics: selectedTopics }),
+                body: JSON.stringify({ email, topics: selectedTopics, timezone }),
             });
 
             if (res.ok) {

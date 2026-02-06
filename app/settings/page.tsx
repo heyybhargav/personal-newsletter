@@ -6,6 +6,7 @@ import Link from 'next/link';
 export default function SettingsPage() {
     const [email, setEmail] = useState('');
     const [deliveryTime, setDeliveryTime] = useState('08:00');
+    const [timezone, setTimezone] = useState('Asia/Kolkata');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
@@ -20,6 +21,10 @@ export default function SettingsPage() {
             const data = await res.json();
             setEmail(data.email || '');
             setDeliveryTime(data.deliveryTime || '08:00');
+
+            // Auto-detect browser timezone if none is set
+            const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            setTimezone(data.timezone || browserTimezone);
         } catch (error) {
             console.error('Error fetching settings:', error);
         } finally {
@@ -36,7 +41,7 @@ export default function SettingsPage() {
             const res = await fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, deliveryTime })
+                body: JSON.stringify({ email, deliveryTime, timezone })
             });
 
             if (res.ok) {
@@ -98,20 +103,38 @@ export default function SettingsPage() {
                                 </p>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
-                                    Global Delivery Time (IST)
-                                </label>
-                                <input
-                                    type="time"
-                                    value={deliveryTime}
-                                    onChange={e => setDeliveryTime(e.target.value)}
-                                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all"
-                                    required
-                                />
-                                <p className="text-sm text-gray-500 mt-2">
-                                    When the system triggers the daily dispatch cycle.
-                                </p>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
+                                        Delivery Time
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={deliveryTime}
+                                        onChange={e => setDeliveryTime(e.target.value)}
+                                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all"
+                                        required
+                                    />
+                                    <p className="text-sm text-gray-500 mt-2">
+                                        When the system triggers your daily dispatch.
+                                    </p>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
+                                        Timezone
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={timezone}
+                                        onChange={e => setTimezone(e.target.value)}
+                                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all bg-gray-50"
+                                        placeholder="e.g., Asia/Kolkata"
+                                        required
+                                    />
+                                    <p className="text-[10px] text-gray-400 mt-1 uppercase font-bold tracking-tighter">
+                                        Detected: {Intl.DateTimeFormat().resolvedOptions().timeZone}
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="pt-4">
