@@ -64,21 +64,23 @@ export default function SubscribePage() {
 
                 {/* Step 1: Email Input */}
                 {step === 'email' && (
-                    <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto relative">
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email address"
-                            className="w-full px-6 py-4 text-lg bg-white border-2 border-gray-200 rounded-full focus:border-black focus:outline-none transition-all shadow-sm"
-                            required
-                        />
-                        <button
-                            type="submit"
-                            className="absolute right-2 top-2 bottom-2 bg-black text-white px-8 rounded-full font-medium hover:bg-gray-800 transition-colors"
-                        >
-                            Start
-                        </button>
+                    <form onSubmit={handleEmailSubmit} className="max-w-md mx-auto">
+                        <div className="relative flex items-center bg-white border-2 border-gray-200 rounded-full focus-within:border-black transition-all shadow-sm p-1.5 pl-6">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter your email address"
+                                className="flex-1 bg-transparent border-none outline-none text-lg py-2 min-w-0"
+                                required
+                            />
+                            <button
+                                type="submit"
+                                className="bg-black text-white px-8 py-3 rounded-full font-medium hover:bg-gray-800 transition-colors flex-shrink-0 ml-2"
+                            >
+                                Start
+                            </button>
+                        </div>
                         <p className="text-xs text-gray-400 mt-4">
                             No password required. Free forever.
                         </p>
@@ -95,8 +97,8 @@ export default function SubscribePage() {
                                     key={topic.id}
                                     onClick={() => toggleTopic(topic.id)}
                                     className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${selectedTopics.includes(topic.id)
-                                            ? 'border-black bg-orange-50'
-                                            : 'border-gray-100 bg-white hover:border-gray-300'
+                                        ? 'border-black bg-orange-50'
+                                        : 'border-gray-100 bg-white hover:border-gray-300'
                                         }`}
                                 >
                                     <span className="text-2xl">{topic.emoji}</span>

@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Source } from '@/lib/types';
+import { Source, DigestSection } from '@/lib/types';
 
 export default function Home() {
   const [sources, setSources] = useState<Source[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [previewSections, setPreviewSections] = useState<DigestSection[]>([]);
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -30,6 +31,7 @@ export default function Home() {
   const handlePreview = async () => {
     setGenerating(true);
     setMessage('');
+    setPreviewSections([]);
     try {
       const res = await fetch('/api/digest');
       const data = await res.json();
@@ -37,6 +39,7 @@ export default function Home() {
         setMessage(`Error: ${data.error}`);
       } else {
         setMessage(`✅ Generated digest with ${data.itemCount} items across ${data.sections?.length || 0} sections`);
+        setPreviewSections(data.sections || []);
       }
     } catch (error: any) {
       setMessage(`Error: ${error.message}`);
@@ -133,6 +136,49 @@ export default function Home() {
               {generating ? 'Generating Preview...' : 'View Preview'}
             </button>
           </div>
+
+          {/* PREVIEW AREA */}
+          {previewSections.length > 0 && (
+            <div className="mb-12 bg-gray-50 rounded-xl p-8 border border-gray-200 shadow-inner animate-in fade-in slide-in-from-top-4">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-serif font-bold text-xl">📝 Latest Digest Preview</h3>
+                <button onClick={() => setPreviewSections([])} className="text-sm text-gray-500 hover:text-gray-700">Close</button>
+              </div>
+
+              <div className="space-y-8 prose prose-indigo max-w-none">
+                {previewSections.map((section, idx) => (
+                  <div key={idx} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <h4 className="flex items-center gap-3 text-sm font-bold tracking-widest text-gray-400 uppercase mb-4 border-b border-gray-50 pb-2">
+                      {section.title}
+                    </h4>
+
+                    {/* Render the AI Narrative - treating newlines as paragraphs */}
+                    <div className="text-gray-800 leading-relaxed space-y-4">
+                      {section.summary.split('\n\n').map((para, i) => (
+                        <p key={i} dangerouslySetInnerHTML={{
+                          __html: para.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        }} />
+                      ))}
+                    </div>
+
+                    {/* Deep Dive Links */}
+                    <div className="mt-6 pt-6 border-t border-gray-100">
+                      <p className="text-xs font-bold text-gray-400 uppercase mb-3">Deep Dive Sources</p>
+                      <ul className="space-y-2">
+                        {section.items.map((item, i) => (
+                          <li key={i}>
+                            <a href={item.url} target="_blank" className="text-sm text-indigo-600 hover:underline truncate block">
+                              {item.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="py-12 text-center text-gray-400">Loading sources...</div>

@@ -37,23 +37,28 @@ async function synthesizeCategory(category: string, items: ContentItem[]): Promi
     try {
         const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-        // Construct the context
+        // Better context construction
         const itemsText = items.map((item, i) =>
-            `[${i + 1}] Title: ${item.title}\nSource: ${item.source}\nSnippet: ${item.description.slice(0, 300)}`
-        ).join('\n\n');
+            `HEADLINE: ${item.title}\nSOURCE: ${item.source}\nCONTEXT: ${item.description ? item.description.slice(0, 400) : 'No description provided'}`
+        ).join('\n---\n');
 
         const prompt = `
-      You are an elite executive briefer. Your job is to synthesize news items about "${category}" into a cohesive, high-level narrative.
+      You are the Editor-in-Chief of a premium daily newsletter (think "Morning Brew" or "Axios"). 
+      
+      YOUR TASK:
+      Write a cohesive, engaging, and witty "Executive Briefing" for the "${category}" section based on the items below.
+      
+      STRICT WRITING RULES:
+      1. **NO LISTS**: Do not say "Here are the updates" or utilize bullet points. Write in full, flowing paragraphs.
+      2. **NARRATIVE FIRST**: Connect the dots between stories. Identify a common theme. If stories are unrelated, pivot smoothly (e.g., "In other news...", "Meanwhile...").
+      3. **LEAD WITH IMPACT**: Start with the most important story. Why does it matter?
+      4. **VOICE**: Smart, concise, slightly conversational but professional.
+      5. **FORMATTING**: Use **bold** for key companies, people, or numbers to make it skimmable.
+      6. **LENGTH**: Keep it under 200 words.
+      
+      CRITICAL: If the input content seems like noise or spam, just write a very short sentence saying "A quiet day for ${category} today."
 
-      RULES:
-      1. Write a 2-paragraph "Executive Summary" connecting the dots.
-      2. Identify the single biggest trend or story.
-      3. Use bolding (e.g., **Apple**) for key entities.
-      4. Do NOT just list them ("Item 1 did this"). Weave them together.
-      5. Tone: Professional, concise, insightful (like Axios).
-      6. Return ONLY the narrative text.
-
-      INPUT DATA:
+      INPUT ITEMS:
       ${itemsText}
     `;
 
@@ -62,7 +67,8 @@ async function synthesizeCategory(category: string, items: ContentItem[]): Promi
         return text.trim();
     } catch (error) {
         console.error(`Error synthesizing category ${category}:`, error);
-        return `Updates on ${category} from ${items.length} sources.`;
+        // Fallback that looks slightly better than a hard error
+        return `We successfully aggregated ${items.length} stories for ${category}, but our AI editor is taking a quick coffee break. Please check the deep dive links below for the details.`;
     }
 }
 
