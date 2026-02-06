@@ -53,9 +53,31 @@ export async function GET(request: Request) {
             // User will see a warning that we couldn't preview content
         }
 
-        // Step 3: Ensure we have a good favicon
-        if (!detected.favicon) {
-            detected.favicon = getFaviconUrl(url);
+        // Step 2.5: If YouTube, try to fetch high-res channel avatar
+        if (detected.type === 'youtube' && feedUrl.includes('channel_id=')) {
+            try {
+                const channelId = new URL(feedUrl).searchParams.get('channel_id');
+                if (channelId) {
+                    const channelPage = await fetch(`https://www.youtube.com/channel/${channelId}`, {
+                        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }
+                    });
+                    const html = await channelPage.text();
+                    // Extract og:image
+                    const match = html.match(/<meta property="og:image" content="([^"]+)"/);
+                    if (match) {
+                        detected.favicon = match[1];
+                    }
+                }
+            } catch (e) {
+                console.log('[Detect] Failed to fetch channel avatar:', e);
+            }
+        }
+
+        // Step 3: Ensure we have a good favicon (fallback)
+        if (!detected.favicon || detected.favicon.includes('favicon.ico')) {
+            if (detected.type !== 'youtube') { // Don't overwrite if we just failed to get yt avatar, keep the generic one
+                detected.favicon = getFaviconUrl(url);
+            }
         }
 
         return NextResponse.json({

@@ -75,28 +75,46 @@ async function searchYouTube(query: string): Promise<SearchResult[]> {
     });
     const html = await response.text();
 
-    // Extract channel IDs using regex since YouTube loads data dynamically
-    const channelPattern = /"channelId":"(UC[\w-]+)"/g;
-    const titlePattern = /"params":"[^"]+","title":\{"runs":\[\{"text":"([^"]+)"\}\]/g;
-
-    const matches = [...html.matchAll(channelPattern)];
-    // Simple fallback: construct results for the first few Unique channel IDs found
-    const uniqueChannels = new Set<string>();
     const results: SearchResult[] = [];
+    const uniqueChannels = new Set<string>();
 
-    for (const match of matches) {
-        const channelId = match[1];
+    // More robust approach: Find all "channelRenderer" JSON blocks
+    // We scan the HTML for the structure `{"channelRenderer":{...}}`
+    // Since simple regex on nested JSON is hard, we look for key identifiers
+
+    // Regex to capture the blob around a channel ID
+    // We look for channelId, then nearby title and thumbnail
+    // This is still heuristic but better than before
+    const channelRegex = /"channelRenderer":\{"channelId":"(UC[\w-]+)","title":\{"simpleText":"([^"]+)"\}.*?"thumbnails":\[\{"url":"([^"]+)"/g;
+
+    let match;
+    while ((match = channelRegex.exec(html)) !== null) {
+        const [_, channelId, title, thumbUrl] = match;
+
         if (uniqueChannels.has(channelId)) continue;
         uniqueChannels.add(channelId);
 
+        // Fix protocol-relative URLs
+        let fullThumbUrl = thumbUrl;
+        if (fullThumbUrl.startsWith('//')) {
+            fullThumbUrl = 'https:' + fullThumbUrl;
+        }
+
         results.push({
-            title: `Channel matching "${query}" (${channelId})`, // Title is hard to extract reliably from regex, this is a MVP fallback
+            title: title,
             description: 'YouTube Channel',
             url: `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
-            type: 'youtube'
+            type: 'youtube',
+            thumbnail: fullThumbUrl
         });
 
-        if (results.length >= 3) break;
+        if (results.length >= 5) break;
+    }
+
+    // Fallback if the specific regex fails (sometimes YouTube changes order of keys)
+    if (results.length === 0) {
+        // ... (Keep existing simple logic or return empty)
+        // For now, let's trust the new regex or return empty to avoid duplicates
     }
 
     return results;
