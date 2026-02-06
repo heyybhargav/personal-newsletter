@@ -227,19 +227,16 @@ export default function SourcesPage() {
 
     return (
         <div className="min-h-screen bg-[#F9FAFB]">
-            {/* Header */}
-            <div className="bg-white border-b border-gray-200 py-8 px-6">
-                <div className="max-w-5xl mx-auto flex justify-between items-center">
+            {/* Header - Simplified since we have Navbar */}
+            <div className="bg-white border-b border-gray-200 py-6 px-4 sm:px-6">
+                <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <Link href="/" className="text-gray-500 hover:text-gray-900 mb-2 inline-block text-sm font-medium">
-                            ← Back to Dashboard
-                        </Link>
-                        <h1 className="text-3xl font-serif font-bold text-gray-900">Intelligence Sources</h1>
-                        <p className="text-gray-500 mt-1">Curate your daily briefing. Paste any URL — we'll handle the rest.</p>
+                        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900">Intelligence Sources</h1>
+                        <p className="text-gray-500 mt-1 text-sm sm:text-base">Curate your daily briefing. We'll handle the rest.</p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition font-medium flex items-center gap-2 shadow-sm"
+                        className="w-full sm:w-auto bg-black text-white px-5 py-3 rounded-lg hover:bg-gray-800 transition font-medium flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base"
                     >
                         <span className="text-lg">+</span> Add Source
                     </button>
@@ -247,9 +244,9 @@ export default function SourcesPage() {
             </div>
 
             {/* Main Content */}
-            <div className="max-w-5xl mx-auto px-6 py-12">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
                 {message && (
-                    <div className={`mb-6 p-4 rounded-lg font-medium ${message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                    <div className={`mb-6 p-4 rounded-lg font-medium text-sm ${message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
                         {message}
                     </div>
                 )}
@@ -259,7 +256,7 @@ export default function SourcesPage() {
                     {loading ? (
                         <div className="p-12 text-center text-gray-400">Loading intelligence sources...</div>
                     ) : sources.length === 0 ? (
-                        <div className="text-center py-20">
+                        <div className="text-center py-20 px-4">
                             <div className="text-5xl mb-4 grayscale opacity-50">📰</div>
                             <h3 className="text-xl font-medium text-gray-900">No sources configured</h3>
                             <p className="text-gray-500 mt-2 mb-6">Add news sites, YouTube channels, newsletters, or any RSS feed.</p>
@@ -268,56 +265,57 @@ export default function SourcesPage() {
                     ) : (
                         <div className="divide-y divide-gray-100">
                             {sources.map(source => (
-                                <div key={source.id} className="p-5 hover:bg-gray-50 transition flex items-center gap-5">
-                                    {/* Icon/Favicon */}
-                                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
-                                        {source.favicon ? (
-                                            <img src={source.favicon} alt="" className="w-7 h-7 object-contain" onError={(e) => {
-                                                (e.target as HTMLImageElement).style.display = 'none';
-                                            }} />
-                                        ) : (
-                                            <span className="text-xl">{getSourceTypeEmoji(source.type as SourceType)}</span>
-                                        )}
+                                <div key={source.id} className="p-4 sm:p-5 hover:bg-gray-50 transition flex flex-col sm:flex-row sm:items-center gap-4">
+                                    {/* Icon & Title Group */}
+                                    <div className="flex items-start sm:items-center gap-4 flex-1">
+                                        {/* Icon */}
+                                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
+                                            {source.favicon ? (
+                                                <img src={source.favicon} alt="" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" onError={(e) => {
+                                                    (e.target as HTMLImageElement).style.display = 'none';
+                                                }} />
+                                            ) : (
+                                                <span className="text-lg sm:text-xl">{getSourceTypeEmoji(source.type as SourceType)}</span>
+                                            )}
+                                        </div>
+
+                                        {/* Text Info */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                <a
+                                                    href={source.originalUrl || source.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="font-semibold text-gray-900 text-base sm:text-lg hover:text-indigo-600 transition break-words sm:truncate"
+                                                >
+                                                    {source.name}
+                                                </a>
+                                                {/* Mobile-friendly external link icon */}
+                                                <a
+                                                    href={source.originalUrl || source.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-gray-400 hover:text-indigo-600 transition hidden sm:inline"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                                </a>
+                                            </div>
+                                            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+                                                <span className={`px-2 py-0.5 rounded-full font-medium capitalize border ${getSourceTypeColor(source.type as SourceType)}`}>
+                                                    {source.type}
+                                                </span>
+                                                <span className={`px-2 py-0.5 rounded-full font-medium border ${source.enabled ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                                                    {source.enabled ? 'Active' : 'Paused'}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 mb-1">
-                                            <a
-                                                href={source.originalUrl || source.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="font-semibold text-gray-900 text-lg truncate hover:text-indigo-600 transition"
-                                            >
-                                                {source.name}
-                                            </a>
-                                            <a
-                                                href={source.originalUrl || source.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-gray-400 hover:text-indigo-600 transition"
-                                                title="Visit original source"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-sm">
-                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize border ${getSourceTypeColor(source.type as SourceType)}`}>
-                                                {getSourceTypeEmoji(source.type as SourceType)} {source.type}
-                                            </span>
-                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${source.enabled ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                                                {source.enabled ? '● Active' : '○ Paused'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Actions - Always Visible */}
-                                    <div className="flex gap-2">
+                                    {/* Actions - Row on Mobile */}
+                                    <div className="flex gap-2 sm:ml-auto w-full sm:w-auto">
                                         <button
                                             onClick={() => handleToggle(source)}
-                                            className={`px-4 py-2 text-sm font-medium rounded-lg border transition ${source.enabled
+                                            className={`flex-1 sm:flex-initial justify-center px-4 py-2 text-sm font-medium rounded-lg border transition ${source.enabled
                                                 ? 'text-gray-600 border-gray-200 hover:bg-gray-100'
                                                 : 'text-green-600 border-green-200 hover:bg-green-50'
                                                 }`}
@@ -326,10 +324,10 @@ export default function SourcesPage() {
                                         </button>
                                         <button
                                             onClick={() => handleDelete(source.id)}
-                                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                                            title="Delete source"
+                                            className="px-3 sm:p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition border border-transparent hover:border-red-100"
+                                            title="Delete source text-center"
                                         >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
                                         </button>
