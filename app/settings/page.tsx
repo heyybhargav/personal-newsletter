@@ -9,6 +9,7 @@ export default function SettingsPage() {
     const [timezone, setTimezone] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [runningCron, setRunningCron] = useState(false);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
@@ -31,6 +32,29 @@ export default function SettingsPage() {
             console.error('Error fetching settings:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleForceDispatch = async () => {
+        if (!confirm('This will trigger the digest dispatch for ALL users regardless of time settings. Continue?')) return;
+
+        setRunningCron(true);
+        setMessage('');
+
+        try {
+            const res = await fetch('/api/cron');
+            const data = await res.json();
+
+            if (res.ok) {
+                setMessage('✅ Dispatch triggered successfully! Check your inbox momentarily.');
+                console.log(data);
+            } else {
+                setMessage(`Error: ${data.message || 'Cron failed'}`);
+            }
+        } catch (error) {
+            setMessage('Failed to trigger dispatch');
+        } finally {
+            setRunningCron(false);
         }
     };
 
@@ -118,6 +142,30 @@ export default function SettingsPage() {
                                 />
                                 <p className="text-sm text-gray-500 mt-2">
                                     When the system triggers the daily dispatch cycle.
+                                </p>
+                            </div>
+
+                            <div className="pt-2 pb-6 border-b border-gray-100">
+                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
+                                    Manual Override
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={handleForceDispatch}
+                                    disabled={runningCron}
+                                    className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition font-bold shadow-md flex items-center justify-center gap-2"
+                                >
+                                    {runningCron ? (
+                                        <>
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            Dispatching...
+                                        </>
+                                    ) : (
+                                        '⚡ Force Send Digest Now'
+                                    )}
+                                </button>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    Bypasses schedule and sends emails immediately to all users.
                                 </p>
                             </div>
 
