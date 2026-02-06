@@ -1,13 +1,16 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 import { ContentItem, DigestSection, SummarizedContent } from './types';
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+// Initialize Groq
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+});
 
-const MODEL_NAME = 'gemini-2.0-flash';
+// Using Llama 3.3 70B for high-quality writing
+const MODEL_NAME = 'llama-3.3-70b-versatile';
 
 // ============================================================================
-// NEW: Unified Narrative Generation
+// Unified Narrative Generation (Groq-powered)
 // ============================================================================
 
 export interface UnifiedBriefing {
@@ -34,12 +37,10 @@ export async function generateUnifiedBriefing(allContent: ContentItem[]): Promis
 async function synthesizeUnifiedNarrative(items: ContentItem[]): Promise<string> {
     try {
         // Validate API key
-        if (!process.env.GEMINI_API_KEY) {
-            console.error('[Gemini] CRITICAL: GEMINI_API_KEY is not set!');
+        if (!process.env.GROQ_API_KEY) {
+            console.error('[Groq] CRITICAL: GROQ_API_KEY is not set!');
             throw new Error('API key missing');
         }
-
-        const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
         // Build rich context from all items
         const itemsText = items.map((item, i) =>
@@ -53,21 +54,18 @@ async function synthesizeUnifiedNarrative(items: ContentItem[]): Promise<string>
             day: 'numeric'
         });
 
-        const prompt = `
-You are Sarah Chen, the senior editor of "The Daily Executive Briefing" — a premium newsletter read by 50,000 busy professionals over their morning coffee.
+        const prompt = `You are Sarah Chen, the senior editor of "The Daily Executive Briefing" — a premium newsletter read by 50,000 busy professionals over their morning coffee.
 
 TODAY'S DATE: ${today}
 
 YOUR MISSION:
 Write today's edition of the newsletter based on the stories below. This is NOT a summary of links. This is a WRITTEN NEWSLETTER — like Morning Brew, Axios, or The Hustle.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 WRITING STYLE GUIDE:
 
 1. **OPENING HOOK (2-3 sentences)**
    Start with the single most important or interesting story of the day.
-   Make it punchy. "Here's another day of links" is BANNED.
+   Make it punchy. "Here are today's links" is BANNED.
    Good examples:
    - "The AI wars just got personal."
    - "If you thought cloud spending was slowing down, think again."
@@ -88,8 +86,6 @@ WRITING STYLE GUIDE:
    End with something memorable — a prediction, a joke, or a thought-provoking question.
    Example: "The question isn't whether AI will change everything. It's whether we're ready."
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 FORMATTING RULES:
 - Use **bold** liberally for key names and numbers
 - NO bullet points in the main narrative (Quick Hits excepted)
@@ -97,27 +93,34 @@ FORMATTING RULES:
 - Length: AIM FOR 300-500 words. Take your time. Quality over brevity.
 - If stories seem unrelated, use transitions like "Meanwhile...", "In other news...", "Elsewhere..."
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 TODAY'S STORIES:
 
 ${itemsText}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 Now write today's edition. Remember: you're Sarah Chen, a sharp, witty editor who makes complex news feel accessible. Your readers love you for your clarity and personality.
 
-BEGIN:
-`;
+BEGIN:`;
 
-        console.log('[Gemini] Sending unified briefing request...');
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
-        console.log('[Gemini] Successfully generated narrative:', text.slice(0, 100) + '...');
+        console.log('[Groq] Sending unified briefing request...');
+
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: 'user',
+                    content: prompt,
+                }
+            ],
+            model: MODEL_NAME,
+            temperature: 0.7,
+            max_tokens: 1500,
+        });
+
+        const text = chatCompletion.choices[0]?.message?.content || '';
+        console.log('[Groq] Successfully generated narrative:', text.slice(0, 100) + '...');
         return text.trim();
 
     } catch (error: any) {
-        console.error('[Gemini] Error generating unified narrative:', error.message || error);
+        console.error('[Groq] Error generating unified narrative:', error.message || error);
 
         // Graceful fallback: Generate a simple "Quick Hits" style summary
         return generateFallbackBriefing(items);
@@ -176,29 +179,31 @@ export async function generateBriefing(groupedContent: Record<string, ContentIte
 
 async function synthesizeCategoryLegacy(category: string, items: ContentItem[]): Promise<string> {
     try {
-        if (!process.env.GEMINI_API_KEY) {
+        if (!process.env.GROQ_API_KEY) {
             throw new Error('API key missing');
         }
-
-        const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
         const itemsText = items.map((item, i) =>
             `HEADLINE: ${item.title}\nSOURCE: ${item.source}\nCONTEXT: ${item.description ? item.description.slice(0, 400) : 'No description provided'}`
         ).join('\n---\n');
 
-        const prompt = `
-You are the Editor-in-Chief of a premium daily newsletter (think "Morning Brew" or "Axios"). 
+        const prompt = `You are the Editor-in-Chief of a premium daily newsletter (think "Morning Brew" or "Axios"). 
 
 Write a cohesive, engaging paragraph for the "${category}" section. Connect the dots between stories. Use **bold** for key entities. Keep it under 150 words. No bullet points.
 
 INPUT:
-${itemsText}
-`;
+${itemsText}`;
 
-        const result = await model.generateContent(prompt);
-        return result.response.text().trim();
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [{ role: 'user', content: prompt }],
+            model: MODEL_NAME,
+            temperature: 0.7,
+            max_tokens: 500,
+        });
+
+        return chatCompletion.choices[0]?.message?.content?.trim() || `Today's ${category} stories are ready for your review.`;
     } catch (error) {
-        console.error(`[Gemini] Error synthesizing ${category}:`, error);
+        console.error(`[Groq] Error synthesizing ${category}:`, error);
         return `Today's ${category} stories are ready for your review. Check the links below for the full details.`;
     }
 }
