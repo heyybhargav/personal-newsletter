@@ -36,16 +36,10 @@ export async function generateUnifiedBriefing(allContent: ContentItem[]): Promis
 
 async function synthesizeUnifiedNarrative(items: ContentItem[]): Promise<string> {
     try {
-        // Validate API key
         if (!process.env.GROQ_API_KEY) {
             console.error('[Groq] CRITICAL: GROQ_API_KEY is not set!');
             throw new Error('API key missing');
         }
-
-        // Build rich context from all items
-        const itemsText = items.map((item, i) =>
-            `[${i + 1}] "${item.title}" — ${item.source}\n${item.description ? item.description.slice(0, 350) : ''}`
-        ).join('\n\n');
 
         const today = new Date().toLocaleDateString('en-US', {
             weekday: 'long',
@@ -54,52 +48,77 @@ async function synthesizeUnifiedNarrative(items: ContentItem[]): Promise<string>
             day: 'numeric'
         });
 
-        const prompt = `You are Sarah Chen, the senior editor of "The Daily Executive Briefing" — a premium newsletter read by 50,000 busy professionals over their morning coffee.
+        // Pre-process items to help the AI identify types
+        const itemsText = items.map((item, i) => {
+            let typeHint = '[TYPE: ARTICLE]';
+            if (item.source.toLowerCase().includes('youtube') || item.link.includes('youtube') || item.link.includes('youtu.be')) {
+                typeHint = '[TYPE: YOUTUBE VIDEO]';
+            } else if (item.source.toLowerCase().includes('podcast') || item.title.toLowerCase().includes('episode')) {
+                typeHint = '[TYPE: PODCAST]';
+            } else if (item.source.toLowerCase().includes('reddit')) {
+                typeHint = '[TYPE: REDDIT THREAD]';
+            }
+
+            // Include thumbnail if available, for the AI to use in HTML
+            let imageContext = item.thumbnail ? `\n   THUMBNAIL_URL: ${item.thumbnail}` : '';
+
+            return `ITEM #${i + 1} ${typeHint}
+   TITLE: "${item.title}"
+   SOURCE: ${item.source}
+   LINK: ${item.link}${imageContext}
+   CONTENT: ${item.description ? item.description.slice(0, 500).replace(/\n/g, ' ') : 'No description'}`;
+        }).join('\n\n');
+
+        const prompt = `You are Sarah Chen, "The Insider" — a sharp, high-bandwidth analyst writing a private daily briefing for 50,000 busy tech and business leaders.
 
 TODAY'S DATE: ${today}
 
-YOUR MISSION:
-Write today's edition of the newsletter based on the stories below. This is NOT a summary of links. This is a WRITTEN NEWSLETTER — like Morning Brew, Axios, or The Hustle.
+Your goal is MAXIMAL INFORMATION DENSITY. Do not waste the reader's time with fluff.
+BANNED PHRASES: "In today's digital landscape", "Game changer", "Revolutionary", "It remains to be seen", "In conclusion".
 
-WRITING STYLE GUIDE:
+### CONTENT FRAMEWORK (Follow Strict Order):
 
-1. **OPENING HOOK (2-3 sentences)**
-   Start with the single most important or interesting story of the day.
-   Make it punchy. "Here are today's links" is BANNED.
-   Good examples:
-   - "The AI wars just got personal."
-   - "If you thought cloud spending was slowing down, think again."
-   - "Reddit is betting its future on AI search. Bold move."
+1. **THE LEAD (Deep Dive)** - [Analysis Mode]
+   - Pick the SINGLE most critically important story.
+   - Write 2-3 paragraphs explaining WHY it matters and its second-order effects.
+   - Tone: Analytical, insider, bold.
+   - MUST hyperlink the title: "Google's [Project Astra](http...) suggests..."
 
-2. **THE BIG PICTURE (2-3 paragraphs)**
-   Weave the top 3-5 stories into a cohesive narrative.
-   - Find connections between stories ("The timing isn't coincidental...")
-   - Add your take ("This signals a broader shift in...")
-   - Use **bold** for key companies, people, numbers, and terms
-   - Keep paragraphs SHORT: 2-3 sentences max
+2. **THE BRIEFING (Hybrid Narrative)** - [Synthesis Mode]
+   - Cover the next 6-10 stories. 
+   - DO NOT write a dry bulleted list. 
+   - DO NOT write a generic essay.
+   - **DO THIS**: Group related stories into "Narrative Blocks".
+     - Example: "In AI infrastructure, Nvidia [revealed](url)... meanwhile AMD is [countering](url)..."
+   - Every claim must look like: "...[claim](url)..."
+   - Use **bold** for key entities.
 
-3. **QUICK HITS (3-5 one-liners)**
-   For stories that don't fit the main narrative, include them as punchy one-liners.
-   Format: "**[Entity]** did [action]. [One sentence of context or snark]."
+3. **THE AUDIO FEED (Podcasts)** - [Quote Mode]
+   - IF (and only if) there are [TYPE: PODCAST] items, pick the best insight.
+   - Format:
+     > "Direct quote from the episode..."
+     — **Host Name**, in *[Episode Title](url)*
 
-4. **KICKER (1 sentence)**
-   End with something memorable — a prediction, a joke, or a thought-provoking question.
-   Example: "The question isn't whether AI will change everything. It's whether we're ready."
+4. **THE WATCHLIST (Visuals)** - [Gallery Mode]
+   - IF (and only if) there are [TYPE: YOUTUBE VIDEO] items, place them HERE at the end.
+   - You MUST generate valid HTML for the thumbnail:
+     <div style="margin-top:10px; margin-bottom: 20px;">
+       <a href="url" style="text-decoration:none;">
+          <img src="thumbnail_url" style="width:100%; border-radius:8px; display:block;" />
+          <p style="margin-top:5px; font-size:14px; color:#555;">▶️ <strong>Watch:</strong> One sentence hook here.</p>
+       </a>
+     </div>
 
-FORMATTING RULES:
-- Use **bold** liberally for key names and numbers
-- NO bullet points in the main narrative (Quick Hits excepted)
-- NO headers or section titles — this should read as flowing prose
-- Length: AIM FOR 300-500 words. Take your time. Quality over brevity.
-- If stories seem unrelated, use transitions like "Meanwhile...", "In other news...", "Elsewhere..."
+### CRITICAL RULES:
+- **HYPERLINKS**: EVERY story you mention must be hyperlinked. No exceptions.
+- **IMAGES**: Only use images for YouTube videos in the Watchlist section.
+- **TONE**: Smart, concise, no corp-speak.
+- **MARKDOWN**: Use standard markdown, but use HTML <img> tags for thumbnails.
 
-TODAY'S STORIES:
-
+### INPUT DATA:
 ${itemsText}
 
-Now write today's edition. Remember: you're Sarah Chen, a sharp, witty editor who makes complex news feel accessible. Your readers love you for your clarity and personality.
-
-BEGIN:`;
+BEGIN BRIEFING:`;
 
         console.log('[Groq] Sending unified briefing request...');
 
@@ -111,8 +130,8 @@ BEGIN:`;
                 }
             ],
             model: MODEL_NAME,
-            temperature: 0.7,
-            max_tokens: 1500,
+            temperature: 0.6,
+            max_tokens: 2000,
         });
 
         const text = chatCompletion.choices[0]?.message?.content || '';
@@ -121,8 +140,6 @@ BEGIN:`;
 
     } catch (error: any) {
         console.error('[Groq] Error generating unified narrative:', error.message || error);
-
-        // Graceful fallback: Generate a simple "Quick Hits" style summary
         return generateFallbackBriefing(items);
     }
 }

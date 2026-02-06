@@ -46,6 +46,7 @@ export interface ContentItem {
   pubDate: string;
   source: string;
   sourceType: SourceType;
+  thumbnail?: string;
 }
 
 export interface DigestSection {
