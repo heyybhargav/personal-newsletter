@@ -1,12 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function SubscribePage() {
     const [email, setEmail] = useState('');
     const [step, setStep] = useState<'email' | 'topics' | 'success'>('email');
     const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+    const [timezone, setTimezone] = useState('');
+
+    // Auto-detect timezone on mount
+    useEffect(() => {
+        setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    }, []);
 
     // Pre-curated premium topics
     const topics = [
@@ -32,7 +38,6 @@ export default function SubscribePage() {
     const handleComplete = async () => {
         setLoading(true);
         try {
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const res = await fetch('/api/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -122,9 +127,9 @@ export default function SubscribePage() {
                 {step === 'success' && (
                     <div className="animate-in zoom-in duration-500 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
                         <div className="text-6xl mb-6">🎉</div>
-                        <h2 className="text-3xl font-serif font-bold mb-4">You&apos;re all set!</h2>
+                        <h2 className="text-3xl font-serif font-bold mb-4">You're all set!</h2>
                         <p className="text-gray-600 mb-6 text-lg">
-                            We&apos;ve created your profile for <strong>{email}</strong>.
+                            We've created your profile for <strong>{email}</strong>.
                             Your first briefing will arrive tomorrow morning.
                         </p>
                         <div className="flex justify-center gap-4">

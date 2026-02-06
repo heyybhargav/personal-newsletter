@@ -13,10 +13,10 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
 
         return feed.items.map(item => {
             // Type assertion for RSS item properties
-            const description = item.contentSnippet || item.content || (item as { description?: string }).description || '';
+            const rssItem = item as any;
             return {
                 title: item.title || 'No title',
-                description,
+                description: item.contentSnippet || item.content || rssItem.description || '',
                 link: item.link || '',
                 pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
                 source: sourceName,

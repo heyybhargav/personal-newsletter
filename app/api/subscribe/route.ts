@@ -11,7 +11,7 @@ export async function POST(request: Request) {
         }
 
         // 1. Create User
-        await createUser(email, { timezone });
+        await createUser(email, timezone);
 
         // 2. Add Sources based on Topics
         // For MVP, we'll map topics to 1-2 hardcoded high-quality sources
@@ -45,15 +45,14 @@ export async function POST(request: Request) {
         // Add them to DB
         for (const source of sourcesToAdd) {
             if (source.name && source.url && source.type) {
-                await addSourceToUser(email, source as Omit<Source, 'id' | 'addedAt'>);
+                await addSourceToUser(email, source as any);
             }
         }
 
         return NextResponse.json({ success: true, count: sourcesToAdd.length });
 
-    } catch (error: unknown) {
-        const err = error as Error;
-        console.error('Subscribe error:', err);
+    } catch (error: any) {
+        console.error('Subscribe error:', error);
         return NextResponse.json({ error: 'Failed' }, { status: 500 });
     }
 }

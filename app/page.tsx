@@ -41,9 +41,8 @@ export default function Home() {
         setMessage(`✅ Generated digest with ${data.itemCount} items across ${data.sections?.length || 0} sections`);
         setPreviewSections(data.sections || []);
       }
-    } catch (error: unknown) {
-      const err = error as Error;
-      setMessage(`Error: ${err.message}`);
+    } catch (error: any) {
+      setMessage(`Error: ${error.message}`);
     } finally {
       setGenerating(false);
     }
@@ -62,9 +61,8 @@ export default function Home() {
       } else {
         setMessage(data.message || 'No email sent');
       }
-    } catch (error: unknown) {
-      const err = error as Error;
-      setMessage(`Error: ${err.message}`);
+    } catch (error: any) {
+      setMessage(`Error: ${error.message}`);
     } finally {
       setSending(false);
     }

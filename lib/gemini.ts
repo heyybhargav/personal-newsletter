@@ -119,9 +119,8 @@ BEGIN:`;
         console.log('[Groq] Successfully generated narrative:', text.slice(0, 100) + '...');
         return text.trim();
 
-    } catch (error: unknown) {
-        const err = error as Error;
-        console.error('[Groq] Error generating unified narrative:', err.message || err);
+    } catch (error: any) {
+        console.error('[Groq] Error generating unified narrative:', error.message || error);
 
         // Graceful fallback: Generate a simple "Quick Hits" style summary
         return generateFallbackBriefing(items);

@@ -19,12 +19,12 @@ A personalized daily email digest that aggregates content from your favorite sou
 - **AI**: Google Gemini API (free tier)
 - **Email**: SendGrid (free tier, 100/day)
 - **Hosting**: Vercel (free tier)
-- **Scheduling**: Vercel Cron
+- **Scheduling**: Vercel Cron (Hourly global check)
 
 ## Prerequisites
 
-1. Google Gemini API key ([Get it here](https://makersuite.google.com/app/apikey))
-2. SendGrid API key ([Sign up here](https://sendgrid.com/))
+1. Groq API key (for AI)
+2. SendGrid API key (for email)
 3. Verified sender email in SendGrid
 
 ## Local Development

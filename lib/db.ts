@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis';
-import { UserProfile, Source, UserPreferences } from './types';
+import { UserProfile, Source } from './types';
 
 // Initialize Redis
 const redis = new Redis({
@@ -26,7 +26,7 @@ export async function getUser(email: string): Promise<UserProfile | null> {
     }
 }
 
-export async function createUser(email: string, initialPrefs?: Partial<UserPreferences>): Promise<UserProfile> {
+export async function createUser(email: string, timezone: string = 'Asia/Kolkata'): Promise<UserProfile> {
     const existing = await getUser(email);
     if (existing) return existing;
 
@@ -34,7 +34,7 @@ export async function createUser(email: string, initialPrefs?: Partial<UserPrefe
         email,
         preferences: {
             deliveryTime: '08:00',
-            timezone: initialPrefs?.timezone || 'Asia/Kolkata', // Default to IST if not provided
+            timezone,
             digestFormat: 'comprehensive'
         },
         sources: [], // Start empty
@@ -110,7 +110,7 @@ export async function getPreferences() {
     };
 }
 
-export async function savePreferences(legacyPrefs: { email?: string; deliveryTime?: string; timezone?: string; sources?: Source[] }) {
+export async function savePreferences(legacyPrefs: any) {
     const user = await getUser(ADMIN_EMAIL) || await createUser(ADMIN_EMAIL);
     user.preferences.deliveryTime = legacyPrefs.deliveryTime || '08:00';
     user.preferences.timezone = legacyPrefs.timezone || 'Asia/Kolkata';
@@ -119,6 +119,6 @@ export async function savePreferences(legacyPrefs: { email?: string; deliveryTim
 }
 
 // Legacy wrappers for sources
-export async function addSource(source: Omit<Source, 'id' | 'addedAt'>) { return addSourceToUser(ADMIN_EMAIL, source); }
+export async function addSource(source: any) { return addSourceToUser(ADMIN_EMAIL, source); }
 export async function removeSource(id: string) { return removeSourceFromUser(ADMIN_EMAIL, id); }
-export async function updateSource(id: string, updates: Partial<Source>) { return updateSourceForUser(ADMIN_EMAIL, id, updates); }
+export async function updateSource(id: string, updates: any) { return updateSourceForUser(ADMIN_EMAIL, id, updates); }

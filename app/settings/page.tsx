@@ -6,7 +6,7 @@ import Link from 'next/link';
 export default function SettingsPage() {
     const [email, setEmail] = useState('');
     const [deliveryTime, setDeliveryTime] = useState('08:00');
-    const [timezone, setTimezone] = useState('Asia/Kolkata');
+    const [timezone, setTimezone] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
@@ -21,10 +21,12 @@ export default function SettingsPage() {
             const data = await res.json();
             setEmail(data.email || '');
             setDeliveryTime(data.deliveryTime || '08:00');
-
-            // Auto-detect browser timezone if none is set
-            const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            setTimezone(data.timezone || browserTimezone);
+            // If API returns timezone, use it. Otherwise, auto-detect from browser.
+            if (data.timezone) {
+                setTimezone(data.timezone);
+            } else {
+                setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+            }
         } catch (error) {
             console.error('Error fetching settings:', error);
         } finally {
@@ -51,9 +53,8 @@ export default function SettingsPage() {
                 const data = await res.json();
                 setMessage(`Error: ${data.error}`);
             }
-        } catch (error: unknown) {
-            const err = error as Error;
-            setMessage(`Error: ${err.message}`);
+        } catch (error: any) {
+            setMessage(`Error: ${error.message}`);
         } finally {
             setSaving(false);
         }
@@ -104,38 +105,53 @@ export default function SettingsPage() {
                                 </p>
                             </div>
 
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
-                                        Delivery Time
-                                    </label>
-                                    <input
-                                        type="time"
-                                        value={deliveryTime}
-                                        onChange={e => setDeliveryTime(e.target.value)}
-                                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all"
-                                        required
-                                    />
-                                    <p className="text-sm text-gray-500 mt-2">
-                                        When the system triggers your daily dispatch.
-                                    </p>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
-                                        Timezone
-                                    </label>
-                                    <input
-                                        type="text"
+                            <div>
+                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
+                                    Global Delivery Time (IST)
+                                </label>
+                                <input
+                                    type="time"
+                                    value={deliveryTime}
+                                    onChange={e => setDeliveryTime(e.target.value)}
+                                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all"
+                                    required
+                                />
+                                <p className="text-sm text-gray-500 mt-2">
+                                    When the system triggers the daily dispatch cycle.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
+                                    Timezone
+                                </label>
+                                <div className="relative">
+                                    <select
                                         value={timezone}
                                         onChange={e => setTimezone(e.target.value)}
-                                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all bg-gray-50"
-                                        placeholder="e.g., Asia/Kolkata"
+                                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all appearance-none bg-white"
                                         required
-                                    />
-                                    <p className="text-[10px] text-gray-400 mt-1 uppercase font-bold tracking-tighter">
-                                        Detected: {Intl.DateTimeFormat().resolvedOptions().timeZone}
-                                    </p>
+                                    >
+                                        {/* Common Timezones */}
+                                        <optgroup label="Detected">
+                                            <option value={timezone}>{timezone}</option>
+                                        </optgroup>
+                                        <optgroup label="Global">
+                                            <option value="UTC">UTC (Universal Time)</option>
+                                            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                                            <option value="America/New_York">America/New_York (EST)</option>
+                                            <option value="America/Los_Angeles">America/Los_Angeles (PST)</option>
+                                            <option value="Europe/London">Europe/London (GMT)</option>
+                                            <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                                        </optgroup>
+                                    </select>
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                        ▼
+                                    </div>
                                 </div>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    Auto-detected from your browser.
+                                </p>
                             </div>
 
                             <div className="pt-4">

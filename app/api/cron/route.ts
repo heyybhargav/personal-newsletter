@@ -3,72 +3,55 @@ import { getAllUsers, getUser } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
-import { formatInTimeZone } from 'date-fns-tz';
 
 export async function GET() {
     try {
         const userEmails = await getAllUsers();
-        console.log(`[Cron] Starting dispatch check for ${userEmails.length} users...`);
+        console.log(`[Cron] ⏰ Hourly check for ${userEmails.length} users...`);
 
-        const now = new Date();
-        const results = [];
-
-        // Process all users
-        for (const email of userEmails) {
+        const results = await Promise.allSettled(userEmails.map(async (email) => {
             const user = await getUser(email);
-            if (!user) continue;
+            if (!user || !user.sources.length) return { email, status: 'skipped_no_sources' };
 
-            // Step 0: Check if it's the right time in the user's timezone
-            const userTimezone = user.preferences.timezone || 'Asia/Kolkata';
-            const userHour = user.preferences.deliveryTime?.split(':')[0] || '08';
+            // --- Timezone Logic ---
+            const timezone = user.preferences.timezone || 'Asia/Kolkata';
+            const deliveryTime = user.preferences.deliveryTime || '08:00'; // "HH:MM" format
 
-            // Format current time in user's timezone to get their local hour
-            const currentLocalHour = formatInTimeZone(now, userTimezone, 'HH');
+            // Get current time in USER'S timezone
+            const userNow = new Date().toLocaleString('en-US', { timeZone: timezone, hour12: false });
+            const currentHour = new Date(userNow).getHours();
 
-            if (currentLocalHour !== userHour) {
-                console.log(`[Cron] Skipping ${email}: Local hour is ${currentLocalHour}, expected ${userHour}`);
-                continue;
+            // Parse target delivery hour
+            const [targetHourStr] = deliveryTime.split(':');
+            const targetHour = parseInt(targetHourStr, 10);
+
+            // Check if it's the right hour (allow 5 min window or just check hour equality)
+            // Since cron runs at top of hour, equality is sufficient
+            if (currentHour !== targetHour) {
+                // console.log(`[Cron] Skipping ${email}: ${currentHour}:00 (User) != ${targetHour}:00 (Target)`);
+                return { email, status: 'skipped_wrong_time', userTime: `${currentHour}:00` };
             }
 
-            if (!user.sources || user.sources.length === 0) {
-                console.log(`[Cron] Skipping ${email}: No sources configured`);
-                results.push({ email, status: 'skipped_no_sources' });
-                continue;
-            }
+            // --- Content Generation ---
+            console.log(`[Cron] 🚀 Dispatching to ${email} (Timezone: ${timezone})`);
 
-            // Step 1: Aggregate content for this user
-            console.log(`[Cron] 🕒 Triggering dispatch for ${email} (Local time matches)`);
             const content = await aggregateContent(user.sources);
+            if (content.length === 0) return { email, status: 'skipped_no_content' };
 
-            if (content.length === 0) {
-                console.log(`[Cron] Skipping ${email}: no content found`);
-                results.push({ email, status: 'no_content' });
-                continue;
-            }
-
-            // Step 2: Generate UNIFIED briefing
-            console.log(`[Cron] Generating briefing for ${email}: ${content.length} items`);
             const briefing = await generateUnifiedBriefing(content);
-
-            // Step 3: Send unified email
             await sendUnifiedDigestEmail(user.email, briefing);
-            console.log(`[Cron] ✅ Sent to ${email}`);
 
-            results.push({ email, status: 'sent', items: content.length });
-        }
+            console.log(`[Cron] ✅ Sent to ${email}`);
+            return { email, status: 'sent', items: content.length };
+        }));
 
         return NextResponse.json({
             success: true,
-            timestamp: now.toISOString(),
-            processed: results.length,
-            results
+            timestamp: new Date().toISOString(),
+            results: results.map(r => r.status === 'fulfilled' ? r.value : r.reason)
         });
-    } catch (error: unknown) {
-        const err = error as Error;
-        console.error('[Cron] Error:', err);
-        return NextResponse.json({
-            error: 'Cron job failed',
-            details: err.message
-        }, { status: 500 });
+    } catch (error: any) {
+        console.error('[Cron] Error:', error);
+        return NextResponse.json({ error: 'Cron job failed', details: error.message }, { status: 500 });
     }
 }

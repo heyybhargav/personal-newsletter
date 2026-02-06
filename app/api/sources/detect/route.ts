@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 
         // Step 2: Try to fetch sample content from the feed
         let sampleItems: { title: string; link: string; pubDate?: string }[] = [];
-        const feedUrl = detected.feedUrl;
+        let feedUrl = detected.feedUrl;
 
         try {
             // Special handling for YouTube @handle URLs - need to resolve channel ID
@@ -47,14 +47,16 @@ export async function GET(request: Request) {
             if (feed.title && feed.title.length > 0) {
                 detected.name = feed.title;
             }
-        } catch (feedError: unknown) {
-            const err = feedError as Error;
-            console.log('[Detect] Could not fetch sample items:', err.message);
+        } catch (feedError: any) {
+            console.log('[Detect] Could not fetch sample items:', feedError.message);
             // Feed parsing failed, but we can still return the detected source
             // User will see a warning that we couldn't preview content
         }
 
-        // ... (favicon logic) ...
+        // Step 3: Ensure we have a good favicon
+        if (!detected.favicon) {
+            detected.favicon = getFaviconUrl(url);
+        }
 
         return NextResponse.json({
             detected: {
@@ -65,12 +67,11 @@ export async function GET(request: Request) {
             canPreview: sampleItems.length > 0,
         });
 
-    } catch (error: unknown) {
-        const err = error as Error;
-        console.error('[Detect] Error:', err);
+    } catch (error: any) {
+        console.error('[Detect] Error:', error);
         return NextResponse.json({
             error: 'Failed to detect source',
-            details: err.message
+            details: error.message
         }, { status: 500 });
     }
 }

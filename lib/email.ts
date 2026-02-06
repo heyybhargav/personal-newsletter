@@ -113,7 +113,7 @@ function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string): stri
 
 // Convert markdown-style formatting to HTML
 function formatNarrative(text: string): string {
-  const html = text
+  let html = text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **Bold** -> <strong>
     .replace(/\n\n/g, '</p><p style="margin: 0 0 18px 0;">') // Double newlines -> paragraphs
     .replace(/\n/g, '<br>'); // Single newlines -> line breaks
@@ -140,11 +140,10 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
   try {
     await sgMail.send(msg);
     console.log(`[Email] Unified digest sent to ${to}`);
-  } catch (error: unknown) {
-    const err = error as { message?: string; response?: { body?: string } };
-    console.error('[Email] Error sending unified digest:', err.message || err);
-    if (err.response) {
-      console.error('[Email] SendGrid response:', err.response.body);
+  } catch (error: any) {
+    console.error('[Email] Error sending unified digest:', error);
+    if (error.response) {
+      console.error('[Email] SendGrid response:', error.response.body);
     }
     throw error;
   }
@@ -250,11 +249,10 @@ export async function sendDigestEmail(to: string, sections: DigestSection[]): Pr
   try {
     await sgMail.send(msg);
     console.log(`Digest email sent to ${to}`);
-  } catch (error: unknown) {
-    const err = error as { message?: string; response?: { body?: string } };
-    console.error('Error sending email:', err.message || err);
-    if (err.response) {
-      console.error(err.response.body);
+  } catch (error: any) {
+    console.error('Error sending email:', error);
+    if (error.response) {
+      console.error(error.response.body);
     }
     throw error;
   }

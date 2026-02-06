@@ -86,7 +86,7 @@ export default function SourcesPage() {
                 setSampleItems(data.sampleItems || []);
                 setEditableName(data.detected.name);
             }
-        } catch (error: unknown) {
+        } catch (error: any) {
             setDetectionError('Failed to detect source');
         } finally {
             setDetecting(false);
@@ -129,9 +129,8 @@ export default function SourcesPage() {
                 const data = await res.json();
                 setDetectionError(data.error || 'Failed to add source');
             }
-        } catch (error: unknown) {
-            const err = error as Error;
-            setDetectionError(err.message);
+        } catch (error: any) {
+            setDetectionError(error.message);
         }
     };
 
@@ -154,9 +153,8 @@ export default function SourcesPage() {
                 setMessage('✅ Source deleted');
                 setTimeout(() => setMessage(''), 3000);
             }
-        } catch (error: unknown) {
-            const err = error as Error;
-            setMessage(`Error: ${err.message}`);
+        } catch (error: any) {
+            setMessage(`Error: ${error.message}`);
         }
     };
 
@@ -185,7 +183,7 @@ export default function SourcesPage() {
                             ← Back to Dashboard
                         </Link>
                         <h1 className="text-3xl font-serif font-bold text-gray-900">Intelligence Sources</h1>
-                        <p className="text-gray-500 mt-1">Curate your daily briefing. Paste any URL — we&apos;ll handle the rest.</p>
+                        <p className="text-gray-500 mt-1">Curate your daily briefing. Paste any URL — we'll handle the rest.</p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
@@ -388,7 +386,7 @@ export default function SourcesPage() {
 
                                     {sampleItems.length === 0 && !detecting && (
                                         <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
-                                            ⚠️ Couldn&apos;t preview content. The source may still work when added.
+                                            ⚠️ Couldn't preview content. The source may still work when added.
                                         </p>
                                     )}
                                 </div>
