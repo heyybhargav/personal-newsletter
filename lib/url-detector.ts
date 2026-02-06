@@ -76,8 +76,9 @@ const detectionRules: DetectionRule[] = [
         ],
         extractFeedUrl: (url) => url,
         extractName: () => 'Podcast',
-        getFavicon: () => 'https://cdn-icons-png.flaticon.com/512/2628/2628834.png',
+        getFavicon: (url) => '', // Return empty so the Detect API logic triggers to fetch from feed
     },
+    // ... (rest of rules)
 
     // Reddit - handles subreddit URLs
     {
@@ -273,7 +274,7 @@ export function getFaviconUrl(url: string): string {
     try {
         const domain = new URL(url).hostname;
         // Google's favicon service is the most reliable
-        return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+        return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
     } catch {
         return '';
     }

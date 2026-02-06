@@ -47,6 +47,17 @@ export async function GET(request: Request) {
             if (feed.title && feed.title.length > 0) {
                 detected.name = feed.title;
             }
+
+            // Extract feed image (itunes:image or image.url)
+            if (!detected.favicon || detected.favicon.includes('google.com/s2/favicons')) {
+                // @ts-ignore
+                const itunesImage = feed.itunes?.image;
+                if (itunesImage) {
+                    detected.favicon = itunesImage;
+                } else if (feed.image?.url) {
+                    detected.favicon = feed.image.url;
+                }
+            }
         } catch (feedError: any) {
             console.log('[Detect] Could not fetch sample items:', feedError.message);
             // Feed parsing failed, but we can still return the detected source
