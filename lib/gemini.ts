@@ -113,6 +113,8 @@ BANNED PHRASES: "In today's digital landscape", "Game changer", "Revolutionary",
      </div>
 
 ### CRITICAL RULES:
+- **NO FAKE LINKS**: You are strictly FORBIDDEN from using "example.com" or inventing URLs.
+- **USE PROVIDED LINKS**: You must ONLY use links provided in the "INPUT DATA" section.
 - **HYPERLINKS**: Links must be frequent and accurate. Link the **SOURCE NAME** or the **REPORT** where possible.
 - **IMAGES**: Only use images for YouTube videos in the Watchlist section.
 - **TONE**: Smart, concise, no corp-speak.

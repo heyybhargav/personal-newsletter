@@ -3,7 +3,11 @@ import { ContentItem, SourceType } from './types';
 
 const parser = new Parser({
     customFields: {
-        item: ['media:thumbnail', 'media:content']
+        item: [
+            ['media:thumbnail', 'media:thumbnail'],
+            ['media:content', 'media:content'],
+            ['media:group', 'media:group']
+        ]
     }
 });
 
