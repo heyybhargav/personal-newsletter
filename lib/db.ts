@@ -110,7 +110,7 @@ export async function getPreferences() {
     };
 }
 
-export async function savePreferences(legacyPrefs: any) {
+export async function savePreferences(legacyPrefs: { email?: string; deliveryTime?: string; timezone?: string; sources?: Source[] }) {
     const user = await getUser(ADMIN_EMAIL) || await createUser(ADMIN_EMAIL);
     user.preferences.deliveryTime = legacyPrefs.deliveryTime || '08:00';
     user.preferences.timezone = legacyPrefs.timezone || 'Asia/Kolkata';
@@ -119,6 +119,6 @@ export async function savePreferences(legacyPrefs: any) {
 }
 
 // Legacy wrappers for sources
-export async function addSource(source: any) { return addSourceToUser(ADMIN_EMAIL, source); }
+export async function addSource(source: Omit<Source, 'id' | 'addedAt'>) { return addSourceToUser(ADMIN_EMAIL, source); }
 export async function removeSource(id: string) { return removeSourceFromUser(ADMIN_EMAIL, id); }
-export async function updateSource(id: string, updates: any) { return updateSourceForUser(ADMIN_EMAIL, id, updates); }
+export async function updateSource(id: string, updates: Partial<Source>) { return updateSourceForUser(ADMIN_EMAIL, id, updates); }

@@ -45,14 +45,15 @@ export async function POST(request: Request) {
         // Add them to DB
         for (const source of sourcesToAdd) {
             if (source.name && source.url && source.type) {
-                await addSourceToUser(email, source as any);
+                await addSourceToUser(email, source as Omit<Source, 'id' | 'addedAt'>);
             }
         }
 
         return NextResponse.json({ success: true, count: sourcesToAdd.length });
 
-    } catch (error: any) {
-        console.error('Subscribe error:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('Subscribe error:', err);
         return NextResponse.json({ error: 'Failed' }, { status: 500 });
     }
 }

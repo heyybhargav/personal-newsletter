@@ -86,7 +86,7 @@ export default function SourcesPage() {
                 setSampleItems(data.sampleItems || []);
                 setEditableName(data.detected.name);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             setDetectionError('Failed to detect source');
         } finally {
             setDetecting(false);
@@ -129,8 +129,9 @@ export default function SourcesPage() {
                 const data = await res.json();
                 setDetectionError(data.error || 'Failed to add source');
             }
-        } catch (error: any) {
-            setDetectionError(error.message);
+        } catch (error: unknown) {
+            const err = error as Error;
+            setDetectionError(err.message);
         }
     };
 
@@ -153,8 +154,9 @@ export default function SourcesPage() {
                 setMessage('✅ Source deleted');
                 setTimeout(() => setMessage(''), 3000);
             }
-        } catch (error: any) {
-            setMessage(`Error: ${error.message}`);
+        } catch (error: unknown) {
+            const err = error as Error;
+            setMessage(`Error: ${err.message}`);
         }
     };
 
@@ -183,7 +185,7 @@ export default function SourcesPage() {
                             ← Back to Dashboard
                         </Link>
                         <h1 className="text-3xl font-serif font-bold text-gray-900">Intelligence Sources</h1>
-                        <p className="text-gray-500 mt-1">Curate your daily briefing. Paste any URL — we'll handle the rest.</p>
+                        <p className="text-gray-500 mt-1">Curate your daily briefing. Paste any URL — we&apos;ll handle the rest.</p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
@@ -266,8 +268,8 @@ export default function SourcesPage() {
                                         <button
                                             onClick={() => handleToggle(source)}
                                             className={`px-4 py-2 text-sm font-medium rounded-lg border transition ${source.enabled
-                                                    ? 'text-gray-600 border-gray-200 hover:bg-gray-100'
-                                                    : 'text-green-600 border-green-200 hover:bg-green-50'
+                                                ? 'text-gray-600 border-gray-200 hover:bg-gray-100'
+                                                : 'text-green-600 border-green-200 hover:bg-green-50'
                                                 }`}
                                         >
                                             {source.enabled ? 'Pause' : 'Resume'}
@@ -386,7 +388,7 @@ export default function SourcesPage() {
 
                                     {sampleItems.length === 0 && !detecting && (
                                         <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
-                                            ⚠️ Couldn't preview content. The source may still work when added.
+                                            ⚠️ Couldn&apos;t preview content. The source may still work when added.
                                         </p>
                                     )}
                                 </div>

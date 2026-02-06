@@ -51,8 +51,9 @@ export default function SettingsPage() {
                 const data = await res.json();
                 setMessage(`Error: ${data.error}`);
             }
-        } catch (error: any) {
-            setMessage(`Error: ${error.message}`);
+        } catch (error: unknown) {
+            const err = error as Error;
+            setMessage(`Error: ${err.message}`);
         } finally {
             setSaving(false);
         }

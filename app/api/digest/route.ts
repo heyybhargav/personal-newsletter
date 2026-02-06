@@ -49,11 +49,12 @@ export async function POST(request: Request) {
             narrativeLength: briefing.narrative.length,
             timestamp: briefing.generatedAt
         });
-    } catch (error: any) {
-        console.error('[Digest API] Error:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('[Digest API] Error:', err);
         return NextResponse.json({
             error: 'Digest generation failed',
-            details: error.message,
+            details: err.message,
             sent: false
         }, { status: 500 });
     }
@@ -93,8 +94,9 @@ export async function GET() {
                 }))
             }]
         });
-    } catch (error: any) {
-        console.error('[Digest API] Preview error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('[Digest API] Preview error:', err);
+        return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

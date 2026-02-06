@@ -63,11 +63,12 @@ export async function GET() {
             processed: results.length,
             results
         });
-    } catch (error: any) {
-        console.error('[Cron] Error:', error);
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('[Cron] Error:', err);
         return NextResponse.json({
             error: 'Cron job failed',
-            details: error.message
+            details: err.message
         }, { status: 500 });
     }
 }

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
 
 interface SearchResult {
     title: string;
@@ -39,9 +38,10 @@ export async function GET(request: Request) {
         }
 
         return NextResponse.json({ results });
-    } catch (error: any) {
-        console.error('Search error:', error);
-        return NextResponse.json({ error: 'Search failed', details: error.message }, { status: 500 });
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error('Search error:', err);
+        return NextResponse.json({ error: 'Search failed', details: err.message }, { status: 500 });
     }
 }
 
@@ -56,7 +56,6 @@ async function searchYouTube(query: string): Promise<SearchResult[]> {
 
     // Extract channel IDs using regex since YouTube loads data dynamically
     const channelPattern = /"channelId":"(UC[\w-]+)"/g;
-    const titlePattern = /"params":"[^"]+","title":\{"runs":\[\{"text":"([^"]+)"\}\]/g;
 
     const matches = [...html.matchAll(channelPattern)];
     // Simple fallback: construct results for the first few Unique channel IDs found
@@ -85,7 +84,7 @@ async function searchPodcasts(query: string): Promise<SearchResult[]> {
     const response = await fetch(`https://itunes.apple.com/search?media=podcast&term=${encodeURIComponent(query)}&limit=5`);
     const data = await response.json();
 
-    return data.results.map((item: any) => ({
+    return (data.results || []).map((item: { collectionName: string; artistName: string; feedUrl: string; artworkUrl100?: string }) => ({
         title: item.collectionName,
         description: item.artistName,
         url: item.feedUrl,
@@ -110,7 +109,7 @@ async function searchReddit(query: string): Promise<SearchResult[]> {
     const response = await fetch(`https://www.reddit.com/subreddits/search.json?q=${encodeURIComponent(query)}&limit=5`);
     const data = await response.json();
 
-    return data.data.children.map((item: any) => ({
+    return (data.data?.children || []).map((item: { data: { display_name_prefixed: string; public_description?: string; url: string; icon_img?: string } }) => ({
         title: `r/${item.data.display_name_prefixed}`,
         description: item.data.public_description || `Subreddit for ${query}`,
         url: `https://www.reddit.com${item.data.url}.rss`,
