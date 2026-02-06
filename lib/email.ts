@@ -11,8 +11,8 @@ if (process.env.SENDGRID_API_KEY) {
 // NEW: Unified Narrative Email Template
 // ============================================================================
 
-function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string): string {
-  const narrativeHTML = formatNarrative(briefing.narrative);
+async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string): Promise<string> {
+  const narrativeHTML = await formatNarrative(briefing.narrative);
 
   const linksHTML = briefing.topStories.map(item => `
     <tr>
@@ -114,10 +114,10 @@ function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string): stri
 import { marked } from 'marked';
 
 // Convert markdown-style formatting to HTML using marked
-function formatNarrative(text: string): string {
+async function formatNarrative(text: string): Promise<string> {
   // Configure marked to not sanitize - assuming internal AI content is safe
   // and we need HTML features (like <img> tags in the prompt)
-  const html = marked.parse(text, { async: false }) as string;
+  const html = await marked.parse(text);
 
   // Add custom styling to paragraphs
   return html.replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333;">')
@@ -139,7 +139,7 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
     to,
     from: fromEmail,
     subject: `☕ Your Daily Executive Briefing — ${today}`,
-    html: generateUnifiedEmailHTML(briefing, today),
+    html: await generateUnifiedEmailHTML(briefing, today),
   };
 
   try {
