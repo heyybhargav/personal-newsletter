@@ -37,15 +37,15 @@ export async function aggregateContent(sources: Source[]): Promise<ContentItem[]
 }
 
 // Group items by source type for better organization
-export function groupBySourceType(items: ContentItem[]): Map<string, ContentItem[]> {
-    const grouped = new Map<string, ContentItem[]>();
+export function groupBySourceType(items: ContentItem[]): Record<string, ContentItem[]> {
+    const grouped: Record<string, ContentItem[]> = {};
 
     items.forEach(item => {
         const type = item.sourceType;
-        if (!grouped.has(type)) {
-            grouped.set(type, []);
+        if (!grouped[type]) {
+            grouped[type] = [];
         }
-        grouped.get(type)!.push(item);
+        grouped[type].push(item);
     });
 
     return grouped;

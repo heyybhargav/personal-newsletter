@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-interface Source {
-  id: string;
-  name: string;
-  type: string;
-  url: string;
-  enabled: boolean;
-}
+import { Source } from '@/lib/types';
 
 export default function Home() {
   const [sources, setSources] = useState<Source[]>([]);
@@ -72,23 +65,23 @@ export default function Home() {
     }
   };
 
-  const getSourceTypeEmoji = (type: string) => {
-    switch (type) {
-      case 'youtube': return '📺';
-      case 'podcast': return '🎙️';
-      case 'news': return '📰';
-      case 'reddit': return '💬';
-      default: return '🔖';
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16 px-6">
+    <div className="min-h-screen bg-[#F9FAFB] text-gray-900 font-sans">
+      {/* Premium Hero Section */}
+      <div className="bg-white border-b border-gray-200 pt-20 pb-16 px-6">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-5xl font-bold mb-4">✨ Daily Digest</h1>
-          <p className="text-xl text-indigo-100">Your personalized AI-powered news feed, delivered every morning</p>
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <p className="text-sm font-bold tracking-widest text-gray-400 uppercase mb-2">Admin Dashboard</p>
+              <h1 className="text-5xl font-serif font-bold text-gray-900 tracking-tight">Control Room</h1>
+            </div>
+            <Link href="/subscribe" className="text-gray-400 hover:text-black transition text-sm font-medium border-b border-gray-200 hover:border-black pb-0.5">
+              View Public Subscription Page ↗
+            </Link>
+          </div>
+          <p className="text-xl text-gray-500 font-light max-w-2xl leading-relaxed">
+            Manage the intelligence sources and generation pipeline for your executive briefings.
+          </p>
         </div>
       </div>
 
@@ -96,59 +89,59 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Quick Actions */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Link href="/sources" className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all hover:-translate-y-1">
-            <div className="text-4xl mb-3">📚</div>
-            <h3 className="text-xl font-bold mb-2">Manage Sources</h3>
-            <p className="text-gray-600">Add YouTube, podcasts, news, and more</p>
+          <Link href="/sources" className="group bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md hover:border-gray-300 transition-all">
+            <div className="text-3xl mb-4 grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition">📚</div>
+            <h3 className="text-lg font-bold mb-2">Manage Sources</h3>
+            <p className="text-gray-500 text-sm">Curate the RSS feeds and intelligence channels.</p>
           </Link>
 
-          <Link href="/settings" className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all hover:-translate-y-1">
-            <div className="text-4xl mb-3">⚙️</div>
-            <h3 className="text-xl font-bold mb-2">Settings</h3>
-            <p className="text-gray-600">Configure email and delivery time</p>
+          <Link href="/settings" className="group bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md hover:border-gray-300 transition-all">
+            <div className="text-3xl mb-4 grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition">⚙️</div>
+            <h3 className="text-lg font-bold mb-2">System Config</h3>
+            <p className="text-gray-500 text-sm">Configure global specific delivery preferences.</p>
           </Link>
 
           <button
             onClick={handleSendTest}
             disabled={sending}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed text-left"
+            className="group bg-black text-white rounded-xl shadow-lg p-8 hover:bg-gray-900 transition-all text-left disabled:opacity-50"
           >
-            <div className="text-4xl mb-3">📧</div>
-            <h3 className="text-xl font-bold mb-2">
-              {sending ? 'Sending...' : 'Send Test Email'}
+            <div className="text-3xl mb-4">✨</div>
+            <h3 className="text-lg font-bold mb-2">
+              {sending ? 'Dispatching...' : 'Force Dispatch'}
             </h3>
-            <p className="text-indigo-100">Get your digest right now</p>
+            <p className="text-gray-400 text-sm">Trigger immediate digest generation for Test Admin.</p>
           </button>
         </div>
 
         {/* Message Display */}
         {message && (
-          <div className={`mb-8 p-4 rounded-lg ${message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+          <div className={`mb-8 p-4 rounded-lg font-medium border ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-700' : 'bg-green-50 border-green-100 text-green-700'}`}>
             {message}
           </div>
         )}
 
         {/* Current Sources */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Your Sources ({sources.length})</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-6">
+            <h2 className="text-2xl font-serif font-bold">Active Intelligence Sources</h2>
             <button
               onClick={handlePreview}
               disabled={generating}
-              className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+              className="text-indigo-600 font-medium hover:text-indigo-800 transition disabled:opacity-50"
             >
-              {generating ? 'Generating...' : 'Preview Digest'}
+              {generating ? 'Generating Preview...' : 'View Preview'}
             </button>
           </div>
 
           {loading ? (
-            <p className="text-gray-500">Loading...</p>
+            <div className="py-12 text-center text-gray-400">Loading sources...</div>
           ) : sources.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">📭</div>
-              <p className="text-gray-600 mb-4">No sources added yet</p>
-              <Link href="/sources" className="text-indigo-600 hover:underline">
-                Add your first source →
+              <div className="text-4xl mb-4 opacity-30">📭</div>
+              <p className="text-gray-500 mb-6">No sources configured for the admin account.</p>
+              <Link href="/sources" className="bg-black text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition">
+                Add Source
               </Link>
             </div>
           ) : (
@@ -156,36 +149,35 @@ export default function Home() {
               {sources.map(source => (
                 <div
                   key={source.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition"
+                  className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-sm transition"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="text-2xl">{getSourceTypeEmoji(source.type)}</div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold truncate">{source.name}</h3>
-                      <p className="text-sm text-gray-500 capitalize">{source.type}</p>
-                      <p className="text-xs text-gray-400 truncate mt-1">{source.url}</p>
-                    </div>
-                    <div className={`px-2 py-1 rounded text-xs ${source.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {source.enabled ? 'Active' : 'Disabled'}
-                    </div>
+                  {/* Icon */}
+                  <div className="w-10 h-10 rounded bg-white border border-gray-200 flex items-center justify-center text-lg shadow-sm">
+                    {source.favicon ? <img src={source.favicon} className="w-6 h-6 object-contain" /> : getSourceTypeEmoji(source.type)}
                   </div>
+
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 truncate">{source.name}</h3>
+                    <p className="text-xs text-gray-500 truncate">{source.url.replace('https://', '')}</p>
+                  </div>
+
+                  <div className={`w-2 h-2 rounded-full ${source.enabled ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                 </div>
               ))}
             </div>
           )}
         </div>
-
-        {/* Info Section */}
-        <div className="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl p-8">
-          <h2 className="text-2xl font-bold mb-4">How it works</h2>
-          <div className="space-y-3 text-gray-700">
-            <p><span className="font-semibold">1.</span> Add your favorite sources (YouTube, podcasts, news, Reddit, etc.)</p>
-            <p><span className="font-semibold">2.</span> Set your email and preferred delivery time</p>
-            <p><span className="font-semibold">3.</span> Get a beautifully formatted digest every morning at 8 AM</p>
-            <p><span className="font-semibold">4.</span> Each item is AI-summarized to save you hours of reading</p>
-          </div>
-        </div>
       </div>
     </div>
   );
 }
+
+const getSourceTypeEmoji = (type: string) => {
+  switch (type) {
+    case 'youtube': return '📺';
+    case 'podcast': return '🎙️';
+    case 'news': return '📰';
+    case 'reddit': return '💬';
+    default: return '🔖';
+  }
+};

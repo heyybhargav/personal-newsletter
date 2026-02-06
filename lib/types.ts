@@ -1,3 +1,19 @@
+// Core User Profile
+export interface UserProfile {
+  email: string;
+  preferences: UserPreferences;
+  sources: Source[];
+  createdAt: string;
+  lastDigestAt?: string;
+}
+
+export interface UserPreferences {
+  email?: string; // Legacy support
+  deliveryTime: string; // HH:MM
+  timezone?: string; // e.g., 'Asia/Kolkata'
+  digestFormat?: 'simple' | 'comprehensive';
+}
+
 export type SourceType = 'youtube' | 'podcast' | 'news' | 'reddit' | 'custom';
 
 export interface Source {
@@ -7,6 +23,7 @@ export interface Source {
   url: string;
   enabled: boolean;
   addedAt: string;
+  favicon?: string; // New: For premium UI
 }
 
 export interface ContentItem {
@@ -20,16 +37,11 @@ export interface ContentItem {
 
 export interface DigestSection {
   title: string;
-  items: Array<{
-    title: string;
-    summary: string;
-    link: string;
-    source: string;
-  }>;
+  items: SummarizedContent[];
+  summary?: string; // New: Section-level synthesis
 }
 
-export interface UserPreferences {
-  email: string;
-  deliveryTime: string; // HH:mm format
-  sources: Source[];
+export interface SummarizedContent extends ContentItem {
+  summary: string;
+  relevanceScore?: number;
 }

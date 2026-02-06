@@ -1,73 +1,72 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ContentItem, DigestSection } from './types';
+import { ContentItem, DigestSection, SummarizedContent } from './types';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-export async function summarizeContent(item: ContentItem): Promise<string> {
-    try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const MODEL_NAME = 'gemini-1.5-flash';
 
-        const prompt = `Summarize this content in 2-3 concise sentences that capture the key points. Make it engaging and easy to understand:
-
-Title: ${item.title}
-Content: ${item.description.slice(0, 1000)}
-
-Summary:`;
-
-        const result = await model.generateContent(prompt);
-        const response = result.response;
-        return response.text().trim();
-    } catch (error) {
-        console.error('Error summarizing content:', error);
-        return item.description.slice(0, 200) + '...';
-    }
-}
-
-export async function generateDigest(groupedContent: Map<string, ContentItem[]>): Promise<DigestSection[]> {
+export async function generateBriefing(groupedContent: Record<string, ContentItem[]>): Promise<DigestSection[]> {
     const sections: DigestSection[] = [];
 
-    // Define section order and titles
-    const sectionConfig = [
-        { type: 'youtube', title: '📺 YouTube Updates' },
-        { type: 'podcast', title: '🎙️ Podcast Episodes' },
-        { type: 'news', title: '📰 Top News' },
-        { type: 'reddit', title: '💬 Reddit Discussions' },
-        { type: 'custom', title: '🔖 Other Sources' }
-    ];
+    for (const [category, items] of Object.entries(groupedContent)) {
+        if (items.length === 0) continue;
 
-    for (const config of sectionConfig) {
-        const items = groupedContent.get(config.type);
-        if (!items || items.length === 0) continue;
+        // 1. Synthesize the section (Narrative)
+        // We send top 15 items to avoid token limits
+        const topItems = items.slice(0, 15);
+        const synthesis = await synthesizeCategory(category, topItems);
 
-        // Limit to top 5 items per section
-        const topItems = items.slice(0, 5);
-
-        // Summarize each item
-        const summarizedItems = await Promise.all(
-            topItems.map(async (item) => ({
-                title: item.title,
-                summary: await summarizeContent(item),
-                link: item.link,
-                source: item.source
-            }))
-        );
+        // 2. Select top items (we'll just pass the top 5 for the email list)
+        const listItems = topItems.slice(0, 5).map(item => ({
+            ...item,
+            summary: '' // Narrative covers it
+        }));
 
         sections.push({
-            title: config.title,
-            items: summarizedItems
+            title: category.toUpperCase(),
+            summary: synthesis,
+            items: listItems
         });
     }
 
     return sections;
 }
 
-export async function rankContentByImportance(items: ContentItem[]): Promise<ContentItem[]> {
-    // Use simple heuristics for now:
-    // 1. Newer content is more important
-    // 2. Longer descriptions suggest more substantial content
-    return items.sort((a, b) => {
-        const dateScore = new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
-        const lengthScore = b.description.length - a.description.length;
-        return dateScore * 0.7 + lengthScore * 0.3;
-    });
+async function synthesizeCategory(category: string, items: ContentItem[]): Promise<string> {
+    try {
+        const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+
+        // Construct the context
+        const itemsText = items.map((item, i) =>
+            `[${i + 1}] Title: ${item.title}\nSource: ${item.source}\nSnippet: ${item.description.slice(0, 300)}`
+        ).join('\n\n');
+
+        const prompt = `
+      You are an elite executive briefer. Your job is to synthesize news items about "${category}" into a cohesive, high-level narrative.
+
+      RULES:
+      1. Write a 2-paragraph "Executive Summary" connecting the dots.
+      2. Identify the single biggest trend or story.
+      3. Use bolding (e.g., **Apple**) for key entities.
+      4. Do NOT just list them ("Item 1 did this"). Weave them together.
+      5. Tone: Professional, concise, insightful (like Axios).
+      6. Return ONLY the narrative text.
+
+      INPUT DATA:
+      ${itemsText}
+    `;
+
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        return text.trim();
+    } catch (error) {
+        console.error(`Error synthesizing category ${category}:`, error);
+        return `Updates on ${category} from ${items.length} sources.`;
+    }
+}
+
+// Legacy function
+export async function summarizeContent(item: ContentItem): Promise<string> {
+    return item.description.slice(0, 200);
 }

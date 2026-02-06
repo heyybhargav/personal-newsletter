@@ -2,85 +2,131 @@ import sgMail from '@sendgrid/mail';
 import { DigestSection } from './types';
 import { format } from 'date-fns';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
+// 🎨 Premium "Morning Brew" / "Axios" Style Template
 function generateEmailHTML(sections: DigestSection[], date: string): string {
-    const sectionsHTML = sections.map(section => `
-    <div style="margin-bottom: 40px;">
-      <h2 style="color: #1a1a1a; font-size: 24px; margin-bottom: 20px; border-bottom: 3px solid #6366f1; padding-bottom: 10px;">
-        ${section.title}
-      </h2>
-      ${section.items.map(item => `
-        <div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%); border-left: 4px solid #6366f1; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-          <h3 style="margin: 0 0 10px 0; font-size: 18px; color: #1a1a1a;">
-            <a href="${item.link}" style="color: #1a1a1a; text-decoration: none; transition: color 0.2s;">
-              ${item.title}
-            </a>
-          </h3>
-          <p style="color: #4b5563; line-height: 1.6; margin: 0 0 10px 0; font-size: 15px;">
-            ${item.summary}
-          </p>
-          <div style="font-size: 13px; color: #9ca3af;">
-            <span style="background: #e0e7ff; padding: 4px 12px; border-radius: 12px; color: #4f46e5;">
-              ${item.source}
-            </span>
-          </div>
+  const sectionsHTML = sections.map(section => `
+      <div style="margin-bottom: 40px; border-top: 2px solid #000; padding-top: 20px;">
+        <h2 style="font-family: 'Merriweather', serif; font-size: 20px; font-weight: 900; color: #000; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">
+          ${section.title}
+        </h2>
+        
+        <!-- The AI Narrative -->
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
+          ${formatNarrative(section.summary || '')}
         </div>
-      `).join('')}
-    </div>
-  `).join('');
 
-    return `
+        <!-- Quick Links -->
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+            <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; margin: 0 0 10px 0;">
+                DEEP DIVE
+            </p>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                ${section.items.map(item => `
+                    <li style="margin-bottom: 10px; padding-left: 0;">
+                        <a href="${item.link}" style="color: #2563eb; text-decoration: none; font-weight: 600; font-family: 'Helvetica Neue', sans-serif; font-size: 15px;">
+                            ${item.title}
+                        </a>
+                        <span style="color: #666; font-size: 13px; font-family: 'Helvetica Neue', sans-serif;">
+                            — ${item.source}
+                        </span>
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+      </div>
+    `).join('');
+
+  return `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Your Daily Digest</title>
+      <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
     </head>
-    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
-      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; border-radius: 12px 12px 0 0; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 32px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-          ✨ Your Daily Digest
-        </h1>
-        <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;">
-          ${date}
-        </p>
-      </div>
+    <body style="margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
       
-      <div style="background: white; padding: 40px 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        ${sectionsHTML}
-        
-        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 14px;">
-          <p>Made with ❤️ by your Daily Digest System</p>
-          <p style="margin-top: 10px;">
-            <a href="#" style="color: #6366f1; text-decoration: none;">Manage Preferences</a>
-          </p>
-        </div>
-      </div>
+      <!-- Container -->
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+          <td align="center" style="padding: 20px 0;">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; background: #ffffff; border: 1px solid #e0e0e0;">
+              
+              <!-- Header -->
+              <tr>
+                <td style="padding: 40px 30px; border-bottom: 4px solid #000; text-align: center;">
+                    <h1 style="font-family: 'Merriweather', serif; font-size: 32px; font-weight: 900; margin: 0; color: #000; letter-spacing: -1px;">
+                        The Daily Brief
+                    </h1>
+                    <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; color: #666; margin: 10px 0 0 0; text-transform: uppercase; letter-spacing: 1px;">
+                        ${date} • Prepared for You
+                    </p>
+                </td>
+              </tr>
+
+              <!-- Content -->
+              <tr>
+                <td style="padding: 30px;">
+                    ${sectionsHTML}
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td style="padding: 30px; background: #000; color: #fff; text-align: center;">
+                    <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; margin: 0;">
+                        Generated by Your Personal AI Chief of Staff
+                    </p>
+                    <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #888; margin: 10px 0 0 0;">
+                        <a href="https://your-domain.com" style="color: #fff; text-decoration: underline;">Manage Preferences</a>
+                    </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+
     </body>
     </html>
   `;
 }
 
+// Convert "**Bold**" markdown to "<strong>Bold</strong>" HTML
+function formatNarrative(text: string): string {
+  let html = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+    .replace(/\n\n/g, '</p><p>'); // Paragraphs
+
+  return `<p>${html}</p>`;
+}
+
 export async function sendDigestEmail(to: string, sections: DigestSection[]): Promise<void> {
-    const today = format(new Date(), 'EEEE, MMMM d, yyyy');
+  const today = format(new Date(), 'EEEE, MMMM d, yyyy');
 
-    const msg = {
-        to,
-        from: to, // SendGrid requires verified sender
-        subject: `✨ Your Daily Digest - ${today}`,
-        html: generateEmailHTML(sections, today),
-    };
+  // Use verified sender from env (User Complaint #4 fixed)
+  const fromEmail = process.env.USER_EMAIL || to;
 
-    try {
-        await sgMail.send(msg);
-        console.log('Digest email sent successfully!');
-    } catch (error: any) {
-        console.error('Error sending email:', error);
-        if (error.response) {
-            console.error(error.response.body);
-        }
-        throw error;
+  const msg = {
+    to,
+    from: fromEmail,
+    subject: `☕️ Your Daily Briefing - ${today}`,
+    html: generateEmailHTML(sections, today),
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log(`Digest email sent to ${to}`);
+  } catch (error: any) {
+    console.error('Error sending email:', error);
+    if (error.response) {
+      console.error(error.response.body);
     }
+    throw error;
+  }
 }

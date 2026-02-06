@@ -1,64 +1,122 @@
 import { Redis } from '@upstash/redis';
-import { UserPreferences, Source } from './types';
+import { UserProfile, Source } from './types';
 
-// Default preferences
-const defaultPreferences: UserPreferences = {
-    email: process.env.USER_EMAIL || '',
-    deliveryTime: process.env.DELIVERY_TIME || '08:00',
-    sources: []
-};
-
-const PREFS_KEY = 'user_preferences';
-
-// Initialize Redis client
-// Supports both Upstash native env vars and Vercel KV env vars
+// Initialize Redis
 const redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '',
     token: process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '',
 });
 
-export async function getPreferences(): Promise<UserPreferences> {
+// --- Keys ---
+const USER_KEY_PREFIX = 'user:';
+const ALL_USERS_SET = 'users:index'; // Set of all registered emails
+
+// --- Helpers ---
+const getUserKey = (email: string) => `${USER_KEY_PREFIX}${email}:config`;
+
+// --- Core User Operations ---
+
+export async function getUser(email: string): Promise<UserProfile | null> {
     try {
-        const prefs = await redis.get<UserPreferences>(PREFS_KEY);
-        return prefs || defaultPreferences;
+        const user = await redis.get<UserProfile>(getUserKey(email));
+        return user;
     } catch (error) {
-        console.error('Error reading preferences from Redis:', error);
-        return defaultPreferences;
+        console.error(`Error fetching user ${email}:`, error);
+        return null;
     }
 }
 
-export async function savePreferences(prefs: UserPreferences): Promise<void> {
-    try {
-        await redis.set(PREFS_KEY, prefs);
-    } catch (error) {
-        console.error('Error saving preferences to Redis:', error);
-        throw error;
-    }
+export async function createUser(email: string): Promise<UserProfile> {
+    const existing = await getUser(email);
+    if (existing) return existing;
+
+    const newUser: UserProfile = {
+        email,
+        preferences: {
+            deliveryTime: '08:00',
+            timezone: 'Asia/Kolkata', // Default to IST for now, will make dynamic later
+            digestFormat: 'comprehensive'
+        },
+        sources: [], // Start empty
+        createdAt: new Date().toISOString()
+    };
+
+    await saveUser(newUser);
+    await redis.sadd(ALL_USERS_SET, email); // Add to index
+    return newUser;
 }
 
-export async function addSource(source: Omit<Source, 'id' | 'addedAt'>): Promise<Source> {
-    const prefs = await getPreferences();
+export async function saveUser(user: UserProfile): Promise<void> {
+    await redis.set(getUserKey(user.email), user);
+}
+
+export async function getAllUsers(): Promise<string[]> {
+    return await redis.smembers(ALL_USERS_SET);
+}
+
+// --- Source Operations (Scoped to User) ---
+
+export async function addSourceToUser(email: string, source: Omit<Source, 'id' | 'addedAt'>): Promise<Source> {
+    const user = await getUser(email) || await createUser(email);
+
     const newSource: Source = {
         ...source,
         id: Date.now().toString(),
         addedAt: new Date().toISOString(),
     };
-    prefs.sources.push(newSource);
-    await savePreferences(prefs);
+
+    // Avoid duplicates
+    if (!user.sources.some(s => s.url === source.url)) {
+        user.sources.push(newSource);
+        await saveUser(user);
+    }
+
     return newSource;
 }
 
-export async function removeSource(id: string): Promise<void> {
-    const prefs = await getPreferences();
-    prefs.sources = prefs.sources.filter(s => s.id !== id);
-    await savePreferences(prefs);
+export async function removeSourceFromUser(email: string, sourceId: string): Promise<void> {
+    const user = await getUser(email);
+    if (!user) return;
+
+    user.sources = user.sources.filter(s => s.id !== sourceId);
+    await saveUser(user);
 }
 
-export async function updateSource(id: string, updates: Partial<Source>): Promise<void> {
-    const prefs = await getPreferences();
-    const index = prefs.sources.findIndex(s => s.id === id);
+export async function updateSourceForUser(email: string, sourceId: string, updates: Partial<Source>): Promise<void> {
+    const user = await getUser(email);
+    if (!user) return;
+
+    const index = user.sources.findIndex(s => s.id === sourceId);
     if (index !== -1) {
-        prefs.sources[index] = { ...prefs.sources[index], ...updates };
-        await savePreferences(prefs);
+        user.sources[index] = { ...user.sources[index], ...updates };
+        await saveUser(user);
     }
 }
+
+// --- Legacy Support (Backwards Compatibility) ---
+// We'll treat the .env USER_EMAIL as the "Admin" (Legacy User)
+// This keeps the current localhost dashboard working 
+
+const ADMIN_EMAIL = process.env.USER_EMAIL || 'admin@example.com';
+
+export async function getPreferences() {
+    const user = await getUser(ADMIN_EMAIL) || await createUser(ADMIN_EMAIL);
+    // Transform new structure back to old structure for temporary compatibility
+    return {
+        email: user.email,
+        deliveryTime: user.preferences.deliveryTime,
+        sources: user.sources
+    };
+}
+
+export async function savePreferences(legacyPrefs: any) {
+    const user = await getUser(ADMIN_EMAIL) || await createUser(ADMIN_EMAIL);
+    user.preferences.deliveryTime = legacyPrefs.deliveryTime || '08:00';
+    user.sources = legacyPrefs.sources || [];
+    await saveUser(user);
+}
+
+// Legacy wrappers for sources
+export async function addSource(source: any) { return addSourceToUser(ADMIN_EMAIL, source); }
+export async function removeSource(id: string) { return removeSourceFromUser(ADMIN_EMAIL, id); }
+export async function updateSource(id: string, updates: any) { return updateSourceForUser(ADMIN_EMAIL, id, updates); }

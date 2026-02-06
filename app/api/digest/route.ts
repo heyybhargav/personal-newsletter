@@ -1,72 +1,38 @@
 import { NextResponse } from 'next/server';
 import { getPreferences } from '@/lib/db';
 import { aggregateContent, groupBySourceType } from '@/lib/content-aggregator';
-import { generateDigest } from '@/lib/gemini';
+import { generateBriefing } from '@/lib/gemini';
 import { sendDigestEmail } from '@/lib/email';
+import { Source } from '@/lib/types';
 
-export async function GET() {
-    try {
-        const prefs = await getPreferences();
+// This endpoint is for MANUAL triggering (e.g. "Send Test Email" or "Preview Digest")
+// It defaults to the current admin user (env.USER_EMAIL) via getPreferences()
 
-        if (prefs.sources.length === 0) {
-            return NextResponse.json({
-                error: 'No sources configured. Please add some sources first.'
-            }, { status: 400 });
-        }
-
-        // Aggregate content
-        const content = await aggregateContent(prefs.sources);
-
-        if (content.length === 0) {
-            return NextResponse.json({
-                message: 'No new content found in the last 24 hours',
-                sections: []
-            });
-        }
-
-        // Group by type and generate digest
-        const grouped = groupBySourceType(content);
-        const sections = await generateDigest(grouped);
-
-        return NextResponse.json({ sections, itemCount: content.length });
-    } catch (error: any) {
-        console.error('Error generating digest:', error);
-        return NextResponse.json({
-            error: 'Failed to generate digest',
-            details: error.message
-        }, { status: 500 });
-    }
-}
-
-export async function POST() {
+export async function POST(request: Request) {
     try {
         const prefs = await getPreferences();
 
         if (!prefs.email) {
-            return NextResponse.json({
-                error: 'Email not configured. Please set your email in settings.'
-            }, { status: 400 });
+            return NextResponse.json({ error: 'Email not configured', sent: false }, { status: 400 });
         }
 
         if (prefs.sources.length === 0) {
-            return NextResponse.json({
-                error: 'No sources configured. Please add some sources first.'
-            }, { status: 400 });
+            return NextResponse.json({ error: 'No sources configured', sent: false }, { status: 400 });
         }
+
+        // Cast legacy source to Source type if needed
+        const sources = prefs.sources as Source[];
 
         // Aggregate content
-        const content = await aggregateContent(prefs.sources);
+        const content = await aggregateContent(sources);
 
         if (content.length === 0) {
-            return NextResponse.json({
-                message: 'No new content found in the last 24 hours. No email sent.',
-                sent: false
-            });
+            return NextResponse.json({ message: 'No new content found', sent: false });
         }
 
-        // Group by type and generate digest
+        // Generate Briefing
         const grouped = groupBySourceType(content);
-        const sections = await generateDigest(grouped);
+        const sections = await generateBriefing(grouped);
 
         // Send email
         await sendDigestEmail(prefs.email, sections);
@@ -75,13 +41,38 @@ export async function POST() {
             success: true,
             sent: true,
             itemCount: content.length,
-            sectionCount: sections.length
+            sectionCount: sections.length,
+            timestamp: new Date().toISOString()
         });
     } catch (error: any) {
-        console.error('Error sending digest:', error);
+        console.error('Digest trigger error:', error);
         return NextResponse.json({
-            error: 'Failed to send digest',
-            details: error.message
+            error: 'Digest generation failed',
+            details: error.message,
+            sent: false
         }, { status: 500 });
+    }
+}
+
+export async function GET() {
+    try {
+        const prefs = await getPreferences();
+        const sources = prefs.sources as Source[];
+
+        if (sources.length === 0) {
+            return NextResponse.json({ error: 'No sources configured', itemCount: 0 });
+        }
+
+        const content = await aggregateContent(sources);
+        const grouped = groupBySourceType(content);
+        const sections = await generateBriefing(grouped);
+
+        return NextResponse.json({
+            itemCount: content.length,
+            sections
+        });
+    } catch (error: any) {
+        console.error('Preview error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

@@ -9,6 +9,7 @@ interface Source {
     type: string;
     url: string;
     enabled: boolean;
+    favicon?: string;
 }
 
 interface SearchResult {
@@ -33,7 +34,8 @@ export default function SourcesPage() {
     const [newSource, setNewSource] = useState({
         name: '',
         url: '',
-        type: 'youtube'
+        type: 'youtube',
+        favicon: ''
     });
     const [message, setMessage] = useState('');
 
@@ -79,10 +81,24 @@ export default function SourcesPage() {
     };
 
     const selectResult = (result: SearchResult) => {
+        // Auto-generate favicon for the new source
+        let domain = '';
+        try {
+            // Extract domain for favicon
+            const urlObj = new URL(result.url);
+            domain = urlObj.hostname;
+        } catch (e) {
+            // Fallback for when URL is just a feed URL or invalid
+            domain = 'google.com';
+        }
+
+        const favicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+
         setNewSource({
             name: result.title,
             url: result.url,
-            type: searchType
+            type: searchType,
+            favicon
         });
         setSearchResults([]); // Hide results after selection
     };
@@ -91,16 +107,25 @@ export default function SourcesPage() {
         e.preventDefault();
         setMessage('');
 
+        // Ensure we have a favicon if not set
+        let finalSource = { ...newSource };
+        if (!finalSource.favicon && finalSource.url) {
+            try {
+                const domain = new URL(finalSource.url).hostname;
+                finalSource.favicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+            } catch (e) { }
+        }
+
         try {
             const res = await fetch('/api/sources', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newSource)
+                body: JSON.stringify(finalSource)
             });
 
             if (res.ok) {
                 await fetchSources();
-                setNewSource({ name: '', url: '', type: 'youtube' });
+                setNewSource({ name: '', url: '', type: 'youtube', favicon: '' });
                 setSearchQuery('');
                 setSearchResults([]);
                 setShowAddModal(false);
@@ -143,88 +168,97 @@ export default function SourcesPage() {
         }
     };
 
-    const getSourceTypeEmoji = (type: string) => {
-        switch (type) {
-            case 'youtube': return '📺';
-            case 'podcast': return '🎙️';
-            case 'news': return '📰';
-            case 'reddit': return '💬';
-            default: return '🔖';
-        }
-    };
-
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+        <div className="min-h-screen bg-[#F9FAFB]">
             {/* Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-12 px-6">
-                <div className="max-w-5xl mx-auto">
-                    <Link href="/" className="text-indigo-200 hover:text-white mb-4 inline-block">
-                        ← Back to Dashboard
-                    </Link>
-                    <h1 className="text-4xl font-bold mb-2">📚 Manage Sources</h1>
-                    <p className="text-indigo-100">Add and organize your content sources</p>
+            <div className="bg-white border-b border-gray-200 py-8 px-6">
+                <div className="max-w-5xl mx-auto flex justify-between items-center">
+                    <div>
+                        <Link href="/" className="text-gray-500 hover:text-gray-900 mb-2 inline-block text-sm font-medium">
+                            ← Back to Dashboard
+                        </Link>
+                        <h1 className="text-3xl font-serif font-bold text-gray-900">Manage Sources</h1>
+                        <p className="text-gray-500 mt-1">Curate your daily briefing intelligence.</p>
+                    </div>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition font-medium flex items-center gap-2 shadow-sm"
+                    >
+                        <span>+</span> Add Source
+                    </button>
                 </div>
             </div>
 
             {/* Main Content */}
             <div className="max-w-5xl mx-auto px-6 py-12">
                 {message && (
-                    <div className={`mb-6 p-4 rounded-lg ${message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                    <div className={`mb-6 p-4 rounded-lg font-medium ${message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
                         {message}
                     </div>
                 )}
 
-                <div className="mb-6">
-                    <button
-                        onClick={() => setShowAddModal(true)}
-                        className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition font-semibold flex items-center gap-2"
-                    >
-                        <span>+</span> Add New Source
-                    </button>
-                </div>
-
                 {/* Sources List */}
-                <div className="bg-white rounded-xl shadow-lg p-8">
-                    <h2 className="text-2xl font-bold mb-6">Your Sources ({sources.length})</h2>
-
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     {loading ? (
-                        <p className="text-gray-500">Loading...</p>
+                        <div className="p-12 text-center text-gray-400">Loading intelligence sources...</div>
                     ) : sources.length === 0 ? (
-                        <div className="text-center py-12">
-                            <div className="text-6xl mb-4">📭</div>
-                            <p className="text-gray-600">No sources yet. Add your first one!</p>
+                        <div className="text-center py-20">
+                            <div className="text-5xl mb-4 grayscale opacity-50">📰</div>
+                            <h3 className="text-xl font-medium text-gray-900">No sources configured</h3>
+                            <p className="text-gray-500 mt-2 mb-6">Add news sites, YouTube channels, or podcasts to start.</p>
+                            <button onClick={() => setShowAddModal(true)} className="text-indigo-600 font-medium hover:underline">Add your first source</button>
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="divide-y divide-gray-100">
                             {sources.map(source => (
-                                <div
-                                    key={source.id}
-                                    className="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition"
-                                >
-                                    <div className="flex items-start gap-4">
-                                        <div className="text-3xl">{getSourceTypeEmoji(source.type)}</div>
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="font-semibold text-lg">{source.name}</h3>
-                                            <p className="text-sm text-gray-500 capitalize mb-1">{source.type}</p>
-                                            <p className="text-xs text-gray-400 break-all">{source.url}</p>
+                                <div key={source.id} className="p-6 hover:bg-gray-50 transition flex items-center gap-6 group">
+                                    {/* Icon/Favicon */}
+                                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
+                                        {source.favicon ? (
+                                            <img src={source.favicon} alt="" className="w-8 h-8 object-contain" />
+                                        ) : (
+                                            <span className="text-2xl opacity-50">
+                                                {source.type === 'youtube' ? '📺' : source.type === 'podcast' ? '🎙️' : '📰'}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Info */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <h3 className="font-semibold text-gray-900 text-lg truncate">{source.name}</h3>
+                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium uppercase tracking-wide border ${source.enabled ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'
+                                                }`}>
+                                                {source.enabled ? 'Active' : 'Paused'}
+                                            </span>
                                         </div>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() => handleToggle(source)}
-                                                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${source.enabled
-                                                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                                    }`}
-                                            >
-                                                {source.enabled ? '✓ Enabled' : 'Disabled'}
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(source.id)}
-                                                className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition text-sm font-medium"
-                                            >
-                                                Delete
-                                            </button>
+                                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                                            <span className="capitalize flex items-center gap-1">
+                                                {source.type === 'youtube' && <span className="w-2 h-2 rounded-full bg-red-500"></span>}
+                                                {source.type === 'news' && <span className="w-2 h-2 rounded-full bg-blue-500"></span>}
+                                                {source.type}
+                                            </span>
+                                            <span className="text-gray-300">•</span>
+                                            <a href={source.url} target="_blank" className="hover:text-indigo-600 truncate max-w-md">
+                                                {source.url}
+                                            </a>
                                         </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={() => handleToggle(source)}
+                                            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-200 hover:border-gray-300 rounded-lg shadow-sm"
+                                        >
+                                            {source.enabled ? 'Pause' : 'Resume'}
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(source.id)}
+                                            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 bg-white border border-gray-200 hover:border-red-200 rounded-lg shadow-sm"
+                                        >
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
                             ))}
@@ -233,123 +267,114 @@ export default function SourcesPage() {
                 </div>
             </div>
 
-            {/* Add Source Modal with Search */}
+            {/* Add Source Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-6 z-50 overflow-y-auto">
-                    <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-8 my-8">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold">Add New Source</h2>
-                            <button onClick={() => setShowAddModal(false)} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-0 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="flex justify-between items-center p-6 border-b border-gray-100">
+                            <h2 className="text-xl font-bold font-serif">Add Intelligence Source</h2>
+                            <button onClick={() => setShowAddModal(false)} className="text-gray-400 hover:text-gray-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
                         </div>
 
-                        {/* Type Selection Tabs */}
-                        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-                            {['youtube', 'podcast', 'news', 'reddit', 'custom'].map((type) => (
-                                <button
-                                    key={type}
-                                    onClick={() => setSearchType(type)}
-                                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${searchType === type
-                                            ? 'bg-indigo-600 text-white'
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                        }`}
-                                >
-                                    {type === 'youtube' && '📺 YouTube'}
-                                    {type === 'podcast' && '🎙️ Podcast'}
-                                    {type === 'news' && '📰 News'}
-                                    {type === 'reddit' && '💬 Reddit'}
-                                    {type === 'custom' && '🔖 Custom URL'}
-                                </button>
-                            ))}
-                        </div>
+                        <div className="p-6">
+                            {/* Type Tabs */}
+                            <div className="flex gap-2 mb-6 p-1 bg-gray-100 rounded-lg inline-flex">
+                                {['youtube', 'podcast', 'news', 'reddit', 'custom'].map((type) => (
+                                    <button
+                                        key={type}
+                                        onClick={() => setSearchType(type)}
+                                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${searchType === type
+                                            ? 'bg-white text-black shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-700'
+                                            }`}
+                                    >
+                                        <span className="capitalize">{type}</span>
+                                    </button>
+                                ))}
+                            </div>
 
-                        {/* Search Bar (Only for supported types) */}
-                        {searchType !== 'custom' && (
-                            <div className="mb-6">
-                                <form onSubmit={handleSearch} className="flex gap-2">
+                            {/* Search */}
+                            {searchType !== 'custom' && (
+                                <div className="mb-8">
+                                    <form onSubmit={handleSearch} className="relative">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder={`Find a ${searchType}... (e.g. "Verge", "Huberman Lab")`}
+                                            className="w-full border-2 border-gray-200 rounded-xl px-5 py-3 pr-24 focus:border-black focus:outline-none transition-colors"
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={searching || !searchQuery.trim()}
+                                            className="absolute right-2 top-2 bottom-2 bg-black text-white px-5 rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-50"
+                                        >
+                                            {searching ? '...' : 'Search'}
+                                        </button>
+                                    </form>
+
+                                    {/* Results */}
+                                    {searchResults.length > 0 && (
+                                        <div className="mt-4 border border-gray-100 rounded-xl max-h-64 overflow-y-auto shadow-inner bg-gray-50">
+                                            {searchResults.map((result, index) => (
+                                                <button
+                                                    key={index}
+                                                    onClick={() => selectResult(result)}
+                                                    className="w-full text-left p-4 hover:bg-white border-b border-gray-100 transition flex items-center gap-4 group"
+                                                >
+                                                    {result.thumbnail ? (
+                                                        <img src={result.thumbnail} alt="" className="w-12 h-12 rounded-md object-cover shadow-sm" />
+                                                    ) : (
+                                                        <div className="w-12 h-12 bg-gray-200 rounded-md"></div>
+                                                    )}
+                                                    <div>
+                                                        <p className="font-bold text-gray-900 group-hover:text-indigo-600 transition">{result.title}</p>
+                                                        <p className="text-xs text-gray-500 line-clamp-1">{result.description}</p>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Manual Form */}
+                            <form onSubmit={handleAdd} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">NAME</label>
                                     <input
                                         type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder={`Search ${searchType}s...`}
-                                        className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                        value={newSource.name}
+                                        onChange={e => setNewSource({ ...newSource, name: e.target.value })}
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black focus:border-transparent"
+                                        placeholder="Source Name"
+                                        required
                                     />
-                                    <button
-                                        type="submit"
-                                        disabled={searching || !searchQuery.trim()}
-                                        className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
-                                    >
-                                        {searching ? 'Searching...' : 'Search'}
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">FEED URL</label>
+                                    <input
+                                        type="url"
+                                        value={newSource.url}
+                                        onChange={e => setNewSource({ ...newSource, url: e.target.value })}
+                                        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-black focus:border-transparent font-mono text-sm"
+                                        placeholder="https://..."
+                                        required
+                                    />
+                                </div>
+                                <div className="pt-4 flex gap-3">
+                                    <button type="submit" className="flex-1 bg-black text-white py-3 rounded-lg font-bold hover:bg-gray-800 hover:scale-[1.02] transition-all transform">
+                                        Add Source
                                     </button>
-                                </form>
+                                    <button type="button" onClick={() => setShowAddModal(false)} className="px-6 py-3 bg-gray-100 rounded-lg font-medium hover:bg-gray-200 transition">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
 
-                                {/* Search Results */}
-                                {searchResults.length > 0 && (
-                                    <div className="mt-4 border border-gray-200 rounded-lg max-h-60 overflow-y-auto divide-y divide-gray-100">
-                                        {searchResults.map((result, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() => selectResult(result)}
-                                                className="w-full text-left p-3 hover:bg-indigo-50 transition flex items-center gap-3"
-                                            >
-                                                {result.thumbnail && (
-                                                    <img src={result.thumbnail} alt="" className="w-10 h-10 rounded object-cover" />
-                                                )}
-                                                <div>
-                                                    <p className="font-semibold text-sm">{result.title}</p>
-                                                    <p className="text-xs text-gray-500">{result.description}</p>
-                                                </div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Manual Entry Form */}
-                        <form onSubmit={handleAdd} className="border-t border-gray-100 pt-6">
-                            <div className="mb-4">
-                                <label className="block text-sm font-semibold mb-2">Source Name</label>
-                                <input
-                                    type="text"
-                                    value={newSource.name}
-                                    onChange={e => setNewSource({ ...newSource, name: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                    placeholder="name"
-                                    required
-                                />
-                            </div>
-
-                            <div className="mb-6">
-                                <label className="block text-sm font-semibold mb-2">RSS Feed URL</label>
-                                <input
-                                    type="url"
-                                    value={newSource.url}
-                                    onChange={e => setNewSource({ ...newSource, url: e.target.value })}
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                    placeholder="https://..."
-                                    required
-                                />
-                                <p className="text-xs text-gray-400 mt-1">
-                                    {searchType !== 'custom' ? 'Auto-filled from search, or enter manually.' : 'Enter the RSS feed URL directly.'}
-                                </p>
-                            </div>
-
-                            <div className="flex gap-3">
-                                <button
-                                    type="submit"
-                                    className="flex-1 bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition font-semibold"
-                                >
-                                    Add Source
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowAddModal(false)}
-                                    className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg hover:bg-gray-300 transition font-semibold"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             )}

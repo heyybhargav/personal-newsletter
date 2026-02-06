@@ -1,58 +1,45 @@
 import { NextResponse } from 'next/server';
-import { getPreferences } from '@/lib/db';
+import { getAllUsers, getUser } from '@/lib/db';
 import { aggregateContent, groupBySourceType } from '@/lib/content-aggregator';
-import { generateDigest } from '@/lib/gemini';
+import { generateBriefing } from '@/lib/gemini';
 import { sendDigestEmail } from '@/lib/email';
 
 export async function GET() {
     try {
-        const prefs = await getPreferences();
+        const userEmails = await getAllUsers();
+        console.log(`Starting cron for ${userEmails.length} users...`);
 
-        if (!prefs.email) {
-            return NextResponse.json({
-                error: 'Email not configured',
-                sent: false
-            }, { status: 400 });
-        }
+        // Process all users
+        // In a real production app, we would use a queue (Upstash QStash) for this
+        // but for now, we'll iterate.
+        const results = await Promise.allSettled(userEmails.map(async (email) => {
+            const user = await getUser(email);
+            if (!user || !user.sources.length) return { email, status: 'skipped' };
 
-        if (prefs.sources.length === 0) {
-            return NextResponse.json({
-                error: 'No sources configured',
-                sent: false
-            }, { status: 400 });
-        }
+            // Aggregate content for this user
+            const content = await aggregateContent(user.sources);
+            if (content.length === 0) return { email, status: 'no_content' };
 
-        // Aggregate content
-        const content = await aggregateContent(prefs.sources);
+            // Generate the "Briefing"
+            const grouped = groupBySourceType(content);
+            const sections = await generateBriefing(grouped);
 
-        if (content.length === 0) {
-            console.log('No new content found, skipping email');
-            return NextResponse.json({
-                message: 'No new content found',
-                sent: false
-            });
-        }
+            // Send Email
+            await sendDigestEmail(user.email, sections);
 
-        // Group by type and generate digest
-        const grouped = groupBySourceType(content);
-        const sections = await generateDigest(grouped);
-
-        // Send email
-        await sendDigestEmail(prefs.email, sections);
+            return { email, status: 'sent', items: content.length };
+        }));
 
         return NextResponse.json({
             success: true,
-            sent: true,
-            itemCount: content.length,
-            sectionCount: sections.length,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            results
         });
     } catch (error: any) {
         console.error('Cron job error:', error);
         return NextResponse.json({
             error: 'Cron job failed',
-            details: error.message,
-            sent: false
+            details: error.message
         }, { status: 500 });
     }
 }
