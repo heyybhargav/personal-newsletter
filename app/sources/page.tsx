@@ -30,6 +30,14 @@ interface SampleItem {
     pubDate?: string;
 }
 
+interface SearchResult {
+    title: string;
+    description: string;
+    url: string;
+    type: string;
+    thumbnail?: string;
+}
+
 export default function SourcesPage() {
     const [sources, setSources] = useState<Source[]>([]);
     const [loading, setLoading] = useState(true);
@@ -42,6 +50,10 @@ export default function SourcesPage() {
     const [detectedSource, setDetectedSource] = useState<DetectedSource | null>(null);
     const [sampleItems, setSampleItems] = useState<SampleItem[]>([]);
     const [detectionError, setDetectionError] = useState('');
+
+    // Search State
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
     // Editable fields after detection
     const [editableName, setEditableName] = useState('');
@@ -64,16 +76,11 @@ export default function SourcesPage() {
 
     // Debounced URL detection
     const detectUrl = useCallback(async (url: string) => {
-        if (!url.trim() || url.length < 10) {
-            setDetectedSource(null);
-            setSampleItems([]);
-            return;
-        }
-
         setDetecting(true);
         setDetectionError('');
         setDetectedSource(null);
         setSampleItems([]);
+        setSearchResults([]); // Clear search if detecting URL
 
         try {
             const res = await fetch(`/api/sources/detect?url=${encodeURIComponent(url)}`);
@@ -93,16 +100,60 @@ export default function SourcesPage() {
         }
     }, []);
 
-    // Trigger detection on URL input
+    const searchUniversal = useCallback(async (query: string) => {
+        setIsSearching(true);
+        setDetectionError('');
+        setSearchResults([]);
+        setDetectedSource(null);
+
+        try {
+            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=all`);
+            const data = await res.json();
+
+            if (data.results && data.results.length > 0) {
+                setSearchResults(data.results);
+            } else {
+                setDetectionError('No results found. Try a specific URL.');
+            }
+        } catch (error) {
+            console.error(error);
+            setDetectionError('Search failed');
+        } finally {
+            setIsSearching(false);
+        }
+    }, []);
+
+    // Trigger detection or search based on input
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (inputUrl.trim()) {
-                detectUrl(inputUrl);
+            const trimmed = inputUrl.trim();
+            if (!trimmed) {
+                setDetectedSource(null);
+                setSearchResults([]);
+                return;
             }
-        }, 500); // Debounce 500ms
+
+            // Simple heuristic: Does it look like a URL?
+            const isUrl = trimmed.includes('.') && !trimmed.includes(' ') && (trimmed.startsWith('http') || trimmed.includes('www') || trimmed.split('.').length > 1);
+
+            if (isUrl) {
+                detectUrl(trimmed);
+            } else if (trimmed.length > 2) {
+                // If it's text, search
+                searchUniversal(trimmed);
+            }
+        }, 600); // 600ms debounce
 
         return () => clearTimeout(timer);
-    }, [inputUrl, detectUrl]);
+    }, [inputUrl, detectUrl, searchUniversal]);
+
+    const handleSelectResult = (result: SearchResult) => {
+        setInputUrl(result.url);
+        // detection will auto-trigger due to useEffect but we can force it for better UX
+        // actually, setting inputUrl will trigger the effect. 
+        // We just need to make sure the user knows what happened.
+        setSearchResults([]); // Clear results
+    };
 
     const handleAdd = async () => {
         if (!detectedSource) return;
@@ -139,6 +190,7 @@ export default function SourcesPage() {
         setInputUrl('');
         setDetectedSource(null);
         setSampleItems([]);
+        setSearchResults([]);
         setDetectionError('');
         setEditableName('');
     };
@@ -315,15 +367,15 @@ export default function SourcesPage() {
                                         type="text"
                                         value={inputUrl}
                                         onChange={(e) => setInputUrl(e.target.value)}
-                                        placeholder="https://youtube.com/@mkbhd, reddit.com/r/tech, any RSS..."
+                                        placeholder="Paste URL or search (e.g. 'MKBHD', 'TechCrunch')"
                                         className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 pr-12 focus:border-black focus:outline-none transition-colors font-mono text-sm"
                                         autoFocus
                                     />
-                                    {detecting && (
+                                    {detecting || isSearching ? (
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2">
                                             <div className="w-5 h-5 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
                                         </div>
-                                    )}
+                                    ) : null}
                                 </div>
                                 <p className="text-xs text-gray-400 mt-2">
                                     Supported: YouTube, Reddit, Substack, Medium, Hacker News, GitHub, Twitter/X, Podcasts, RSS
@@ -337,7 +389,43 @@ export default function SourcesPage() {
                                 </div>
                             )}
 
-                            {/* Detected Source Preview */}
+                            {/* Search Results List */}
+                            {searchResults.length > 0 && !detectedSource && (
+                                <div className="mb-6">
+                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Search Results</h3>
+                                    <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                        {searchResults.map((result, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleSelectResult(result)}
+                                                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-200 transition text-left group"
+                                            >
+                                                {result.thumbnail ? (
+                                                    <img src={result.thumbnail} alt="" className="w-10 h-10 rounded-lg object-cover bg-gray-200" />
+                                                ) : (
+                                                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg">
+                                                        {getSourceTypeEmoji(result.type as SourceType)}
+                                                    </div>
+                                                )}
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-bold text-gray-900 truncate group-hover:text-black">
+                                                        {result.title}
+                                                    </div>
+                                                    <div className="text-xs text-gray-500 flex items-center gap-2">
+                                                        <span className={`capitalize ${getSourceTypeColor(result.type as SourceType)} px-1.5 py-0.5 rounded text-[10px]`}>
+                                                            {result.type}
+                                                        </span>
+                                                        <span className="truncate opacity-70">{result.description}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-gray-300 group-hover:text-black transition">
+                                                    →
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}                        {/* Detected Source Preview */}
                             {detectedSource && (
                                 <div className="mb-6 border-2 border-green-200 bg-green-50/50 rounded-xl p-5 animate-in slide-in-from-bottom-2">
                                     <div className="flex items-start gap-4 mb-4">

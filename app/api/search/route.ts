@@ -21,21 +21,42 @@ export async function GET(request: Request) {
     try {
         let results: SearchResult[] = [];
 
-        switch (type) {
-            case 'youtube':
-                results = await searchYouTube(query);
-                break;
-            case 'podcast':
-                results = await searchPodcasts(query);
-                break;
-            case 'news':
-                results = await searchNews(query);
-                break;
-            case 'reddit':
-                results = await searchReddit(query);
-                break;
-            default:
-                return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
+        if (type === 'all' || !type) {
+            // Universal search: Run all providers in parallel
+            const [youtube, podcasts, reddit, news] = await Promise.allSettled([
+                searchYouTube(query),
+                searchPodcasts(query),
+                searchReddit(query),
+                searchNews(query)
+            ]);
+
+            // Helper to get value or empty array
+            const getResults = (r: PromiseSettledResult<SearchResult[]>) =>
+                r.status === 'fulfilled' ? r.value : [];
+
+            results = [
+                ...getResults(youtube),
+                ...getResults(podcasts),
+                ...getResults(reddit),
+                ...getResults(news)
+            ];
+        } else {
+            switch (type) {
+                case 'youtube':
+                    results = await searchYouTube(query);
+                    break;
+                case 'podcast':
+                    results = await searchPodcasts(query);
+                    break;
+                case 'news':
+                    results = await searchNews(query);
+                    break;
+                case 'reddit':
+                    results = await searchReddit(query);
+                    break;
+                default:
+                    return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
+            }
         }
 
         return NextResponse.json({ results });
