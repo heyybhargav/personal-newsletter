@@ -191,23 +191,23 @@ export default function Home() {
               </Link>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {sources.map(source => (
                 <div
                   key={source.id}
-                  className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-sm transition"
+                  className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-sm transition overflow-hidden"
                 >
                   {/* Icon */}
-                  <div className="w-10 h-10 rounded bg-white border border-gray-200 flex items-center justify-center text-lg shadow-sm">
+                  <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 flex-shrink-0 flex items-center justify-center text-lg shadow-sm">
                     {source.favicon ? <img src={source.favicon} className="w-6 h-6 object-contain" /> : getSourceTypeEmoji(source.type)}
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 truncate">{source.name}</h3>
-                    <p className="text-xs text-gray-500 truncate">{source.url.replace('https://', '')}</p>
+                    <p className="text-xs text-gray-500 truncate font-mono opacity-80">{source.url.replace(/^https?:\/\//, '').replace(/^www\./, '')}</p>
                   </div>
 
-                  <div className={`w-2 h-2 rounded-full ${source.enabled ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${source.enabled ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                 </div>
               ))}
             </div>
