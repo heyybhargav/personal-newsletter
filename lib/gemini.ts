@@ -120,6 +120,7 @@ You must filter out "fluff" and "PR speak". If a story has no substance, **IGNOR
    - *Style*: Insightful, bold, forward-looking.
 
 2. **THE BRIEFING** (News & Updates)
+   - **CRITICAL**: Do NOT repeat the story you selected for THE LEAD.
    - Group remaining *High Quality* stories by theme (e.g., "AI", "Markets", "Big Tech").
    - Use **Bold** for organizations/people.
    - Use [Link Text](URL) for citations.
@@ -128,9 +129,16 @@ You must filter out "fluff" and "PR speak". If a story has no substance, **IGNOR
 3. **THE PLAYBOOK** (Mental Models & Lessons)
    - *Crucial*: Look at [TYPE: PODCAST] or [TYPE: YOUTUBE VIDEO] items.
    - Extract **3 Specific Mental Models** or **Lessons** from the content.
-   - Format:
-     > "Direct impactful quote..."
-     — **Speaker Name**, on *[Topic/Title](url)* (Source Name)
+   - You MUST format them as distinct items separated by a blank line:
+   
+   **1. The Lesson Title**
+   > "The direct impactful quote goes here..."
+   — **Speaker Name**, on *[Source Name](url)*
+
+   **2. Another Lesson Title**
+   > "The second quote goes here..."
+   — **Speaker Name**, on *[Source Name](url)*
+
    - *If no good lessons exist, OMIT THIS SECTION.*
 
 4. **THE WATCHLIST** (Visuals)
