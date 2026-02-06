@@ -111,14 +111,19 @@ function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string): stri
   `;
 }
 
-// Convert markdown-style formatting to HTML
-function formatNarrative(text: string): string {
-  let html = text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **Bold** -> <strong>
-    .replace(/\n\n/g, '</p><p style="margin: 0 0 18px 0;">') // Double newlines -> paragraphs
-    .replace(/\n/g, '<br>'); // Single newlines -> line breaks
+import { marked } from 'marked';
 
-  return `<p style="margin: 0 0 18px 0;">${html}</p>`;
+// Convert markdown-style formatting to HTML using marked
+function formatNarrative(text: string): string {
+  // Configure marked to not sanitize - assuming internal AI content is safe
+  // and we need HTML features (like <img> tags in the prompt)
+  const html = marked.parse(text, { async: false }) as string;
+
+  // Add custom styling to paragraphs
+  return html.replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333;">')
+    .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline;" ')
+    .replace(/<li>/g, '<li style="margin-bottom: 8px;">')
+    .replace(/<blockquote>/g, '<blockquote style="border-left: 3px solid #000; padding-left: 15px; margin: 20px 0; font-style: italic; color: #555;">');
 }
 
 // ============================================================================

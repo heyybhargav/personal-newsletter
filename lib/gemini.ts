@@ -89,9 +89,12 @@ BANNED PHRASES: "In today's digital landscape", "Game changer", "Revolutionary",
    - DO NOT write a dry bulleted list. 
    - DO NOT write a generic essay.
    - **DO THIS**: Group related stories into "Narrative Blocks".
-     - Example: "In AI infrastructure, Nvidia [revealed](url)... meanwhile AMD is [countering](url)..."
-   - Every claim must look like: "...[claim](url)..."
-   - Use **bold** for key entities.
+     - Example: "In AI infrastructure, **Nvidia** [announced](url) strict updates... meanwhile **AMD** is [pushing back](url)..."
+   - **CITATION RULE**: Every claim must align with its source.
+     - Good: "...according to [The Verge](url)..."
+     - Good: "...reports [TechCrunch](url)..."
+     - Good: "...points out [MKBHD](url)..."
+     - Bad: "...[Google announced](url)..." (Don't link the verb if possible, link the source entity or the noun 'report')
 
 3. **THE AUDIO FEED (Podcasts)** - [Quote Mode]
    - IF (and only if) there are [TYPE: PODCAST] items, pick the best insight.
@@ -110,7 +113,7 @@ BANNED PHRASES: "In today's digital landscape", "Game changer", "Revolutionary",
      </div>
 
 ### CRITICAL RULES:
-- **HYPERLINKS**: EVERY story you mention must be hyperlinked. No exceptions.
+- **HYPERLINKS**: Links must be frequent and accurate. Link the **SOURCE NAME** or the **REPORT** where possible.
 - **IMAGES**: Only use images for YouTube videos in the Watchlist section.
 - **TONE**: Smart, concise, no corp-speak.
 - **MARKDOWN**: Use standard markdown, but use HTML <img> tags for thumbnails.
