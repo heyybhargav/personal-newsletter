@@ -154,7 +154,7 @@ export default function Home() {
 
                     {/* Render the AI Narrative - treating newlines as paragraphs */}
                     <div className="text-gray-800 leading-relaxed space-y-4">
-                      {section.summary.split('\n\n').map((para, i) => (
+                      {(section.summary || '').split('\n\n').map((para, i) => (
                         <p key={i} dangerouslySetInnerHTML={{
                           __html: para.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                         }} />
@@ -167,7 +167,7 @@ export default function Home() {
                       <ul className="space-y-2">
                         {section.items.map((item, i) => (
                           <li key={i}>
-                            <a href={item.url} target="_blank" className="text-sm text-indigo-600 hover:underline truncate block">
+                            <a href={item.link} target="_blank" className="text-sm text-indigo-600 hover:underline truncate block">
                               {item.title}
                             </a>
                           </li>
