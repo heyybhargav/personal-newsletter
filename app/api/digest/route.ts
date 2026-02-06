@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getPreferences } from '@/lib/db';
-import { aggregateContent, groupBySourceType } from '@/lib/content-aggregator';
-import { generateBriefing } from '@/lib/gemini';
-import { sendDigestEmail } from '@/lib/email';
+import { aggregateContent } from '@/lib/content-aggregator';
+import { generateUnifiedBriefing } from '@/lib/gemini';
+import { sendUnifiedDigestEmail } from '@/lib/email';
 import { Source } from '@/lib/types';
 
-// This endpoint is for MANUAL triggering (e.g. "Send Test Email" or "Preview Digest")
+// This endpoint is for MANUAL triggering (e.g. "Force Dispatch" or "Preview Digest")
 // It defaults to the current admin user (env.USER_EMAIL) via getPreferences()
 
 export async function POST(request: Request) {
     try {
+        console.log('[Digest API] POST: Starting manual dispatch...');
+
         const prefs = await getPreferences();
 
         if (!prefs.email) {
@@ -20,32 +22,35 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'No sources configured', sent: false }, { status: 400 });
         }
 
-        // Cast legacy source to Source type if needed
         const sources = prefs.sources as Source[];
 
-        // Aggregate content
+        // Step 1: Aggregate content from all sources
+        console.log('[Digest API] Aggregating content from', sources.length, 'sources...');
         const content = await aggregateContent(sources);
 
         if (content.length === 0) {
             return NextResponse.json({ message: 'No new content found', sent: false });
         }
 
-        // Generate Briefing
-        const grouped = groupBySourceType(content);
-        const sections = await generateBriefing(grouped);
+        console.log('[Digest API] Found', content.length, 'items. Generating unified briefing...');
 
-        // Send email
-        await sendDigestEmail(prefs.email, sections);
+        // Step 2: Generate UNIFIED briefing (new approach!)
+        const briefing = await generateUnifiedBriefing(content);
+
+        console.log('[Digest API] Briefing generated. Sending email to', prefs.email);
+
+        // Step 3: Send the unified email
+        await sendUnifiedDigestEmail(prefs.email, briefing);
 
         return NextResponse.json({
             success: true,
             sent: true,
             itemCount: content.length,
-            sectionCount: sections.length,
-            timestamp: new Date().toISOString()
+            narrativeLength: briefing.narrative.length,
+            timestamp: briefing.generatedAt
         });
     } catch (error: any) {
-        console.error('Digest trigger error:', error);
+        console.error('[Digest API] Error:', error);
         return NextResponse.json({
             error: 'Digest generation failed',
             details: error.message,
@@ -56,6 +61,8 @@ export async function POST(request: Request) {
 
 export async function GET() {
     try {
+        console.log('[Digest API] GET: Generating preview...');
+
         const prefs = await getPreferences();
         const sources = prefs.sources as Source[];
 
@@ -64,15 +71,30 @@ export async function GET() {
         }
 
         const content = await aggregateContent(sources);
-        const grouped = groupBySourceType(content);
-        const sections = await generateBriefing(grouped);
 
+        console.log('[Digest API] Found', content.length, 'items. Generating unified briefing...');
+        const briefing = await generateUnifiedBriefing(content);
+
+        // Return in a format the frontend can render
         return NextResponse.json({
             itemCount: content.length,
-            sections
+            briefing: {
+                narrative: briefing.narrative,
+                topStories: briefing.topStories,
+                generatedAt: briefing.generatedAt
+            },
+            // Legacy compatibility: also return as sections
+            sections: [{
+                title: 'TODAY\'S BRIEFING',
+                summary: briefing.narrative,
+                items: briefing.topStories.map(item => ({
+                    ...item,
+                    summary: ''
+                }))
+            }]
         });
     } catch (error: any) {
-        console.error('Preview error:', error);
+        console.error('[Digest API] Preview error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
