@@ -6,7 +6,10 @@ const parser = new Parser({
         item: [
             ['media:thumbnail', 'media:thumbnail'],
             ['media:content', 'media:content'],
-            ['media:group', 'media:group']
+            ['media:group', 'media:group'],
+            ['content:encoded', 'content:encoded'],
+            ['itunes:summary', 'itunes:summary'],
+            ['itunes:image', 'itunes:image']
         ]
     }
 });
@@ -39,9 +42,30 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
                 thumbnail = item.enclosure.url;
             }
 
+            // Extract best content/description
+            let description = '';
+
+            // Priority 1: YouTube Description (media:group -> media:description)
+            if (rssItem['media:group'] && rssItem['media:group']['media:description']) {
+                const desc = rssItem['media:group']['media:description'];
+                description = Array.isArray(desc) ? desc[0] : desc;
+            }
+            // Priority 2: Podcast/Rich Blog Content (content:encoded)
+            else if (rssItem['content:encoded']) {
+                description = rssItem['content:encoded'];
+            }
+            // Priority 3: iTunes Summary
+            else if (rssItem['itunes:summary']) {
+                description = rssItem['itunes:summary'];
+            }
+            // Priority 4: Standard Fallbacks
+            else {
+                description = item.content || item.contentSnippet || rssItem.description || '';
+            }
+
             return {
                 title: item.title || 'No title',
-                description: item.contentSnippet || item.content || rssItem.description || '',
+                description: description,
                 link: item.link || '',
                 pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
                 source: sourceName,
