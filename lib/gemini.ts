@@ -4,7 +4,7 @@ import { ContentItem, DigestSection, SummarizedContent } from './types';
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-const MODEL_NAME = 'gemini-1.5-flash';
+const MODEL_NAME = 'gemini-2.0-flash';
 
 // ============================================================================
 // NEW: Unified Narrative Generation
