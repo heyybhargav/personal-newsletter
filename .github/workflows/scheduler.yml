@@ -1,0 +1,16 @@
+name: Hourly Digest Trigger
+
+on:
+  schedule:
+    # Run at minute 0 of every hour
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  trigger-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Vercel Cron Endpoint
+        run: |
+          # Replace with your actual Vercel project URL
+          curl -I https://personal-newsletter.vercel.app/api/cron
