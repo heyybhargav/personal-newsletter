@@ -19,17 +19,47 @@ export interface UnifiedBriefing {
     generatedAt: string;
 }
 
-export async function generateUnifiedBriefing(allContent: ContentItem[]): Promise<UnifiedBriefing> {
-    // Take top 25 most recent items across all sources
-    const topItems = allContent
-        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-        .slice(0, 25);
+// ============================================================================
+// Smart Content Balancing Logic
+// ============================================================================
 
-    const narrative = await synthesizeUnifiedNarrative(topItems);
+function balanceContent(items: ContentItem[]): ContentItem[] {
+    const MAX_ITEMS_PER_SOURCE = 3;
+    const MAX_TOTAL_ITEMS = 35; // Cap context window
+
+    // 1. Group by Source Name
+    const bySource: Record<string, ContentItem[]> = {};
+    items.forEach(item => {
+        if (!bySource[item.source]) bySource[item.source] = [];
+        bySource[item.source].push(item);
+    });
+
+    // 2. Pick top N from each source (Round Robin-ish)
+    let balanced: ContentItem[] = [];
+    Object.values(bySource).forEach(sourceItems => {
+        // Sort by date desc
+        sourceItems.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+        // Take max 3
+        balanced.push(...sourceItems.slice(0, MAX_ITEMS_PER_SOURCE));
+    });
+
+    // 3. Ensure Diversity: Prioritize specific types if they exist (Video/Podcast)
+    // (They are already included above, but we want to make sure they survive the final cut)
+
+    // 4. Final Sort and Cut
+    balanced.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+    return balanced.slice(0, MAX_TOTAL_ITEMS);
+}
+
+export async function generateUnifiedBriefing(allContent: ContentItem[]): Promise<UnifiedBriefing> {
+    // Apply Smart Balancing
+    const balancedItems = balanceContent(allContent);
+
+    const narrative = await synthesizeUnifiedNarrative(balancedItems);
 
     return {
         narrative,
-        topStories: topItems.slice(0, 8), // Top 8 for deep dive links
+        topStories: balancedItems.slice(0, 8), // Top 8 for deep dive links
         generatedAt: new Date().toISOString()
     };
 }
@@ -49,12 +79,17 @@ async function synthesizeUnifiedNarrative(items: ContentItem[]): Promise<string>
         });
 
         // Pre-process items to help the AI identify types
+        let hasPodcasts = false;
+        let hasYoutube = false;
+
         const itemsText = items.map((item, i) => {
             let typeHint = '[TYPE: ARTICLE]';
             if (item.source.toLowerCase().includes('youtube') || item.link.includes('youtube') || item.link.includes('youtu.be')) {
                 typeHint = '[TYPE: YOUTUBE VIDEO]';
+                hasYoutube = true;
             } else if (item.source.toLowerCase().includes('podcast') || item.title.toLowerCase().includes('episode')) {
                 typeHint = '[TYPE: PODCAST]';
+                hasPodcasts = true;
             } else if (item.source.toLowerCase().includes('reddit')) {
                 typeHint = '[TYPE: REDDIT THREAD]';
             }
@@ -96,21 +131,21 @@ BANNED PHRASES: "In today's digital landscape", "Game changer", "Revolutionary",
      - Good: "...points out [MKBHD](url)..."
      - Bad: "...[Google announced](url)..." (Don't link the verb if possible, link the source entity or the noun 'report')
 
-3. **THE AUDIO FEED (Podcasts)** - [Quote Mode]
-   - IF (and only if) there are [TYPE: PODCAST] items, pick the best insight.
+${hasPodcasts ? `3. **THE AUDIO FEED (Podcasts)** - [Quote Mode]
+   - Pick the best insight from the [TYPE: PODCAST] items.
    - Format:
      > "Direct quote from the episode..."
-     — **Host Name**, in *[Episode Title](url)*
+     — **Host Name**, in *[Episode Title](url)*` : ''}
 
-4. **THE WATCHLIST (Visuals)** - [Gallery Mode]
-   - IF (and only if) there are [TYPE: YOUTUBE VIDEO] items, place them HERE at the end.
+${hasYoutube ? `4. **THE WATCHLIST (Visuals)** - [Gallery Mode]
+   - Place the [TYPE: YOUTUBE VIDEO] items here.
    - You MUST generate valid HTML for the thumbnail:
      <div style="margin-top:10px; margin-bottom: 20px;">
        <a href="url" style="text-decoration:none;">
           <img src="thumbnail_url" style="width:100%; border-radius:8px; display:block;" />
           <p style="margin-top:5px; font-size:14px; color:#555;">▶️ <strong>Watch:</strong> One sentence hook here.</p>
        </a>
-     </div>
+     </div>` : ''}
 
 ### CRITICAL RULES:
 - **NO FAKE LINKS**: You are strictly FORBIDDEN from using "example.com" or inventing URLs.
@@ -119,6 +154,7 @@ BANNED PHRASES: "In today's digital landscape", "Game changer", "Revolutionary",
 - **IMAGES**: Only use images for YouTube videos in the Watchlist section.
 - **TONE**: Smart, concise, no corp-speak.
 - **MARKDOWN**: Use standard markdown, but use HTML <img> tags for thumbnails.
+- **CONDITIONAL SECTIONS**: IF (and ONLY IF) you were instructed to include Audio/Watchlist above, do so. OTHERWISE, DO NOT PRINT THOSE HEADERS.
 
 ### INPUT DATA:
 ${itemsText}
@@ -128,12 +164,7 @@ BEGIN BRIEFING:`;
         console.log('[Groq] Sending unified briefing request...');
 
         const chatCompletion = await groq.chat.completions.create({
-            messages: [
-                {
-                    role: 'user',
-                    content: prompt,
-                }
-            ],
+            messages: [{ role: 'user', content: prompt }],
             model: MODEL_NAME,
             temperature: 0.6,
             max_tokens: 2000,
