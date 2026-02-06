@@ -78,85 +78,80 @@ async function synthesizeUnifiedNarrative(items: ContentItem[]): Promise<string>
             day: 'numeric'
         });
 
-        // Pre-process items to help the AI identify types
-        let hasPodcasts = false;
-        let hasYoutube = false;
-
+        // Pre-process items
         const itemsText = items.map((item, i) => {
             let typeHint = '[TYPE: ARTICLE]';
+            // Simple heuristic for type
             if (item.source.toLowerCase().includes('youtube') || item.link.includes('youtube') || item.link.includes('youtu.be')) {
                 typeHint = '[TYPE: YOUTUBE VIDEO]';
-                hasYoutube = true;
             } else if (item.source.toLowerCase().includes('podcast') || item.title.toLowerCase().includes('episode')) {
                 typeHint = '[TYPE: PODCAST]';
-                hasPodcasts = true;
             } else if (item.source.toLowerCase().includes('reddit')) {
                 typeHint = '[TYPE: REDDIT THREAD]';
             }
 
-            // Include thumbnail if available, for the AI to use in HTML
+            // Include thumbnail context
             let imageContext = item.thumbnail ? `\n   THUMBNAIL_URL: ${item.thumbnail}` : '';
+
+            // Clean description (truncate huge podcast notes to fit context window)
+            let cleanDesc = item.description ? item.description.slice(0, 1500).replace(/\n/g, ' ') : 'No description';
 
             return `ITEM #${i + 1} ${typeHint}
    TITLE: "${item.title}"
    SOURCE: ${item.source}
    LINK: ${item.link}${imageContext}
-   CONTENT: ${item.description ? item.description.slice(0, 500).replace(/\n/g, ' ') : 'No description'}`;
+   CONTENT: ${cleanDesc}`;
         }).join('\n\n');
 
-        const prompt = `You are Sarah Chen, "The Insider" — a sharp, high-bandwidth analyst writing a private daily briefing for 50,000 busy tech and business leaders.
+        const prompt = `You are the Executive Editor of a premium daily intelligence briefing involved in high-stakes decision making.
+        
+TODAY: ${today}
 
-TODAY'S DATE: ${today}
+### MISSION
+Your goal is to synthesize the provided inputs into a "Smart Brevity" style newsletter (think Axios/Morning Brew but higher IQ). 
+You must filter out "fluff" and "PR speak". If a story has no substance, **IGNORE IT**.
 
-Your goal is MAXIMAL INFORMATION DENSITY. Do not waste the reader's time with fluff.
-BANNED PHRASES: "In today's digital landscape", "Game changer", "Revolutionary", "It remains to be seen", "In conclusion".
+### SECTIONS (Strict Structure)
 
-### CONTENT FRAMEWORK (Follow Strict Order):
+1. **THE LEAD** (1-2 paragraphs)
+   - Synthesis of the Single Most Important Story. 
+   - WHY it matters.
+   - Second-order effects.
+   - *Style*: Insightful, bold, forward-looking.
 
-1. **THE LEAD (Deep Dive)** - [Analysis Mode]
-   - Pick the SINGLE most critically important story.
-   - Write 2-3 paragraphs explaining WHY it matters and its second-order effects.
-   - Tone: Analytical, insider, bold.
-   - MUST hyperlink the title: "Google's [Project Astra](http...) suggests..."
+2. **THE BRIEFING** (News & Updates)
+   - Group remaining *High Quality* stories by theme (e.g., "AI", "Markets", "Big Tech").
+   - Use **Bold** for organizations/people.
+   - Use [Link Text](URL) for citations.
+   - *Style*: "Smart Brevity". Short sentences. Punchy.
 
-2. **THE BRIEFING (Hybrid Narrative)** - [Synthesis Mode]
-   - Cover the next 6-10 stories. 
-   - DO NOT write a dry bulleted list. 
-   - DO NOT write a generic essay.
-   - **DO THIS**: Group related stories into "Narrative Blocks".
-     - Example: "In AI infrastructure, **Nvidia** [announced](url) strict updates... meanwhile **AMD** is [pushing back](url)..."
-   - **CITATION RULE**: Every claim must align with its source.
-     - Good: "...according to [The Verge](url)..."
-     - Good: "...reports [TechCrunch](url)..."
-     - Good: "...points out [MKBHD](url)..."
-     - Bad: "...[Google announced](url)..." (Don't link the verb if possible, link the source entity or the noun 'report')
-
-${hasPodcasts ? `3. **THE AUDIO FEED (Podcasts)** - [Quote Mode]
-   - Pick the best insight from the [TYPE: PODCAST] items.
+3. **THE PLAYBOOK** (Mental Models & Lessons)
+   - *Crucial*: Look at [TYPE: PODCAST] or [TYPE: YOUTUBE VIDEO] items.
+   - Extract **3 Specific Mental Models** or **Lessons** from the content.
    - Format:
-     > "Direct quote from the episode..."
-     — **Host Name**, in *[Episode Title](url)*` : ''}
+     > "Direct impactful quote..."
+     — **Speaker Name**, on *[Topic/Title](url)* (Source Name)
+   - *If no good lessons exist, OMIT THIS SECTION.*
 
-${hasYoutube ? `4. **THE WATCHLIST (Visuals)** - [Gallery Mode]
-   - Place the [TYPE: YOUTUBE VIDEO] items here.
-   - You MUST generate valid HTML for the thumbnail:
-     <div style="margin-top:10px; margin-bottom: 20px;">
-       <a href="url" style="text-decoration:none;">
-          <img src="thumbnail_url" style="width:100%; border-radius:8px; display:block;" />
-          <p style="margin-top:5px; font-size:14px; color:#555;">▶️ <strong>Watch:</strong> One sentence hook here.</p>
-       </a>
-     </div>` : ''}
+4. **THE WATCHLIST** (Visuals)
+   - For [TYPE: YOUTUBE VIDEO] items.
+   - **Render HTML Cards**:
+     <div style="margin-top:15px; margin-bottom: 25px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
+        <a href="LINK_URL" style="text-decoration:none; color: inherit;">
+           <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
+           <div style="padding: 12px; background: #f9f9f9;">
+              <p style="margin:0; font-size:14px; font-weight:600; color:#333;">▶️ Watch: TITLE_HERE</p>
+           </div>
+        </a>
+     </div>
 
-### CRITICAL RULES:
-- **NO FAKE LINKS**: You are strictly FORBIDDEN from using "example.com" or inventing URLs.
-- **USE PROVIDED LINKS**: You must ONLY use links provided in the "INPUT DATA" section.
-- **HYPERLINKS**: Links must be frequent and accurate. Link the **SOURCE NAME** or the **REPORT** where possible.
-- **IMAGES**: Only use images for YouTube videos in the Watchlist section.
-- **TONE**: Smart, concise, no corp-speak.
-- **MARKDOWN**: Use standard markdown, but use HTML <img> tags for thumbnails.
-- **CONDITIONAL SECTIONS**: IF (and ONLY IF) you were instructed to include Audio/Watchlist above, do so. OTHERWISE, DO NOT PRINT THOSE HEADERS.
+### CRITICAL RULES
+1. **NO FLUFF**: Never write "In today's landscape...". Start with the news.
+2. **FILTERING**: If an Item has "No description" or looks like a boring ad, **DO NOT INCLUDE IT**.
+3. **ACCURACY**: Strict hallucination check. Do not invent details.
+4. **IMAGES**: Use the HTML provided above for YouTube only.
 
-### INPUT DATA:
+### INPUT DATA
 ${itemsText}
 
 BEGIN BRIEFING:`;
@@ -166,12 +161,11 @@ BEGIN BRIEFING:`;
         const chatCompletion = await groq.chat.completions.create({
             messages: [{ role: 'user', content: prompt }],
             model: MODEL_NAME,
-            temperature: 0.6,
-            max_tokens: 2000,
+            temperature: 0.5, // Lower temperature for more factual/concise output
+            max_tokens: 2500,
         });
 
         const text = chatCompletion.choices[0]?.message?.content || '';
-        console.log('[Groq] Successfully generated narrative:', text.slice(0, 100) + '...');
         return text.trim();
 
     } catch (error: any) {
