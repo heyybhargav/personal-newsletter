@@ -14,7 +14,20 @@ export interface UserPreferences {
   digestFormat?: 'simple' | 'comprehensive';
 }
 
-export type SourceType = 'youtube' | 'podcast' | 'news' | 'reddit' | 'custom';
+export type SourceType =
+  | 'youtube'
+  | 'reddit'
+  | 'substack'
+  | 'medium'
+  | 'hackernews'
+  | 'github'
+  | 'twitter'
+  | 'podcast'
+  | 'newsletter'
+  | 'blog'
+  | 'news'
+  | 'rss'
+  | 'custom';
 
 export interface Source {
   id: string;

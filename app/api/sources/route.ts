@@ -13,7 +13,7 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, url, type } = body;
+        const { name, url, type, favicon, originalUrl } = body;
 
         if (!name || !url || !type) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -23,7 +23,9 @@ export async function POST(request: Request) {
             name,
             url,
             type,
-            enabled: true
+            enabled: true,
+            favicon: favicon || '',
+            originalUrl: originalUrl || url,
         });
 
         return NextResponse.json({ source: newSource }, { status: 201 });
