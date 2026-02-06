@@ -33,7 +33,7 @@ interface DetectionRule {
 
 // Detection rules for each source type
 const detectionRules: DetectionRule[] = [
-    // YouTube - handles @handles, channel IDs, and /c/ URLs
+    // YouTube - handles @handles, channel IDs, /c/ URLs, AND RSS feeds
     {
         type: 'youtube',
         patterns: [
@@ -41,21 +41,42 @@ const detectionRules: DetectionRule[] = [
             /youtube\.com\/channel\/([\w-]+)/i,
             /youtube\.com\/c\/([\w-]+)/i,
             /youtube\.com\/user\/([\w-]+)/i,
+            /youtube\.com\/feeds\/videos\.xml/i, // Explicitly handle RSS feeds
         ],
         extractFeedUrl: (url, match) => {
+            // If it's already an RSS feed, return it
+            if (url.includes('feeds/videos.xml')) return url;
+
             // For @handle URLs, we need to fetch the channel ID (handled server-side)
-            // For now, return placeholder that will be resolved
             if (match) {
                 if (url.includes('/channel/')) {
                     return `https://www.youtube.com/feeds/videos.xml?channel_id=${match[1]}`;
                 }
-                // For @handle, /c/, /user/ - return the URL for server-side resolution
                 return url;
             }
             return url;
         },
-        extractName: (url, match) => match ? match[1].replace(/-/g, ' ') : 'YouTube Channel',
+        extractName: (url, match) => {
+            if (url.includes('feeds/videos.xml')) return 'YouTube Channel';
+            return match ? match[1].replace(/-/g, ' ') : 'YouTube Channel';
+        },
         getFavicon: () => 'https://www.youtube.com/favicon.ico',
+    },
+
+    // Podcasts (Common Hosts)
+    {
+        type: 'podcast',
+        patterns: [
+            /feeds\.megaphone\.fm/i,
+            /anchor\.fm\/s\//i,
+            /feeds\.buzzsprout\.com/i,
+            /rss\.art19\.com/i,
+            /feeds\.simplecast\.com/i,
+            /feed\.podbean\.com/i,
+        ],
+        extractFeedUrl: (url) => url,
+        extractName: () => 'Podcast',
+        getFavicon: () => 'https://cdn-icons-png.flaticon.com/512/2628/2628834.png',
     },
 
     // Reddit - handles subreddit URLs
