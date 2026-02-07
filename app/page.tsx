@@ -76,7 +76,7 @@ export default function Home() {
           <div className="flex justify-between items-end mb-6">
             <div>
               <p className="text-sm font-bold tracking-widest text-gray-400 uppercase mb-2">Admin Dashboard</p>
-              <h1 className="text-5xl font-serif font-bold text-gray-900 tracking-tight">Control Room</h1>
+              <h1 className="text-5xl font-serif font-bold text-gray-900 tracking-tight">Signal Control Room</h1>
             </div>
             <Link href="/subscribe" className="text-gray-400 hover:text-black transition text-sm font-medium border-b border-gray-200 hover:border-black pb-0.5">
               View Public Subscription Page ↗

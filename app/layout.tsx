@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Newsreader } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  style: ['normal', 'italic'],
+  variable: "--font-newsreader"
+});
 
 export const metadata: Metadata = {
-  title: "Daily Digest - Your Personalized News Feed",
-  description: "Get a comprehensive, AI-powered daily email digest of your favorite content",
+  title: "Signal - High-Signal Intelligence Briefing",
+  description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
 };
 
 export default function RootLayout({
@@ -17,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${newsreader.variable} font-sans antialiased`}>
         <Navbar />
         {children}
       </body>

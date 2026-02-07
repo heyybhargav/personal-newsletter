@@ -53,8 +53,11 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string)
               <tr>
                 <td style="padding: 40px 30px 30px 30px; border-bottom: 4px solid #000; text-align: center;">
                   <h1 style="font-family: 'Merriweather', Georgia, serif; font-size: 28px; font-weight: 900; margin: 0; color: #000; letter-spacing: -1px;">
-                    Your Daily Executive Briefing
+                    Signal
                   </h1>
+                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #888; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">
+                    Daily Executive Briefing
+                  </p>
                   <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #888; margin: 10px 0 0 0; text-transform: uppercase; letter-spacing: 2px;">
                     ${date}
                   </p>
@@ -138,7 +141,7 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
   const msg = {
     to,
     from: fromEmail,
-    subject: `☕ Your Daily Executive Briefing — ${today}`,
+    subject: `☕ Signal: Your Daily Briefing — ${today}`,
     html: await generateUnifiedEmailHTML(briefing, today),
   };
 

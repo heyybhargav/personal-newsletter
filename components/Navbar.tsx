@@ -35,6 +35,9 @@ export default function Navbar() {
         { name: 'Settings', path: '/settings' },
     ];
 
+    // Hide Navbar on login page
+    if (pathname === '/login') return null;
+
     return (
         <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,7 +45,7 @@ export default function Navbar() {
                     <div className="flex">
                         <div className="flex-shrink-0 flex items-center">
                             <Link href="/">
-                                <span className="font-serif font-bold text-xl tracking-tight">Daily Digest</span>
+                                <span className="font-serif font-bold text-xl tracking-tight">Signal</span>
                             </Link>
                         </div>
                         <div className="hidden sm:ml-8 sm:flex sm:space-x-8">

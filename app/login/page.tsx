@@ -3,6 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
+import { ArrowRight } from 'lucide-react';
+import Hero from '@/components/landing/Hero';
+import AntiList from '@/components/landing/AntiList';
+import Manifesto from '@/components/landing/Manifesto';
+import Features from '@/components/landing/Features';
+import HowItWorks from '@/components/landing/HowItWorks';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -28,54 +34,66 @@ export default function LoginPage() {
     };
 
     useEffect(() => {
-        // Initialize Google Button
-        // We use a global callback because the script expects a string name function
         (window as any).handleGoogleCredentialResponse = handleGoogleCallback;
     }, []);
 
+    const triggerLogin = () => {
+        const googleButton = document.querySelector('[role="button"]') as HTMLElement;
+        if (googleButton) googleButton.click();
+    };
+
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-[#FDFBF7] text-[#1A1A1A] font-sans px-6">
+        <main className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans selection:bg-gray-200 overflow-x-hidden">
             <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" />
 
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 p-10 text-center">
-                <div className="mb-8">
-                    <h1 className="text-4xl font-serif font-bold mb-2">Welcome Back.</h1>
-                    <p className="text-gray-500">Sign in to manage your daily briefing.</p>
-                </div>
-
-                {error && (
-                    <div className="mb-6 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
-                        {error}
-                    </div>
-                )}
-
-                <div className="flex justify-center">
-                    <div
-                        id="g_id_onload"
-                        data-client_id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-                        data-context="signin"
-                        data-ux_mode="popup"
-                        data-callback="handleGoogleCredentialResponse"
-                        data-auto_prompt="false"
-                    ></div>
-
-                    <div
-                        className="g_id_signin"
-                        data-type="standard"
-                        data-shape="pill"
-                        data-theme="outline"
-                        data-text="continue_with"
-                        data-size="large"
-                        data-logo_alignment="left"
-                    ></div>
-                </div>
-
-                <div className="mt-8 pt-8 border-t border-gray-100">
-                    <p className="text-xs text-gray-400">
-                        By continuing, you agree to our Terms of Service and Privacy Policy.
-                    </p>
-                </div>
+            {/* Hidden Google Button for Functionality */}
+            <div className="hidden">
+                <div
+                    id="g_id_onload"
+                    data-client_id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="handleGoogleCredentialResponse"
+                    data-auto_prompt="false"
+                ></div>
+                <div className="g_id_signin" data-type="standard"></div>
             </div>
-        </div>
+
+            {/* Navbar (Minimal) */}
+            <nav className="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-50 bg-[#FDFBF7]/80 backdrop-blur-sm">
+                <span className="font-bold text-xl tracking-tight text-[#1A1A1A]">Signal.</span>
+                <button
+                    onClick={triggerLogin}
+                    className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+                >
+                    Log in
+                </button>
+            </nav>
+
+            <Hero />
+            <AntiList />
+            <Manifesto />
+            <Features />
+            <HowItWorks />
+
+            {/* Final CTA */}
+            <section className="py-24 px-6 text-center border-t border-gray-100">
+                <button
+                    onClick={triggerLogin}
+                    className="group inline-flex items-center justify-center px-10 py-5 font-medium text-white bg-[#1A1A1A] rounded-full hover:bg-black transition-colors text-lg"
+                >
+                    Get Started
+                    <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+                </button>
+                <p className="mt-4 text-sm text-gray-400">Free during beta. No credit card.</p>
+            </section>
+
+            {/* Footer */}
+            <footer className="py-12 text-center border-t border-gray-100">
+                <p className="text-sm text-gray-400">
+                    Built with love by Bhargav
+                </p>
+            </footer>
+        </main>
     );
 }
