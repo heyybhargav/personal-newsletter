@@ -1,35 +1,54 @@
 import { NextResponse } from 'next/server';
-import { getPreferences } from '@/lib/db';
+import { getPreferences, getUser } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
 import { Source } from '@/lib/types';
+import { getSession } from '@/lib/auth';
 
 // This endpoint is for MANUAL triggering (e.g. "Force Dispatch" or "Preview Digest")
-// It defaults to the current admin user (env.USER_EMAIL) via getPreferences()
+// It now supports BOTH the logged-in user OR the legacy admin fallack
 
 export async function POST(request: Request) {
     try {
         console.log('[Digest API] POST: Starting manual dispatch...');
 
-        const prefs = await getPreferences();
+        // 1. Identify User
+        const session = await getSession();
+        let email: string | undefined;
+        let sources: Source[] = [];
 
-        if (!prefs.email) {
+        if (session?.email) {
+            console.log(`[Digest API] Session found for: ${session.email}`);
+            const user = await getUser(session.email);
+            if (user) {
+                email = user.email;
+                sources = user.sources;
+            }
+        }
+
+        // Fallback to Admin if no session (e.g. external trigger, though usually that's /api/cron)
+        if (!email) {
+            console.log('[Digest API] No session, falling back to Admin preferences');
+            const prefs = await getPreferences();
+            email = prefs.email;
+            sources = prefs.sources as Source[];
+        }
+
+        if (!email) {
             return NextResponse.json({ error: 'Email not configured', sent: false }, { status: 400 });
         }
 
-        if (prefs.sources.length === 0) {
-            return NextResponse.json({ error: 'No sources configured', sent: false }, { status: 400 });
+        if (sources.length === 0) {
+            return NextResponse.json({ error: 'No sources configured. Add some sources first!', sent: false }, { status: 400 });
         }
 
-        const sources = prefs.sources as Source[];
-
         // Step 1: Aggregate content from all sources
-        console.log('[Digest API] Aggregating content from', sources.length, 'sources...');
+        console.log('[Digest API] Aggregating content from', sources.length, 'sources for', email);
         const content = await aggregateContent(sources);
 
         if (content.length === 0) {
-            return NextResponse.json({ message: 'No new content found', sent: false });
+            return NextResponse.json({ message: 'No new content found in the last 24h', sent: false });
         }
 
         console.log('[Digest API] Found', content.length, 'items. Generating unified briefing...');
@@ -37,14 +56,15 @@ export async function POST(request: Request) {
         // Step 2: Generate UNIFIED briefing (new approach!)
         const briefing = await generateUnifiedBriefing(content);
 
-        console.log('[Digest API] Briefing generated. Sending email to', prefs.email);
+        console.log('[Digest API] Briefing generated. Sending email to', email);
 
         // Step 3: Send the unified email
-        await sendUnifiedDigestEmail(prefs.email, briefing);
+        await sendUnifiedDigestEmail(email, briefing);
 
         return NextResponse.json({
             success: true,
             sent: true,
+            recipient: email,
             itemCount: content.length,
             narrativeLength: briefing.narrative.length,
             timestamp: briefing.generatedAt
@@ -63,8 +83,22 @@ export async function GET() {
     try {
         console.log('[Digest API] GET: Generating preview...');
 
-        const prefs = await getPreferences();
-        const sources = prefs.sources as Source[];
+        // 1. Identify User
+        const session = await getSession();
+        let sources: Source[] = [];
+
+        if (session?.email) {
+            const user = await getUser(session.email);
+            if (user) {
+                sources = user.sources;
+            }
+        }
+
+        if (sources.length === 0) {
+            // Fallback to Admin
+            const prefs = await getPreferences();
+            sources = prefs.sources as Source[];
+        }
 
         if (sources.length === 0) {
             return NextResponse.json({ error: 'No sources configured', itemCount: 0 });
