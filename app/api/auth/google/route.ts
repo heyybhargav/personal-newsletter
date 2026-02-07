@@ -3,6 +3,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { signSession } from '@/lib/auth';
 import { createUser, getUser } from '@/lib/db';
 import { cookies } from 'next/headers';
+import { sendWelcomeEmail } from '@/lib/email';
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 
@@ -34,6 +35,14 @@ export async function POST(request: Request) {
             // Auto-detect timezone from request if possible, or default
             // Ideally frontend sends it, but for now default to UTC/IST or handle later
             await createUser(email, 'Asia/Kolkata'); // Default, user can change later
+
+            // Send Welcome Email
+            try {
+                await sendWelcomeEmail(email);
+            } catch (emailError) {
+                console.error('[Auth] Failed to send welcome email:', emailError);
+                // Continue with login even if email fails
+            }
         }
 
         // 3. Create Session
