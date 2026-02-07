@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getAllUsers, getUser } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
         const userEmails = await getAllUsers();
         console.log(`[Cron] ⏰ Hourly check for ${userEmails.length} users...`);
@@ -27,7 +27,12 @@ export async function GET() {
 
             // Check if it's the right hour (allow 5 min window or just check hour equality)
             // Since cron runs at top of hour, equality is sufficient
-            if (currentHour !== targetHour) {
+            // Check if it's the right hour (allow 5 min window or just check hour equality)
+            // UNLESS ?force=true is passed
+            const { searchParams } = new URL(request.url);
+            const force = searchParams.get('force') === 'true';
+
+            if (!force && currentHour !== targetHour) {
                 // console.log(`[Cron] Skipping ${email}: ${currentHour}:00 (User) != ${targetHour}:00 (Target)`);
                 return { email, status: 'skipped_wrong_time', userTime: `${currentHour}:00` };
             }
