@@ -133,7 +133,7 @@ async function formatNarrative(text: string): Promise<string> {
 export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefing): Promise<void> {
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
 
-  const fromEmail = process.env.USER_EMAIL || to;
+  const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to;
 
   const msg = {
     to,
@@ -242,7 +242,7 @@ function generateEmailHTML(sections: DigestSection[], date: string): string {
 export async function sendDigestEmail(to: string, sections: DigestSection[]): Promise<void> {
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
 
-  const fromEmail = process.env.USER_EMAIL || to;
+  const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to;
 
   const msg = {
     to,
