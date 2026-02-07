@@ -57,7 +57,7 @@ export default function Home() {
       if (data.error) {
         setMessage(`Error: ${data.error}`);
       } else if (data.sent) {
-        setMessage(`✅ Email sent successfully! (${data.itemCount} items)`);
+        setMessage(`✅ Email sent successfully! (${data.itemCount} items) — Check your Spam folder if you don't see it.`);
       } else {
         setMessage(data.message || 'No email sent');
       }
@@ -70,8 +70,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-gray-900 font-sans">
+      {/* Spam Warning Banner */}
+      <div className="bg-yellow-50 border-b border-yellow-100 px-6 py-3 text-center">
+        <p className="text-sm text-yellow-800 font-medium">
+          ⚠️ Emails landing in Spam? Please move them to <strong>Primary</strong> to help us build reputation.
+        </p>
+      </div>
+
       {/* Premium Hero Section */}
-      <div className="bg-white border-b border-gray-200 pt-20 pb-16 px-6">
+      <div className="bg-white border-b border-gray-200 pt-12 pb-16 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="flex justify-between items-end mb-6">
             <div>
