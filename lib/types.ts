@@ -38,6 +38,7 @@ export interface Source {
   enabled: boolean;
   addedAt: string;
   favicon?: string; // New: For premium UI
+  originalUrl?: string; // To track where it came from
 }
 
 export interface ContentItem {

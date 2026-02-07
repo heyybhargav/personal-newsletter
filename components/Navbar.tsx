@@ -1,12 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
     const pathname = usePathname();
+    const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [user, setUser] = useState<{ email: string } | null>(null);
+
+    // Check auth on mount
+    useEffect(() => {
+        fetch('/api/auth/me')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.user) setUser(data.user);
+            })
+            .catch(() => setUser(null));
+    }, []);
+
+    const handleLogout = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        setUser(null);
+        router.push('/login');
+        router.refresh();
+    };
 
     const isActive = (path: string) => pathname === path;
 
@@ -22,22 +41,45 @@ export default function Navbar() {
                 <div className="flex justify-between h-16">
                     <div className="flex">
                         <div className="flex-shrink-0 flex items-center">
-                            <span className="font-serif font-bold text-xl tracking-tight">Daily Digest</span>
+                            <Link href="/">
+                                <span className="font-serif font-bold text-xl tracking-tight">Daily Digest</span>
+                            </Link>
                         </div>
                         <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
-                            {navLinks.map((link) => (
+                            {user && navLinks.map((link) => (
                                 <Link
                                     key={link.path}
                                     href={link.path}
                                     className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full transition-colors ${isActive(link.path)
-                                            ? 'border-black text-gray-900'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                        ? 'border-black text-gray-900'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                         }`}
                                 >
                                     {link.name}
                                 </Link>
                             ))}
                         </div>
+                    </div>
+
+                    <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                        {user ? (
+                            <div className="flex items-center gap-4">
+                                <span className="text-sm text-gray-500 hidden lg:block">{user.email}</span>
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <Link
+                                href="/login"
+                                className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                            >
+                                Sign In
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile menu button */}
@@ -70,19 +112,40 @@ export default function Navbar() {
             {isMenuOpen && (
                 <div className="sm:hidden" id="mobile-menu">
                     <div className="pt-2 pb-3 space-y-1 border-t border-gray-200">
-                        {navLinks.map((link) => (
+                        {user ? (
+                            <>
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.path}
+                                        href={link.path}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className={`block pl-3 pr-4 py-3 border-l-4 text-base font-medium ${isActive(link.path)
+                                            ? 'bg-gray-50 border-black text-black'
+                                            : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
+                                            }`}
+                                    >
+                                        {link.name}
+                                    </Link>
+                                ))}
+                                <button
+                                    onClick={() => {
+                                        handleLogout();
+                                        setIsMenuOpen(false);
+                                    }}
+                                    className="block w-full text-left pl-3 pr-4 py-3 border-l-4 border-transparent text-base font-medium text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+                                >
+                                    Logout ({user.email})
+                                </button>
+                            </>
+                        ) : (
                             <Link
-                                key={link.path}
-                                href={link.path}
+                                href="/login"
                                 onClick={() => setIsMenuOpen(false)}
-                                className={`block pl-3 pr-4 py-3 border-l-4 text-base font-medium ${isActive(link.path)
-                                        ? 'bg-gray-50 border-black text-black'
-                                        : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
-                                    }`}
+                                className="block pl-3 pr-4 py-3 border-l-4 border-transparent text-base font-medium text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
                             >
-                                {link.name}
+                                Sign In
                             </Link>
-                        ))}
+                        )}
                     </div>
                 </div>
             )}
