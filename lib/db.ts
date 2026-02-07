@@ -112,6 +112,7 @@ export async function getPreferences() {
 
 export async function savePreferences(legacyPrefs: any) {
     const user = await getUser(ADMIN_EMAIL) || await createUser(ADMIN_EMAIL);
+    if (legacyPrefs.email) user.email = legacyPrefs.email; // Allow updating delivery email
     user.preferences.deliveryTime = legacyPrefs.deliveryTime || '08:00';
     user.preferences.timezone = legacyPrefs.timezone || 'Asia/Kolkata';
     user.sources = legacyPrefs.sources || [];
