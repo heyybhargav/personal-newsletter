@@ -25,6 +25,9 @@ export async function POST(request: Request) {
         if (body.timezone !== undefined) {
             prefs.timezone = body.timezone;
         }
+        if (body.llmProvider !== undefined) {
+            prefs.llmProvider = body.llmProvider;
+        }
 
         await savePreferences(prefs);
         return NextResponse.json(prefs);

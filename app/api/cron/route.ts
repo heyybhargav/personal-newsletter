@@ -38,7 +38,7 @@ export async function GET() {
             const content = await aggregateContent(user.sources);
             if (content.length === 0) return { email, status: 'skipped_no_content' };
 
-            const briefing = await generateUnifiedBriefing(content);
+            const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
             await sendUnifiedDigestEmail(user.email, briefing);
 
             console.log(`[Cron] ✅ Sent to ${email}`);

@@ -7,6 +7,7 @@ export default function SettingsPage() {
     const [email, setEmail] = useState('');
     const [deliveryTime, setDeliveryTime] = useState('08:00');
     const [timezone, setTimezone] = useState('');
+    const [llmProvider, setLlmProvider] = useState<string>('groq');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [runningCron, setRunningCron] = useState(false);
@@ -22,6 +23,7 @@ export default function SettingsPage() {
             const data = await res.json();
             setEmail(data.email || '');
             setDeliveryTime(data.deliveryTime || '08:00');
+            setLlmProvider(data.llmProvider || 'groq');
             // If API returns timezone, use it. Otherwise, auto-detect from browser.
             if (data.timezone) {
                 setTimezone(data.timezone);
@@ -67,7 +69,7 @@ export default function SettingsPage() {
             const res = await fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, deliveryTime, timezone })
+                body: JSON.stringify({ email, deliveryTime, timezone, llmProvider })
             });
 
             if (res.ok) {
@@ -126,6 +128,28 @@ export default function SettingsPage() {
                                 />
                                 <p className="text-sm text-gray-500 mt-2">
                                     This is the separate admin digest receiver. (Regular users manage their own emails).
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
+                                    AI Intelligence Model
+                                </label>
+                                <div className="relative">
+                                    <select
+                                        value={llmProvider}
+                                        onChange={e => setLlmProvider(e.target.value)}
+                                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-black focus:border-transparent text-lg transition-all appearance-none bg-white"
+                                    >
+                                        <option value="groq">Llama 3.3 70B (Groq) — Fast & Precise</option>
+                                        <option value="gemini">Gemini 1.5 Flash — 1M Context Window</option>
+                                    </select>
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                        ▼
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    Choose the brain powering your digest.
                                 </p>
                             </div>
 

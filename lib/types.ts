@@ -12,6 +12,7 @@ export interface UserPreferences {
   deliveryTime: string; // HH:MM
   timezone?: string; // e.g., 'Asia/Kolkata'
   digestFormat?: 'simple' | 'comprehensive';
+  llmProvider?: 'groq' | 'gemini';
 }
 
 export type SourceType =

@@ -1,10 +1,14 @@
 import Groq from 'groq-sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ContentItem, DigestSection, SummarizedContent } from './types';
 
 // Initialize Groq
 const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 });
+
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 // Using Llama 3.3 70B for high-quality writing
 const MODEL_NAME = 'llama-3.3-70b-versatile';
@@ -51,11 +55,11 @@ function balanceContent(items: ContentItem[]): ContentItem[] {
     return balanced.slice(0, MAX_TOTAL_ITEMS);
 }
 
-export async function generateUnifiedBriefing(allContent: ContentItem[]): Promise<UnifiedBriefing> {
+export async function generateUnifiedBriefing(allContent: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<UnifiedBriefing> {
     // Apply Smart Balancing
     const balancedItems = balanceContent(allContent);
 
-    const narrative = await synthesizeUnifiedNarrative(balancedItems);
+    const narrative = await synthesizeUnifiedNarrative(balancedItems, provider);
 
     return {
         narrative,
@@ -64,7 +68,7 @@ export async function generateUnifiedBriefing(allContent: ContentItem[]): Promis
     };
 }
 
-async function synthesizeUnifiedNarrative(items: ContentItem[]): Promise<string> {
+async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<string> {
     try {
         if (!process.env.GROQ_API_KEY) {
             console.error('[Groq] CRITICAL: GROQ_API_KEY is not set!');
@@ -173,6 +177,10 @@ BEGIN BRIEFING:`;
             max_tokens: 2500,
         });
 
+        if (provider === 'gemini') {
+            return await callGemini(prompt);
+        }
+
         const text = chatCompletion.choices[0]?.message?.content || '';
         return text.trim();
 
@@ -266,4 +274,27 @@ ${itemsText}`;
 // Legacy function
 export async function summarizeContent(item: ContentItem): Promise<string> {
     return item.description.slice(0, 200);
+}
+
+// ============================================================================
+// GEMINI IMPLEMENTATION
+// ============================================================================
+
+async function callGemini(prompt: string): Promise<string> {
+    try {
+        if (!process.env.GEMINI_API_KEY) {
+            console.error('[Gemini] CRITICAL: GEMINI_API_KEY is not set!');
+            throw new Error('Gemini API key missing');
+        }
+
+        console.log('[Gemini] Sending unified briefing request...');
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Using Flash for speed/cost, Pro for quality if needed
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        return response.text().trim();
+    } catch (error: any) {
+        console.error('[Gemini] Error:', error.message || error);
+        throw error; // Let the caller handle fallback
+    }
 }

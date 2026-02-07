@@ -106,6 +106,7 @@ export async function getPreferences() {
         email: user.email,
         deliveryTime: user.preferences.deliveryTime,
         timezone: user.preferences.timezone,
+        llmProvider: user.preferences.llmProvider || 'groq',
         sources: user.sources
     };
 }
@@ -115,6 +116,7 @@ export async function savePreferences(legacyPrefs: any) {
     if (legacyPrefs.email) user.email = legacyPrefs.email; // Allow updating delivery email
     user.preferences.deliveryTime = legacyPrefs.deliveryTime || '08:00';
     user.preferences.timezone = legacyPrefs.timezone || 'Asia/Kolkata';
+    if (legacyPrefs.llmProvider) user.preferences.llmProvider = legacyPrefs.llmProvider;
     user.sources = legacyPrefs.sources || [];
     await saveUser(user);
 }
