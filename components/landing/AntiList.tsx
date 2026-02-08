@@ -18,7 +18,7 @@ export default function AntiList() {
                 <p className="text-sm font-bold tracking-widest text-[#888888] uppercase mb-12">
                     WHAT WE DON'T DO
                 </p>
-                <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
+                <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-4 md:gap-x-6 md:gap-y-6">
                     {antiFeatures.map((item, i) => (
                         <motion.span
                             key={item}
@@ -26,7 +26,7 @@ export default function AntiList() {
                             whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="text-2xl md:text-3xl text-[#CCCCCC] font-serif italic line-through decoration-2 decoration-[#FF4F00]/50"
+                            className="text-xl md:text-3xl text-[#CCCCCC] font-serif italic line-through decoration-2 decoration-[#FF4F00]/50"
                         >
                             {item}
                         </motion.span>

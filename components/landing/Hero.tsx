@@ -39,7 +39,7 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-6xl md:text-8xl lg:text-9xl font-semibold tracking-tighter text-[#1A1A1A] leading-[0.9]"
+                        className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-semibold tracking-tighter text-[#1A1A1A] leading-[0.95] mb-2"
                     >
                         The internet is exhausting.
                     </motion.h1>
@@ -48,7 +48,7 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                        className="text-5xl md:text-7xl lg:text-8xl font-medium tracking-tighter text-[#888888] leading-[1] italic font-serif"
+                        className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-medium tracking-tighter text-[#888888] leading-[1] italic font-serif"
                     >
                         This isn't.
                     </motion.h2>
@@ -58,7 +58,7 @@ export default function Hero() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-xl md:text-2xl text-[#666666] leading-relaxed max-w-lg mx-auto font-medium"
+                    className="text-lg md:text-2xl text-[#4A4A4A] leading-relaxed max-w-lg mx-auto font-medium px-4"
                 >
                     Your personal AI editor synthesizes the internet into one calm, digestible briefing.
                 </motion.p>
@@ -71,7 +71,7 @@ export default function Hero() {
                 >
                     <button
                         onClick={triggerLogin}
-                        className="group inline-flex items-center justify-center px-10 py-5 text-lg font-medium text-white bg-[#1A1A1A] rounded-full hover:scale-105 transition-all duration-300 shadow-xl shadow-black/10"
+                        className="group inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white bg-[#1A1A1A] rounded-full hover:scale-105 transition-all duration-300 shadow-xl shadow-black/10 w-full md:w-auto"
                     >
                         Get Started
                         <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
@@ -81,10 +81,10 @@ export default function Hero() {
                 {/* 3D Digest Card Visual */}
                 <motion.div
                     style={{ y }}
-                    initial={{ opacity: 0, rotateX: 20, y: 100 }}
+                    initial={{ opacity: 0, rotateX: 20, y: 50 }}
                     animate={{ opacity: 1, rotateX: 0, y: 0 }}
                     transition={{ duration: 1, delay: 0.6, type: "spring" }}
-                    className="mt-20 relative max-w-3xl mx-auto perspective-1000"
+                    className="mt-12 md:mt-20 relative w-full max-w-[90vw] md:max-w-3xl mx-auto perspective-1000"
                 >
                     <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform transition-transform hover:scale-[1.02] duration-500">
                         {/* Mock Browser Header */}
@@ -94,17 +94,17 @@ export default function Hero() {
                             <div className="w-3 h-3 rounded-full bg-green-400"></div>
                         </div>
                         {/* Mock Email Body */}
-                        <div className="p-12 text-left space-y-6">
-                            <div className="flex justify-between items-baseline border-b border-black pb-6">
-                                <h3 className="font-serif text-3xl font-bold">Signal.</h3>
-                                <span className="font-mono text-xs text-gray-400 uppercase tracking-widest">Daily Briefing</span>
+                        <div className="p-6 md:p-12 text-left space-y-6">
+                            <div className="flex justify-between items-baseline border-b border-black pb-4 md:pb-6">
+                                <h3 className="font-serif text-2xl md:text-3xl font-bold">Signal.</h3>
+                                <div className="hidden md:block font-mono text-xs text-gray-400 uppercase tracking-widest">Daily Briefing</div>
                             </div>
-                            <div className="space-y-4">
-                                <div className="h-4 bg-gray-100 rounded w-3/4"></div>
-                                <div className="h-4 bg-gray-100 rounded w-full"></div>
-                                <div className="h-4 bg-gray-100 rounded w-5/6"></div>
+                            <div className="space-y-3 md:space-y-4">
+                                <div className="h-3 md:h-4 bg-gray-100 rounded w-3/4"></div>
+                                <div className="h-3 md:h-4 bg-gray-100 rounded w-full"></div>
+                                <div className="h-3 md:h-4 bg-gray-100 rounded w-5/6"></div>
                             </div>
-                            <div className="p-6 bg-[#FDFBF7] rounded-lg border border-gray-100 italic text-gray-600 font-serif">
+                            <div className="p-4 md:p-6 bg-[#FDFBF7] rounded-lg border border-gray-100 italic text-sm md:text-base text-gray-600 font-serif">
                                 "This is the only email I actually read."
                             </div>
                         </div>
