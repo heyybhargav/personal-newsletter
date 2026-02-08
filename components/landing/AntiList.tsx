@@ -2,37 +2,31 @@
 
 import { motion } from 'framer-motion';
 
-const antiItems = [
-    'Ads',
-    'Tracking',
-    'Social Features',
-    'Vanity Metrics',
-    'Data Selling',
+const antiFeatures = [
+    "Infinite Scrolling",
+    "Clickbait Headlines",
+    "Tracking Pixels",
+    "Algorithms",
+    "Popups",
+    "Noise"
 ];
 
 export default function AntiList() {
     return (
-        <section className="py-24 px-6 border-t border-gray-100">
-            <div className="max-w-xl mx-auto text-center">
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-sm uppercase tracking-widest text-gray-400 mb-12"
-                >
-                    What we don't do
-                </motion.p>
-
+        <section className="py-24 px-6 bg-[#FDFBF7]">
+            <div className="max-w-2xl mx-auto text-center">
+                <p className="text-sm font-bold tracking-widest text-[#888888] uppercase mb-12">
+                    WHAT WE DON'T DO
+                </p>
                 <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
-                    {antiItems.map((item, i) => (
+                    {antiFeatures.map((item, i) => (
                         <motion.span
                             key={item}
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="text-2xl md:text-3xl font-light text-gray-300 line-through decoration-gray-300"
+                            className="text-2xl md:text-3xl text-[#CCCCCC] font-serif italic line-through decoration-2 decoration-[#FF4F00]/50"
                         >
                             {item}
                         </motion.span>

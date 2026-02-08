@@ -8,7 +8,6 @@ import Hero from '@/components/landing/Hero';
 import AntiList from '@/components/landing/AntiList';
 import Manifesto from '@/components/landing/Manifesto';
 import Features from '@/components/landing/Features';
-import HowItWorks from '@/components/landing/HowItWorks';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -74,18 +73,27 @@ export default function LoginPage() {
             <AntiList />
             <Manifesto />
             <Features />
-            <HowItWorks />
 
             {/* Final CTA */}
             <section className="py-24 px-6 text-center border-t border-gray-100">
-                <button
-                    onClick={triggerLogin}
-                    className="group inline-flex items-center justify-center px-10 py-5 font-medium text-white bg-[#1A1A1A] rounded-full hover:bg-black transition-colors text-lg"
-                >
-                    Get Started
-                    <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
-                </button>
-                <p className="mt-4 text-sm text-gray-400">Free during beta. No credit card.</p>
+                <div className="max-w-xl mx-auto space-y-8">
+                    <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A]">
+                        Ready to own your morning?
+                    </h2>
+                    <p className="text-lg text-gray-500 font-light leading-relaxed">
+                        Signal synthesizes the internet into one calm, digestible briefing. Delivered to your inbox every morning.
+                    </p>
+                    <div className="pt-8 space-y-4">
+                        <button
+                            onClick={triggerLogin}
+                            className="group inline-flex items-center justify-center px-10 py-5 text-lg font-medium text-white bg-[#111111] rounded-full hover:scale-105 transition-all duration-300 shadow-xl shadow-black/5"
+                        >
+                            Get Started
+                            <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+                        </button>
+                        <p className="text-sm text-gray-400 font-medium tracking-wide">NO CREDIT CARD REQUIRED</p>
+                    </div>
+                </div>
             </section>
 
             {/* Footer */}
