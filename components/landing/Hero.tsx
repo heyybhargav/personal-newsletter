@@ -50,7 +50,7 @@ export default function Hero() {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="text-lg md:text-2xl text-[#4A4A4A] leading-relaxed max-w-lg mx-auto font-medium px-4"
                 >
-                    Your personal AI editor synthesizes the internet into one calm, digestible briefing.
+                    We read the internet so you don't have to. One calm, high-signal briefing. Every morning.
                 </motion.p>
 
                 <motion.div
