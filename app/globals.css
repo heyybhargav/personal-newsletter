@@ -27,6 +27,11 @@ body {
   font-family: var(--font-sans);
 }
 
+button,
+a {
+  cursor: pointer;
+}
+
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
