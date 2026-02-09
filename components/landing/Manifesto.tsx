@@ -13,7 +13,7 @@ export default function Manifesto() {
                     transition={{ duration: 0.8 }}
                 >
                     <p className="text-2xl md:text-3xl lg:text-4xl font-serif italic leading-relaxed text-[#1A1A1A]">
-                        "You become what you consume. Stop scrolling. Start knowing."
+                        "You become what you consume. In an age of endless distraction, I built Signal to protect your attention. One inbox. One story. Every morning."
                     </p>
                     <div className="mt-8 flex items-center justify-center gap-4">
                         <div className="h-px w-12 bg-gray-300"></div>
