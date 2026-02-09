@@ -25,16 +25,6 @@ export default function Hero() {
 
             <div className="max-w-5xl mx-auto text-center space-y-12 relative z-10">
                 <div className="space-y-4">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5 }}
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1A1A]/5 border border-[#1A1A1A]/10 text-sm font-medium text-[#1A1A1A]/60 mb-4"
-                    >
-                        <span className="w-2 h-2 rounded-full bg-[#FF4F00]"></span>
-                        v5.1 Now Live
-                    </motion.div>
-
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
