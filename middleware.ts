@@ -6,7 +6,7 @@ import { verifySession } from '@/lib/auth';
 const PROTECTED_PATHS = ['/', '/settings', '/sources', '/api/sources', '/api/settings'];
 
 // Public paths that should not be protected
-const PUBLIC_PATHS = ['/login', '/subscribe', '/api/auth', '/api/cron', '/api/subscribe', '/api/webhook', '/api/debug'];
+const PUBLIC_PATHS = ['/login', '/api/auth', '/api/cron', '/api/webhook', '/api/debug'];
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;

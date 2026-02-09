@@ -85,14 +85,11 @@ export default function Home() {
               <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm">
                 <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">Control Room</p>
               </div>
-              <h1 className="text-6xl md:text-7xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-[0.9]">
+              <h1 className="text-5xl md:text-7xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-[0.9]">
                 Morning <span className="italic text-gray-400">Briefing</span>
               </h1>
             </div>
-            <Link href="/subscribe" className="group flex items-center gap-2 text-gray-400 hover:text-black transition text-sm font-medium border-b border-transparent hover:border-black pb-0.5">
-              <span>Public Page</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </Link>
+
           </div>
 
           <div className="h-px w-full bg-gray-200/60 mb-12"></div>

@@ -259,7 +259,7 @@ export default function SourcesPage() {
                         <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-4">
                             <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Input Streams</p>
                         </div>
-                        <h1 className="text-5xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
+                        <h1 className="text-4xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
                             Intelligence <span className="italic text-gray-400">Sources</span>
                         </h1>
                         <p className="text-xl text-gray-500 font-light mt-6 max-w-lg leading-relaxed font-serif">
@@ -382,7 +382,7 @@ export default function SourcesPage() {
                                     type="text"
                                     value={inputUrl}
                                     onChange={(e) => setInputUrl(e.target.value)}
-                                    placeholder="Paste URL or search (e.g. 'TechCrunch')"
+                                    placeholder="Paste URL or search..."
                                     className="w-full pl-10 text-2xl font-serif bg-transparent border-none placeholder:text-gray-300 focus:ring-0 focus:outline-none transition-colors p-0"
                                     autoFocus
                                 />
