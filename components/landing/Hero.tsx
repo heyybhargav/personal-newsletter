@@ -19,8 +19,8 @@ export default function Hero() {
 
             {/* Mesh Gradient Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-gradient-to-r from-[#FF4F00]/20 to-[#FFE100]/20 rounded-full blur-[100px] animate-blob mix-blend-multiply opacity-70"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-gradient-to-r from-[#FF4F00]/20 to-[#FFE100]/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply opacity-70"></div>
+                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-gradient-to-r from-[#FF4F00]/30 to-[#FFE100]/30 rounded-full blur-[100px] animate-blob mix-blend-multiply opacity-70"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-gradient-to-r from-[#FF4F00]/30 to-[#FFE100]/30 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply opacity-70"></div>
             </div>
 
             <div className="max-w-5xl mx-auto text-center space-y-12 relative z-10">

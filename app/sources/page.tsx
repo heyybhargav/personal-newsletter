@@ -133,6 +133,12 @@ export default function SourcesPage() {
                 return;
             }
 
+            // Prevent re-detection of the same URL if already detected/detecting
+            // This allows us to set the detectedSource optimistically when clicking a search result
+            if (detectedSource && (detectedSource.feedUrl === trimmed || detectedSource.originalUrl === trimmed)) {
+                return;
+            }
+
             // Simple heuristic: Does it look like a URL?
             const isUrl = trimmed.includes('.') && !trimmed.includes(' ') && (trimmed.startsWith('http') || trimmed.includes('www') || trimmed.split('.').length > 1);
 
@@ -145,14 +151,32 @@ export default function SourcesPage() {
         }, 600); // 600ms debounce
 
         return () => clearTimeout(timer);
-    }, [inputUrl, detectUrl, searchUniversal]);
+    }, [inputUrl, detectUrl, searchUniversal, detectedSource]);
 
     const handleSelectResult = (result: SearchResult) => {
-        setInputUrl(result.url);
-        // detection will auto-trigger due to useEffect but we can force it for better UX
-        // actually, setting inputUrl will trigger the effect. 
-        // We just need to make sure the user knows what happened.
+        // Optimistically set the detected source from the search result
+        // This makes the UI feel instant instead of waiting for a backend roundtrip
+
+        let type: SourceType = 'rss';
+        if (result.type === 'youtube') type = 'youtube';
+        else if (result.type === 'podcast') type = 'podcast';
+        else if (result.type === 'reddit') type = 'reddit';
+        else if (result.type === 'news') type = 'rss'; // Map news to RSS
+
+        const optimisticSource: DetectedSource = {
+            type: type,
+            name: result.title,
+            feedUrl: result.url,
+            originalUrl: result.url,
+            favicon: result.thumbnail || '',
+            confidence: 'high'
+        };
+
+        setDetectedSource(optimisticSource);
+        setEditableName(result.title);
+        setInputUrl(result.url); // This will trigger useEffect, but our check above will prevent re-detection
         setSearchResults([]); // Clear results
+        setDetectionError('');
     };
 
     const handleAdd = async () => {
@@ -226,111 +250,105 @@ export default function SourcesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F9FAFB]">
-            {/* Header - Simplified since we have Navbar */}
-            <div className="bg-white border-b border-gray-200 py-6 px-4 sm:px-6">
-                <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans selection:bg-[#FF5700] selection:text-white">
+
+            {/* Header */}
+            <div className="max-w-3xl mx-auto px-6 pt-16 pb-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900">Intelligence Sources</h1>
-                        <p className="text-gray-500 mt-1 text-sm sm:text-base">Curate your daily briefing. We'll handle the rest.</p>
+                        <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-4">
+                            <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Input Streams</p>
+                        </div>
+                        <h1 className="text-5xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
+                            Intelligence <span className="italic text-gray-400">Sources</span>
+                        </h1>
+                        <p className="text-xl text-gray-500 font-light mt-6 max-w-lg leading-relaxed font-serif">
+                            Curate the signal. All configured streams are synthesized into your daily briefing.
+                        </p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="w-full sm:w-auto bg-black text-white px-5 py-3 rounded-lg hover:bg-gray-800 transition font-medium flex items-center justify-center gap-2 shadow-sm text-sm sm:text-base"
+                        className="group flex items-center gap-3 px-6 py-3 bg-[#1A1A1A] text-white rounded-full hover:bg-[#FF5700] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                     >
-                        <span className="text-lg">+</span> Add Source
+                        <span className="font-medium">Add Source</span>
+                        <span className="group-hover:translate-x-1 transition-transform">→</span>
                     </button>
                 </div>
+
+                <div className="h-px w-full bg-gray-200/60 mt-12"></div>
             </div>
 
             {/* Main Content */}
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+            <div className="max-w-3xl mx-auto px-6 pb-24">
                 {message && (
-                    <div className={`mb-6 p-4 rounded-lg font-medium text-sm ${message.includes('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                    <div className={`mb-8 p-4 rounded-lg font-medium text-sm border ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-700' : 'bg-green-50 border-green-100 text-green-700'}`}>
                         {message}
                     </div>
                 )}
 
                 {/* Sources List */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="space-y-1">
                     {loading ? (
-                        <div className="p-12 text-center text-gray-400">Loading intelligence sources...</div>
+                        <div className="py-24 text-center">
+                            <div className="inline-block w-8 h-8 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
+                            <p className="text-gray-400 font-serif italic">Loading intelligence streams...</p>
+                        </div>
                     ) : sources.length === 0 ? (
-                        <div className="text-center py-20 px-4">
-                            <div className="text-5xl mb-4 grayscale opacity-50">📰</div>
-                            <h3 className="text-xl font-medium text-gray-900">No sources configured</h3>
-                            <p className="text-gray-500 mt-2 mb-6">Add news sites, YouTube channels, newsletters, or any RSS feed.</p>
-                            <button onClick={() => setShowAddModal(true)} className="text-indigo-600 font-medium hover:underline">Add your first source</button>
+                        <div className="text-center py-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
+                            <div className="text-4xl mb-4 opacity-30">📭</div>
+                            <h3 className="text-lg font-serif font-medium text-gray-900">No sources configured</h3>
+                            <p className="text-gray-500 mt-2 mb-8 font-light">Add news sites, YouTube channels, newsletters, or any RSS feed.</p>
+                            <button onClick={() => setShowAddModal(true)} className="text-[#FF5700] font-bold hover:underline">Add your first source</button>
                         </div>
                     ) : (
-                        <div className="divide-y divide-gray-100">
+                        <div className="relative">
+                            <div className="absolute left-6 top-0 bottom-0 w-px bg-gray-200 hidden md:block"></div>
                             {sources.map(source => (
-                                <div key={source.id} className="p-4 sm:p-5 hover:bg-gray-50 transition flex flex-col sm:flex-row sm:items-center gap-4">
-                                    {/* Icon & Title Group */}
-                                    <div className="flex items-start sm:items-center gap-4 flex-1">
-                                        {/* Icon */}
-                                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gray-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm">
-                                            {source.favicon ? (
-                                                <img src={source.favicon} alt="" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" onError={(e) => {
-                                                    (e.target as HTMLImageElement).style.display = 'none';
-                                                }} />
-                                            ) : (
-                                                <span className="text-lg sm:text-xl">{getSourceTypeEmoji(source.type as SourceType)}</span>
-                                            )}
-                                        </div>
+                                <div key={source.id} className="relative pl-0 md:pl-12 py-6 group border-b border-gray-100 last:border-0 hover:bg-white/50 -mx-6 px-6 md:mx-0 md:px-0 transition-colors rounded-lg">
+                                    {/* Timeline Dot */}
+                                    <div className={`absolute left-[21px] top-9 w-3 h-3 rounded-full border-2 border-[#FDFBF7] hidden md:block transition-colors duration-300 ${source.enabled ? 'bg-[#FF5700]' : 'bg-gray-300'}`}></div>
 
-                                        {/* Text Info */}
+                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex flex-wrap items-center gap-2 mb-1">
-                                                <a
-                                                    href={source.originalUrl || source.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="font-semibold text-gray-900 text-base sm:text-lg hover:text-indigo-600 transition break-words sm:truncate"
-                                                >
-                                                    {source.name}
-                                                </a>
-                                                {/* Mobile-friendly external link icon */}
-                                                <a
-                                                    href={source.originalUrl || source.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-gray-400 hover:text-indigo-600 transition hidden sm:inline"
-                                                >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                                </a>
-                                            </div>
-                                            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                                                <span className={`px-2 py-0.5 rounded-full font-medium capitalize border ${getSourceTypeColor(source.type as SourceType)}`}>
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className={`text-xs font-bold tracking-wider uppercase px-2 py-0.5 rounded border ${getSourceTypeColor(source.type as SourceType)} bg-white`}>
                                                     {source.type}
                                                 </span>
-                                                <span className={`px-2 py-0.5 rounded-full font-medium border ${source.enabled ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                                                    {source.enabled ? 'Active' : 'Paused'}
+                                                {!source.enabled && (
+                                                    <span className="text-xs font-mono text-gray-400 uppercase tracking-widest">PAUSED</span>
+                                                )}
+                                            </div>
+
+                                            <div className="flex items-baseline gap-3">
+                                                <h3 className="text-xl font-serif font-medium text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors leading-tight">
+                                                    <a href={source.originalUrl || source.url} target="_blank" rel="noopener noreferrer" className="hover:underline decoration-1 underline-offset-4">
+                                                        {source.name}
+                                                    </a>
+                                                </h3>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 mt-2 text-sm text-gray-500 font-mono">
+                                                <span className="truncate max-w-[300px] opacity-60 hover:opacity-100 transition-opacity">
+                                                    {source.url.replace(/^https?:\/\//, '').replace(/^www\./, '')}
                                                 </span>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Actions - Row on Mobile */}
-                                    <div className="flex gap-2 sm:ml-auto w-full sm:w-auto">
-                                        <button
-                                            onClick={() => handleToggle(source)}
-                                            className={`flex-1 sm:flex-initial justify-center px-4 py-2 text-sm font-medium rounded-lg border transition ${source.enabled
-                                                ? 'text-gray-600 border-gray-200 hover:bg-gray-100'
-                                                : 'text-green-600 border-green-200 hover:bg-green-50'
-                                                }`}
-                                        >
-                                            {source.enabled ? 'Pause' : 'Resume'}
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(source.id)}
-                                            className="px-3 sm:p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition border border-transparent hover:border-red-100"
-                                            title="Delete source text-center"
-                                        >
-                                            <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
+                                        <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mobile-actions-visible">
+                                            <button
+                                                onClick={() => handleToggle(source)}
+                                                className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition py-2"
+                                            >
+                                                {source.enabled ? 'Pause' : 'Resume'}
+                                            </button>
+                                            <div className="w-px h-3 bg-gray-300"></div>
+                                            <button
+                                                onClick={() => handleDelete(source.id)}
+                                                className="text-xs font-bold uppercase tracking-widest text-red-300 hover:text-red-600 transition py-2"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -339,165 +357,177 @@ export default function SourcesPage() {
                 </div>
             </div>
 
-            {/* Add Source Modal - Smart Detection */}
+            {/* Add Source Modal - Final Refined Design */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                        {/* Header */}
-                        <div className="flex justify-between items-center p-6 border-b border-gray-100">
-                            <div>
-                                <h2 className="text-xl font-bold font-serif">Add Intelligence Source</h2>
-                                <p className="text-sm text-gray-500 mt-1">Paste any URL — YouTube, Reddit, Substack, RSS, or website</p>
+                <div className="fixed inset-0 bg-[#FDFBF7]/95 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white w-full max-w-2xl h-[650px] flex flex-col shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-2xl animate-in fade-in zoom-in-95 duration-200">
+                        {/* Fixed Top Section: Header + Large Input */}
+                        <div className="flex-none bg-white p-8 pb-0 z-20 rounded-t-2xl">
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    <h2 className="text-3xl font-serif font-medium text-[#1A1A1A]">New Source</h2>
+                                </div>
+                                <button onClick={resetModal} className="text-gray-400 hover:text-black transition p-2 -mr-2 bg-gray-50 hover:bg-gray-100 rounded-full">
+                                    <span className="sr-only">Close</span>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
                             </div>
-                            <button onClick={resetModal} className="text-gray-400 hover:text-gray-600 p-1">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
+
+                            {/* Large Editorial Input (Fixed) */}
+                            <div className="relative group pb-4 border-b border-gray-100">
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    value={inputUrl}
+                                    onChange={(e) => setInputUrl(e.target.value)}
+                                    placeholder="Paste URL or search (e.g. 'TechCrunch')"
+                                    className="w-full pl-10 text-2xl font-serif bg-transparent border-none placeholder:text-gray-300 focus:ring-0 focus:outline-none transition-colors p-0"
+                                    autoFocus
+                                />
+                                {detecting && (
+                                    <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                                        <div className="w-5 h-5 border-2 border-gray-200 border-t-[#FF5700] rounded-full animate-spin"></div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="p-6">
-                            {/* Smart URL Input */}
-                            <div className="mb-6">
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                    Source URL
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={inputUrl}
-                                        onChange={(e) => setInputUrl(e.target.value)}
-                                        placeholder="Paste URL or search (e.g. 'MKBHD', 'TechCrunch')"
-                                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 pr-12 focus:border-black focus:outline-none transition-colors font-mono text-sm"
-                                        autoFocus
-                                    />
-                                    {detecting || isSearching ? (
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                            <div className="w-5 h-5 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-                                        </div>
-                                    ) : null}
+                        {/* Scrollable Results Area */}
+                        <div className="flex-1 overflow-y-auto px-8 py-6">
+                            {/* Intro Text / Helper (only when empty) */}
+                            {!inputUrl && !detectedSource && (
+                                <div className="h-full flex flex-col items-center justify-center opacity-60 pb-10">
+                                    <p className="font-serif italic text-gray-400 text-lg text-center max-w-sm leading-relaxed">
+                                        Search for YouTube channels, subreddits, podcasts, or paste any RSS link.
+                                    </p>
                                 </div>
-                                <p className="text-xs text-gray-400 mt-2">
-                                    Supported: YouTube, Reddit, Substack, Medium, Hacker News, GitHub, Twitter/X, Podcasts, RSS
-                                </p>
-                            </div>
+                            )}
 
                             {/* Detection Error */}
                             {detectionError && (
-                                <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl text-red-700 text-sm">
+                                <div className="mb-6 p-4 bg-red-50 border-l-2 border-red-500 text-red-700 text-sm font-medium rounded-r-lg">
                                     {detectionError}
                                 </div>
                             )}
 
-                            {/* Search Results List */}
+                            {/* Search Results List - Editorial Style */}
                             {searchResults.length > 0 && !detectedSource && (
-                                <div className="mb-6">
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Search Results</h3>
-                                    <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                <div className="animate-in slide-in-from-bottom-2">
+                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 sticky top-0 bg-white/95 py-2 backdrop-blur-sm z-10 w-full">
+                                        Found {searchResults.length} sources
+                                    </h3>
+                                    <div className="space-y-3 pb-4">
                                         {searchResults.map((result, idx) => (
                                             <button
                                                 key={idx}
                                                 onClick={() => handleSelectResult(result)}
-                                                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-200 transition text-left group"
+                                                className="w-full flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all text-left group bg-white"
                                             >
-                                                {result.thumbnail ? (
-                                                    <img src={result.thumbnail} alt="" className="w-10 h-10 rounded-lg object-cover bg-gray-200" />
-                                                ) : (
-                                                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-lg">
-                                                        {getSourceTypeEmoji(result.type as SourceType)}
-                                                    </div>
-                                                )}
+                                                <div className="w-12 h-12 bg-gray-50 flex-none flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all rounded-lg overflow-hidden border border-gray-100">
+                                                    {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : getSourceTypeEmoji(result.type as SourceType)}
+                                                </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="font-bold text-gray-900 truncate group-hover:text-black">
+                                                    <div className="font-serif text-lg font-medium text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">
                                                         {result.title}
                                                     </div>
-                                                    <div className="text-xs text-gray-500 flex items-center gap-2">
-                                                        <span className={`capitalize ${getSourceTypeColor(result.type as SourceType)} px-1.5 py-0.5 rounded text-[10px]`}>
-                                                            {result.type}
-                                                        </span>
-                                                        <span className="truncate opacity-70">{result.description}</span>
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500 font-mono mt-0.5">
+                                                        <span className={`uppercase tracking-wider ${getSourceTypeColor(result.type as SourceType)}`}>{result.type}</span>
+                                                        <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                                                        <span className="truncate max-w-[200px]">{result.description}</span>
                                                     </div>
                                                 </div>
-                                                <div className="text-gray-300 group-hover:text-black transition">
+                                                <div className="text-gray-300 group-hover:text-[#FF5700] transition-colors transform group-hover:translate-x-1 flex-none">
                                                     →
                                                 </div>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
-                            )}                        {/* Detected Source Preview */}
-                            {detectedSource && (
-                                <div className="mb-6 border-2 border-green-200 bg-green-50/50 rounded-xl p-5 animate-in slide-in-from-bottom-2">
-                                    <div className="flex items-start gap-4 mb-4">
-                                        <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center border border-gray-200 shadow-sm flex-shrink-0">
-                                            {detectedSource.favicon ? (
-                                                <img src={detectedSource.favicon} alt="" className="w-8 h-8 object-contain" />
-                                            ) : (
-                                                <span className="text-2xl">{getSourceTypeEmoji(detectedSource.type)}</span>
-                                            )}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase border ${getSourceTypeColor(detectedSource.type)}`}>
-                                                    {detectedSource.type}
-                                                </span>
-                                                {detectedSource.confidence === 'high' && (
-                                                    <span className="text-green-600 text-xs">✓ Verified</span>
-                                                )}
-                                            </div>
-                                            <input
-                                                type="text"
-                                                value={editableName}
-                                                onChange={(e) => setEditableName(e.target.value)}
-                                                className="w-full text-lg font-bold bg-transparent border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none transition py-1"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Sample Content Preview */}
-                                    {sampleItems.length > 0 && (
-                                        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                                            <div className="px-3 py-2 bg-gray-50 border-b border-gray-100">
-                                                <span className="text-xs font-bold text-gray-500 uppercase">Latest Content</span>
-                                            </div>
-                                            <ul className="divide-y divide-gray-100">
-                                                {sampleItems.map((item, i) => (
-                                                    <li key={i} className="px-3 py-2">
-                                                        <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-800 hover:text-indigo-600 line-clamp-1">
-                                                            {item.title}
-                                                        </a>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-
-                                    {sampleItems.length === 0 && !detecting && (
-                                        <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
-                                            ⚠️ Couldn't preview content. The source may still work when added.
-                                        </p>
-                                    )}
-                                </div>
                             )}
 
-                            {/* Actions */}
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={handleAdd}
-                                    disabled={!detectedSource || detecting}
-                                    className="flex-1 bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition disabled:opacity-40 disabled:cursor-not-allowed"
-                                >
-                                    {detectedSource ? `Add ${detectedSource.type} Source` : 'Detecting...'}
-                                </button>
-                                <button
-                                    onClick={resetModal}
-                                    className="px-6 py-3 bg-gray-100 rounded-xl font-medium hover:bg-gray-200 transition"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
+                            {/* Detected Source Preview */}
+                            {detectedSource && (
+                                <div className="animate-in slide-in-from-bottom-4">
+                                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                                        <div className="flex items-start gap-6">
+                                            <div className="w-16 h-16 bg-white border border-gray-100 flex-none flex items-center justify-center text-3xl shadow-sm rounded-lg overflow-hidden">
+                                                {detectedSource.favicon ? (
+                                                    <img src={detectedSource.favicon} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    getSourceTypeEmoji(detectedSource.type)
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-wider ${getSourceTypeColor(detectedSource.type)} bg-white`}>
+                                                        {detectedSource.type}
+                                                    </span>
+                                                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                                                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                                        Ready to add
+                                                    </span>
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={editableName}
+                                                    onChange={(e) => setEditableName(e.target.value)}
+                                                    className="w-full text-2xl font-serif font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none transition-colors p-0 truncate"
+                                                />
+                                                <p className="text-sm text-gray-400 mt-1 font-mono truncate">{detectedSource.feedUrl}</p>
+
+                                                {/* Preview Items */}
+                                                {sampleItems.length > 0 && (
+                                                    <ul className="mt-4 space-y-2 border-l-2 border-gray-100 pl-4">
+                                                        {sampleItems.slice(0, 3).map((item, i) => (
+                                                            <li key={i} className="text-sm text-gray-500 font-serif italic line-clamp-1">
+                                                                "{item.title}"
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Fixed Actions Bottom Bar */}
+                        <div className="p-6 border-t border-gray-100 bg-white flex-none flex justify-end gap-3 z-20 rounded-b-2xl">
+                            <button
+                                onClick={resetModal}
+                                className="px-6 py-2.5 text-gray-500 font-medium hover:text-black hover:bg-gray-50 rounded-full transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleAdd}
+                                disabled={!detectedSource || detecting}
+                                className="bg-[#1A1A1A] text-white px-8 py-2.5 rounded-full font-medium hover:bg-[#FF5700] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200 flex items-center gap-2"
+                            >
+                                {detecting ? 'Detecting...' : detectedSource ? 'Confirm Source' : 'Add Source'}
+                                {!detecting && detectedSource && <span>↵</span>}
+                            </button>
                         </div>
                     </div>
                 </div>
             )}
+
+            <style jsx global>{`
+                .mobile-actions-visible {
+                   opacity: 1; 
+                }
+                @media (min-width: 640px) {
+                   .mobile-actions-visible {
+                       opacity: 0;
+                   }
+                   .group:hover .mobile-actions-visible {
+                       opacity: 1;
+                   }
+                }
+            `}</style>
         </div>
     );
 }

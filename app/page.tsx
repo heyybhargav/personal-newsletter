@@ -69,156 +69,175 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] text-gray-900 font-sans">
+    <div className="min-h-screen bg-[#FDFBF7] text-gray-900 font-sans selection:bg-[#FF5700] selection:text-white">
       {/* Spam Warning Banner */}
-      <div className="bg-yellow-50 border-b border-yellow-100 px-6 py-3 text-center">
-        <p className="text-sm text-yellow-800 font-medium">
-          ⚠️ Emails landing in Spam? Please move them to <strong>Primary</strong> to help us build reputation.
+      <div className="bg-[#FFE100]/10 border-b border-[#FFE100]/20 px-6 py-2 text-center">
+        <p className="text-xs font-medium text-yellow-800 tracking-wide uppercase">
+          ⚠️ Check your spam folder
         </p>
       </div>
 
       {/* Premium Hero Section */}
-      <div className="bg-white border-b border-gray-200 pt-12 pb-16 px-6">
+      <div className="pt-12 pb-16 px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <p className="text-sm font-bold tracking-widest text-gray-400 uppercase mb-2">Admin Dashboard</p>
-              <h1 className="text-5xl font-serif font-bold text-gray-900 tracking-tight">Signal Control Room</h1>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="space-y-4">
+              <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm">
+                <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">Control Room</p>
+              </div>
+              <h1 className="text-6xl md:text-7xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-[0.9]">
+                Morning <span className="italic text-gray-400">Briefing</span>
+              </h1>
             </div>
-            <Link href="/subscribe" className="text-gray-400 hover:text-black transition text-sm font-medium border-b border-gray-200 hover:border-black pb-0.5">
-              View Public Subscription Page ↗
+            <Link href="/subscribe" className="group flex items-center gap-2 text-gray-400 hover:text-black transition text-sm font-medium border-b border-transparent hover:border-black pb-0.5">
+              <span>Public Page</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
             </Link>
           </div>
-          <p className="text-xl text-gray-500 font-light max-w-2xl leading-relaxed">
-            Manage the intelligence sources and generation pipeline for your executive briefings.
-          </p>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-12">
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Link href="/sources" className="group bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md hover:border-gray-300 transition-all">
-            <div className="text-3xl mb-4 grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition">📚</div>
-            <h3 className="text-lg font-bold mb-2">Manage Sources</h3>
-            <p className="text-gray-500 text-sm">Curate the RSS feeds and intelligence channels.</p>
-          </Link>
+          <div className="h-px w-full bg-gray-200/60 mb-12"></div>
 
-          <Link href="/settings" className="group bg-white rounded-xl shadow-sm border border-gray-200 p-8 hover:shadow-md hover:border-gray-300 transition-all">
-            <div className="text-3xl mb-4 grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition">⚙️</div>
-            <h3 className="text-lg font-bold mb-2">System Config</h3>
-            <p className="text-gray-500 text-sm">Configure global specific delivery preferences.</p>
-          </Link>
+          {/* New Grid Layout */}
+          <div className="grid lg:grid-cols-12 gap-12">
 
-          <button
-            onClick={handleSendTest}
-            disabled={sending}
-            className="group bg-black text-white rounded-xl shadow-lg p-8 hover:bg-gray-900 transition-all text-left disabled:opacity-50"
-          >
-            <div className="text-3xl mb-4">✨</div>
-            <h3 className="text-lg font-bold mb-2">
-              {sending ? 'Dispatching...' : 'Force Dispatch'}
-            </h3>
-            <p className="text-gray-400 text-sm">Trigger immediate digest generation for Test Admin.</p>
-          </button>
-        </div>
-
-        {/* Message Display */}
-        {message && (
-          <div className={`mb-8 p-4 rounded-lg font-medium border ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-700' : 'bg-green-50 border-green-100 text-green-700'}`}>
-            {message}
-          </div>
-        )}
-
-        {/* Current Sources */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <div className="flex justify-between items-center mb-8 border-b border-gray-100 pb-6">
-            <h2 className="text-2xl font-serif font-bold">Active Intelligence Sources</h2>
-            <button
-              onClick={handlePreview}
-              disabled={generating}
-              className="text-indigo-600 font-medium hover:text-indigo-800 transition disabled:opacity-50"
-            >
-              {generating ? 'Generating Preview...' : 'View Preview'}
-            </button>
-          </div>
-
-          {/* PREVIEW AREA */}
-          {previewSections.length > 0 && (
-            <div className="mb-12 bg-gray-50 rounded-xl p-8 border border-gray-200 shadow-inner animate-in fade-in slide-in-from-top-4">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="font-serif font-bold text-xl">📝 Latest Digest Preview</h3>
-                <button onClick={() => setPreviewSections([])} className="text-sm text-gray-500 hover:text-gray-700">Close</button>
-              </div>
-
-              <div className="space-y-8 prose prose-indigo max-w-none">
-                {previewSections.map((section, idx) => (
-                  <div key={idx} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <h4 className="flex items-center gap-3 text-sm font-bold tracking-widest text-gray-400 uppercase mb-4 border-b border-gray-50 pb-2">
-                      {section.title}
-                    </h4>
-
-                    {/* Render the AI Narrative - treating newlines as paragraphs */}
-                    <div className="text-gray-800 leading-relaxed space-y-4">
-                      {(section.summary || '').split('\n\n').map((para, i) => (
-                        <p key={i} dangerouslySetInnerHTML={{
-                          __html: para.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        }} />
-                      ))}
+            {/* LEFT COLUMN: Actions (4 cols) */}
+            <div className="lg:col-span-4 space-y-8">
+              <div>
+                <h3 className="text-xs font-bold tracking-widest text-[#FF5700] uppercase mb-6">Operations</h3>
+                <div className="space-y-3">
+                  <Link href="/sources" className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md hover:border-gray-200 transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-sm group-hover:bg-black group-hover:text-white transition-colors">📚</div>
+                      <span className="font-medium text-gray-900">Manage Sources</span>
                     </div>
+                    <span className="text-gray-300 group-hover:text-black transition-colors">→</span>
+                  </Link>
 
-                    {/* Deep Dive Links */}
-                    <div className="mt-6 pt-6 border-t border-gray-100">
-                      <p className="text-xs font-bold text-gray-400 uppercase mb-3">Deep Dive Sources</p>
-                      <ul className="space-y-2">
-                        {section.items.map((item, i) => (
-                          <li key={i}>
-                            <a href={item.link} target="_blank" className="text-sm text-indigo-600 hover:underline truncate block">
-                              {item.title}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
+                  <Link href="/settings" className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md hover:border-gray-200 transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-sm group-hover:bg-black group-hover:text-white transition-colors">⚙️</div>
+                      <span className="font-medium text-gray-900">System Config</span>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {loading ? (
-            <div className="py-12 text-center text-gray-400">Loading sources...</div>
-          ) : sources.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-4 opacity-30">📭</div>
-              <p className="text-gray-500 mb-6">No sources configured for the admin account.</p>
-              <Link href="/sources" className="bg-black text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition">
-                Add Source
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {sources.map(source => (
-                <div
-                  key={source.id}
-                  className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100 hover:bg-white hover:shadow-sm transition overflow-hidden"
-                >
-                  {/* Icon */}
-                  <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 flex-shrink-0 flex items-center justify-center text-lg shadow-sm">
-                    {source.favicon ? <img src={source.favicon} className="w-6 h-6 object-contain" /> : getSourceTypeEmoji(source.type)}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">{source.name}</h3>
-                    <p className="text-xs text-gray-500 truncate font-mono opacity-80">{source.url.replace(/^https?:\/\//, '').replace(/^www\./, '')}</p>
-                  </div>
-
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${source.enabled ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                    <span className="text-gray-300 group-hover:text-black transition-colors">→</span>
+                  </Link>
                 </div>
-              ))}
+              </div>
+
+              <div className="p-6 bg-[#1A1A1A] rounded-xl text-white relative overflow-hidden group">
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span className="text-xs font-mono text-gray-500">SYSTEM READY</span>
+                  </div>
+                  <h3 className="text-xl font-serif mb-2">Manual Dispatch</h3>
+                  <p className="text-gray-400 text-sm mb-6 leading-relaxed">Trigger an immediate digest generation for the current active sources.</p>
+
+                  <button
+                    onClick={handleSendTest}
+                    disabled={sending}
+                    className="w-full py-3 bg-white text-black font-medium text-sm rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {sending ? (
+                      <>
+                        <span className="animate-spin">↻</span> Processing...
+                      </>
+                    ) : (
+                      'Run Sequence'
+                    )}
+                  </button>
+                </div>
+
+                {/* Decorative noise/gradient */}
+                <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-white/5 blur-[80px] rounded-full pointer-events-none"></div>
+              </div>
+
+              {/* Message Display - Moved here for better UX */}
+              {message && (
+                <div className={`p-4 rounded-lg text-sm font-medium border ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-700' : 'bg-green-50 border-green-100 text-green-700'}`}>
+                  {message}
+                </div>
+              )}
             </div>
-          )}
+
+            {/* RIGHT COLUMN: Sources & Preview (8 cols) */}
+            <div className="lg:col-span-8">
+              <div className="flex justify-between items-baseline mb-6">
+                <h2 className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Intelligence Feed</h2>
+                <button
+                  onClick={handlePreview}
+                  disabled={generating}
+                  className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition disabled:opacity-50"
+                >
+                  {generating ? 'Compiling...' : 'Preview Output'}
+                </button>
+              </div>
+
+              {/* PREVIEW AREA */}
+              {previewSections.length > 0 && (
+                <div className="mb-12 border-l-2 border-[#FF5700] pl-6 py-2 animate-in fade-in slide-in-from-top-2">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="font-serif font-bold text-2xl">Latest Briefing</h3>
+                    <button onClick={() => setPreviewSections([])} className="text-gray-400 hover:text-black">×</button>
+                  </div>
+
+                  <div className="space-y-8">
+                    {previewSections.map((section, idx) => (
+                      <div key={idx} className="prose prose-sm max-w-none">
+                        <h4 className="text-lg font-serif font-bold mb-3">{section.title}</h4>
+
+                        {/* Render the AI Narrative */}
+                        <div className="text-gray-600 leading-relaxed space-y-3 font-serif text-lg">
+                          {(section.summary || '').split('\n\n').map((para, i) => (
+                            <p key={i} dangerouslySetInnerHTML={{
+                              __html: para.replace(/\*\*(.*?)\*\*/g, '<strong class="text-black font-semibold">$1</strong>')
+                            }} />
+                          ))}
+                        </div>
+
+                        {/* Deep Dive Links */}
+                        <div className="mt-4 flex flex-wrap gap-2 text-xs font-mono">
+                          {section.items.map((item, i) => (
+                            <a key={i} href={item.link} target="_blank" className="px-2 py-1 bg-gray-100 text-gray-500 rounded hover:bg-[#FF5700] hover:text-white transition-colors truncate max-w-[200px]">
+                              {new URL(item.link).hostname.replace('www.', '')}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="h-px w-full bg-gray-200 mt-12"></div>
+                </div>
+              )}
+
+              {loading ? (
+                <div className="py-12 text-center text-gray-400 font-mono text-sm animate-pulse">Initializing feed protocols...</div>
+              ) : sources.length === 0 ? (
+                <div className="py-12 border border-dashed border-gray-300 rounded-xl text-center">
+                  <p className="text-gray-500 font-serif italic mb-4">"Silence is golden, but news is essential."</p>
+                  <Link href="/sources" className="text-sm font-bold underline decoration-[#FF5700] decoration-2 underline-offset-4 hover:bg-[#FF5700] hover:text-white hover:no-underline transition-all px-2 py-1 rounded">
+                    Initialize Sources
+                  </Link>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100 border-t border-b border-gray-100">
+                  {sources.map(source => (
+                    <div key={source.id} className="group py-4 flex items-center justify-between hover:bg-white hover:px-4 -mx-4 transition-all duration-300 rounded-lg">
+                      <div className="flex items-center gap-4">
+                        <span className="text-xl opacity-50 grayscale group-hover:grayscale-0 transition-all">
+                          {source.favicon ? <img src={source.favicon} className="w-5 h-5 object-contain" /> : getSourceTypeEmoji(source.type)}
+                        </span>
+                        <div>
+                          <h3 className="font-serif text-lg text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors">{source.name}</h3>
+                          <p className="text-xs text-gray-400 font-mono lowercase">{source.url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0]}</p>
+                        </div>
+                      </div>
+                      <div className={`w-1.5 h-1.5 rounded-full ${source.enabled ? 'bg-[#FF5700]' : 'bg-gray-200'} group-hover:scale-150 transition-transform`}></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

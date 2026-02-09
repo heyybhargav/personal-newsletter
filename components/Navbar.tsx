@@ -39,16 +39,16 @@ export default function Navbar() {
     if (pathname === '/login') return null;
 
     return (
-        <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <nav className="bg-[#FDFBF7] border-b border-gray-200/50 sticky top-0 z-40 backdrop-blur-md">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16">
+                <div className="flex justify-between h-20">
                     <div className="flex">
                         <div className="flex-shrink-0 flex items-center">
                             <Link href="/">
-                                <span className="font-serif font-bold text-xl tracking-tight">Signal</span>
+                                <span className="font-serif font-bold text-2xl tracking-tight text-[#1A1A1A]">Signal.</span>
                             </Link>
                         </div>
-                        <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
+                        <div className="hidden sm:ml-12 sm:flex sm:space-x-8">
                             {user && navLinks.map((link) => (
                                 <Link
                                     key={link.path}

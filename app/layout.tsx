@@ -25,6 +25,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${newsreader.variable} font-sans antialiased`}>
         <Navbar />
         {children}
+        <div className="fixed inset-0 z-50 pointer-events-none bg-noise opacity-[0.03] mix-blend-overlay"></div>
       </body>
     </html>
   );
