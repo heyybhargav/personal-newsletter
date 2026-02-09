@@ -61,7 +61,7 @@ export default function Hero() {
                 >
                     <button
                         onClick={triggerLogin}
-                        className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 text-lg font-medium text-white bg-[#1A1A1A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 w-full md:w-auto overflow-hidden cursor-pointer"
+                        className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 text-lg font-medium text-white bg-[#1A1A1A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 w-full md:w-auto overflow-hidden cursor-pointer z-30"
                     >
                         {/* Shimmer Effect */}
                         <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10 pointer-events-none" />

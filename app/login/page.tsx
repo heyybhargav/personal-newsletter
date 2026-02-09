@@ -63,7 +63,7 @@ export default function LoginPage() {
                 <span className="font-bold text-xl tracking-tight text-[#1A1A1A]">Signal.</span>
                 <button
                     onClick={triggerLogin}
-                    className="text-sm font-medium text-gray-600 hover:text-black transition-colors"
+                    className="text-sm font-medium text-gray-600 hover:text-black transition-colors cursor-pointer"
                 >
                     Log in
                 </button>
@@ -86,7 +86,7 @@ export default function LoginPage() {
                     <div className="pt-8 space-y-4">
                         <button
                             onClick={triggerLogin}
-                            className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 text-lg font-medium text-white bg-[#111111] rounded-full transition-all duration-300 shadow-xl shadow-black/5 overflow-hidden cursor-pointer"
+                            className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 text-lg font-medium text-white bg-[#111111] rounded-full transition-all duration-300 shadow-xl shadow-black/5 overflow-hidden cursor-pointer z-30"
                         >
                             {/* Shimmer Effect */}
                             <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10 pointer-events-none" />
