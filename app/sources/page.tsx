@@ -304,13 +304,14 @@ export default function SourcesPage() {
                         <div className="relative">
                             <div className="absolute left-6 top-0 bottom-0 w-px bg-gray-200 hidden md:block"></div>
                             {sources.map(source => (
-                                <div key={source.id} className="relative pl-0 md:pl-12 py-6 group border-b border-gray-100 last:border-0 hover:bg-white/50 -mx-6 px-6 md:mx-0 md:px-0 transition-colors rounded-lg">
+                                <div key={source.id} className="relative md:pl-12 py-6 group border-b border-gray-100 last:border-0 hover:bg-white/50 transition-colors rounded-lg">
                                     {/* Timeline Dot */}
                                     <div className={`absolute left-[21px] top-9 w-3 h-3 rounded-full border-2 border-[#FDFBF7] hidden md:block transition-colors duration-300 ${source.enabled ? 'bg-[#FF5700]' : 'bg-gray-300'}`}></div>
 
                                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-3 mb-2">
+                                                {source.favicon && <img src={source.favicon} className="w-4 h-4 object-contain" />}
                                                 <span className={`text-xs font-bold tracking-wider uppercase px-2 py-0.5 rounded border ${getSourceTypeColor(source.type as SourceType)} bg-white`}>
                                                     {source.type}
                                                 </span>

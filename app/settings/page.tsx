@@ -128,7 +128,7 @@ export default function SettingsPage() {
                                             type="email"
                                             value={email}
                                             onChange={e => setEmail(e.target.value)}
-                                            className="w-full bg-white border border-gray-200 rounded-none border-b-2 focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-serif placeholder:text-gray-300 transition-colors"
+                                            className="w-full bg-transparent border-0 border-b-2 border-gray-200 rounded-none focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-serif placeholder:text-gray-300 transition-colors focus:outline-none"
                                             placeholder="your@email.com"
                                             required
                                         />
@@ -142,7 +142,7 @@ export default function SettingsPage() {
                                             type="time"
                                             value={deliveryTime}
                                             onChange={e => setDeliveryTime(e.target.value)}
-                                            className="w-full bg-white border border-gray-200 rounded-none border-b-2 focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-mono transition-colors"
+                                            className="w-full bg-transparent border-0 border-b-2 border-gray-200 rounded-none focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-serif transition-colors focus:outline-none"
                                             required
                                         />
                                     </div>

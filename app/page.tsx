@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Radio, Settings2 } from 'lucide-react';
 import { Source, DigestSection } from '@/lib/types';
 
 export default function Home() {
@@ -104,7 +105,9 @@ export default function Home() {
                 <div className="space-y-3">
                   <Link href="/sources" className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md hover:border-gray-200 transition-all group">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-sm group-hover:bg-black group-hover:text-white transition-colors">📚</div>
+                      <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-sm group-hover:bg-[#FF5700] group-hover:text-white transition-colors">
+                        <Radio className="w-4 h-4 text-[#FF5700] group-hover:text-white transition-colors" />
+                      </div>
                       <span className="font-medium text-gray-900">Manage Sources</span>
                     </div>
                     <span className="text-gray-300 group-hover:text-black transition-colors">→</span>
@@ -112,7 +115,9 @@ export default function Home() {
 
                   <Link href="/settings" className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md hover:border-gray-200 transition-all group">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-sm group-hover:bg-black group-hover:text-white transition-colors">⚙️</div>
+                      <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-sm group-hover:bg-gray-800 group-hover:text-white transition-colors">
+                        <Settings2 className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
+                      </div>
                       <span className="font-medium text-gray-900">System Config</span>
                     </div>
                     <span className="text-gray-300 group-hover:text-black transition-colors">→</span>
@@ -218,9 +223,9 @@ export default function Home() {
               ) : (
                 <div className="divide-y divide-gray-100 border-t border-b border-gray-100">
                   {sources.map(source => (
-                    <div key={source.id} className="group py-4 flex items-center justify-between hover:bg-white hover:px-4 -mx-4 transition-all duration-300 rounded-lg">
+                    <div key={source.id} className="group py-4 flex items-center justify-between hover:bg-white hover:px-4 md:-mx-4 transition-all duration-300 rounded-lg">
                       <div className="flex items-center gap-4">
-                        <span className="text-xl opacity-50 grayscale group-hover:grayscale-0 transition-all">
+                        <span className="text-xl transition-all">
                           {source.favicon ? <img src={source.favicon} className="w-5 h-5 object-contain" /> : getSourceTypeEmoji(source.type)}
                         </span>
                         <div>
