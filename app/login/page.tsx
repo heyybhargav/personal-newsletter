@@ -97,9 +97,9 @@ export default function LoginPage() {
             </section>
 
             {/* Footer */}
-            <footer className="py-12 text-center border-t border-gray-100">
-                <p className="text-sm text-gray-400">
-                    Built with love by Bhargav
+            <footer className="py-12 text-center pb-20">
+                <p className="text-base text-[#666666] font-medium flex items-center justify-center gap-2">
+                    Built with <span className="text-red-500 animate-pulse">❤️</span> by <a href="https://twitter.com/heyybhargav" target="_blank" className="text-[#1A1A1A] font-bold underline decoration-2 underline-offset-4 decoration-gray-200 hover:decoration-[#1A1A1A] transition-all">Bhargav</a>
                 </p>
             </footer>
         </main>
