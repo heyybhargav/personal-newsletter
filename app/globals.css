@@ -53,6 +53,8 @@ body {
   animation-delay: 2s;
 }
 
-.perspective-1000 {
-  perspective: 1000px;
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
