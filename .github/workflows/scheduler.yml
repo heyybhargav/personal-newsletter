@@ -13,4 +13,5 @@ jobs:
       - name: Call Vercel Cron Endpoint
         run: |
           # Replace with your actual Vercel project URL
-          curl -I https://personal-newsletter.vercel.app/api/cron
+          # Replace with your actual Vercel project URL
+          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" --fail --max-time 300 https://personal-newsletter.vercel.app/api/cron

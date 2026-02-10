@@ -6,6 +6,11 @@ import { sendUnifiedDigestEmail } from '@/lib/email';
 
 export async function GET(request: NextRequest) {
     try {
+        const authHeader = request.headers.get('authorization');
+        if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const userEmails = await getAllUsers();
         console.log(`[Cron] ⏰ Hourly check for ${userEmails.length} users...`);
 
