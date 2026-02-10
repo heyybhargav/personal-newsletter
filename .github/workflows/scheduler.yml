@@ -14,4 +14,4 @@ jobs:
         run: |
           # Replace with your actual Vercel project URL
           # Replace with your actual Vercel project URL
-          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" --fail --max-time 300 https://personal-newsletter.vercel.app/api/cron
+          curl -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" --fail --max-time 300 https://signaldaily.vercel.app/api/cron
