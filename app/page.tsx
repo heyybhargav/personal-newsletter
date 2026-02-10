@@ -153,10 +153,13 @@ export default function Home() {
                 <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-white/5 blur-[80px] rounded-full pointer-events-none"></div>
               </div>
 
-              {/* Message Display - Moved here for better UX */}
+              {/* Message Display */}
               {message && (
-                <div className={`p-4 rounded-lg text-sm font-medium border ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-700' : 'bg-green-50 border-green-100 text-green-700'}`}>
-                  {message}
+                <div className={`mt-6 p-4 rounded-lg text-sm border flex items-start gap-3 shadow-sm ${message.includes('Error') ? 'bg-[#1A1A1A] border-red-900/50 text-red-200' : 'bg-[#1A1A1A] border-green-900/50 text-green-200'}`}>
+                  <div className={`mt-0.5 w-2 h-2 rounded-full ${message.includes('Error') ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`}></div>
+                  <div className="flex-1 leading-relaxed font-mono text-xs">
+                    {message}
+                  </div>
                 </div>
               )}
             </div>

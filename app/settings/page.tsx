@@ -44,17 +44,19 @@ export default function SettingsPage() {
         setMessage('');
 
         try {
-            const res = await fetch('/api/cron');
+            const res = await fetch('/api/digest', { method: 'POST' });
             const data = await res.json();
 
-            if (res.ok) {
-                setMessage('✅ Dispatch triggered successfully! Check your inbox momentarily.');
+            if (data.error) {
+                setMessage(`Error: ${data.error}`);
+            } else if (data.sent) {
+                setMessage(`✅ Email sent successfully! (${data.itemCount} items) — Check your Spam folder if you don't see it.`);
                 console.log(data);
             } else {
-                setMessage(`Error: ${data.message || 'Cron failed'}`);
+                setMessage(data.message || 'No email sent');
             }
-        } catch (error) {
-            setMessage('Failed to trigger dispatch');
+        } catch (error: any) {
+            setMessage(`Failed to trigger dispatch: ${error.message}`);
         } finally {
             setRunningCron(false);
         }
@@ -105,9 +107,13 @@ export default function SettingsPage() {
 
             {/* Main Content */}
             <div className="max-w-3xl mx-auto px-6 pb-24">
+                {/* Message Display */}
                 {message && (
-                    <div className={`mb-8 p-4 rounded-lg font-medium border ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-700' : 'bg-green-50 border-green-100 text-green-700'}`}>
-                        {message}
+                    <div className={`mb-8 p-4 rounded-lg text-sm border flex items-start gap-3 shadow-sm ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-800' : 'bg-green-50 border-green-100 text-green-800'}`}>
+                        <div className={`mt-1.5 w-2 h-2 rounded-full ${message.includes('Error') ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                        <div className="flex-1 font-medium">
+                            {message}
+                        </div>
                     </div>
                 )}
 
@@ -216,32 +222,41 @@ export default function SettingsPage() {
                     )}
                 </div>
 
-                {/* Danger Zone / Manual Override */}
-                <div className="mt-20 border-t border-gray-200 pt-10">
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Manual Override</h3>
-                    <div className="bg-white border border-gray-200 rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-                        <div className="max-w-md">
-                            <h4 className="font-serif font-bold text-lg mb-1">Force Dispatch</h4>
-                            <p className="text-gray-500 text-sm leading-relaxed">
+                {/* Manual Override Section - Redesigned */}
+                <div className="mt-20 p-8 bg-[#1A1A1A] rounded-2xl text-white relative overflow-hidden group shadow-2xl">
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                                <span className="text-xs font-mono text-gray-400 tracking-widest uppercase">Manual Override</span>
+                            </div>
+                            <h3 className="text-2xl font-serif mb-2 text-white">Force Dispatch</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed max-w-md">
                                 Immediately trigger the digest generation and delivery cycle. This bypasses the scheduled time.
                             </p>
                         </div>
+
                         <button
-                            type="button"
                             onClick={handleForceDispatch}
                             disabled={runningCron}
-                            className="whitespace-nowrap px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition font-medium text-sm flex items-center gap-2"
+                            className="w-full md:w-auto px-8 py-4 bg-white text-black font-medium text-sm rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
                         >
                             {runningCron ? (
                                 <>
-                                    <div className="w-4 h-4 border-2 border-gray-300 border-t-black rounded-full animate-spin"></div>
-                                    <span>Dispatching...</span>
+                                    <span className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-black rounded-full"></span>
+                                    <span>Processing...</span>
                                 </>
                             ) : (
-                                '⚡ Run Now'
+                                <>
+                                    <span>Run Sequence</span>
+                                    <span>→</span>
+                                </>
                             )}
                         </button>
                     </div>
+
+                    {/* Decorative noise/gradient */}
+                    <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-white/5 blur-[100px] rounded-full pointer-events-none"></div>
                 </div>
             </div>
         </div>

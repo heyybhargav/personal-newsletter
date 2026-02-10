@@ -265,6 +265,10 @@ export default function SourcesPage() {
                         <p className="text-xl text-gray-500 font-light mt-6 max-w-lg leading-relaxed font-serif">
                             Curate the signal. All configured streams are synthesized into your daily briefing.
                         </p>
+                        <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-[#FF5700] mt-4 transition-colors group">
+                            <span className="group-hover:-translate-x-1 transition-transform">←</span>
+                            Return to Control Room
+                        </Link>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
@@ -281,8 +285,11 @@ export default function SourcesPage() {
             {/* Main Content */}
             <div className="max-w-3xl mx-auto px-6 pb-24">
                 {message && (
-                    <div className={`mb-8 p-4 rounded-lg font-medium text-sm border ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-700' : 'bg-green-50 border-green-100 text-green-700'}`}>
-                        {message}
+                    <div className={`mb-8 p-4 rounded-lg text-sm border flex items-start gap-3 shadow-sm ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-800' : 'bg-green-50 border-green-100 text-green-800'}`}>
+                        <div className={`mt-1.5 w-2 h-2 rounded-full ${message.includes('Error') ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                        <div className="flex-1 font-medium">
+                            {message}
+                        </div>
                     </div>
                 )}
 
