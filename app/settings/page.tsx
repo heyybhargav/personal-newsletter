@@ -232,7 +232,7 @@ export default function SettingsPage() {
                             </div>
                             <h3 className="text-2xl font-serif mb-2 text-white">Send My Digest Now</h3>
                             <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-                                Generate and deliver your personal briefing immediately. Only sends to your email — does not affect other users.
+                                Generate and deliver your briefing immediately, bypassing the scheduled time.
                             </p>
                         </div>
 

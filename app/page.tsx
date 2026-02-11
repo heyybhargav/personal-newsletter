@@ -132,7 +132,7 @@ export default function Home() {
                     <span className="text-xs font-mono text-gray-500">SYSTEM READY</span>
                   </div>
                   <h3 className="text-xl font-serif mb-2">Send My Digest</h3>
-                  <p className="text-gray-400 text-sm mb-6 leading-relaxed">Generate and deliver your personal briefing now. Only sends to your email.</p>
+                  <p className="text-gray-400 text-sm mb-6 leading-relaxed">Generate and deliver your briefing now.</p>
 
                   <button
                     onClick={handleSendTest}
