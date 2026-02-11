@@ -11,8 +11,22 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://signaldaily.me'),
   title: "Signal - High-Signal Intelligence Briefing",
   description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
+  openGraph: {
+    title: "Signal - High-Signal Intelligence Briefing",
+    description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
+    url: 'https://signaldaily.me',
+    siteName: 'Signal Daily',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Signal - High-Signal Intelligence Briefing",
+    description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
+  },
 };
 
 export default function RootLayout({
