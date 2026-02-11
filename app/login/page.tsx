@@ -78,10 +78,10 @@ export default function LoginPage() {
             <section className="py-24 px-6 text-center border-t border-gray-100">
                 <div className="max-w-xl mx-auto space-y-8">
                     <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A]">
-                        Ready to own your morning?
+                        Ready to own your signal?
                     </h2>
                     <p className="text-lg text-gray-500 font-light leading-relaxed">
-                        Signal synthesizes the internet into one calm, digestible briefing. Delivered to your inbox every morning.
+                        Signal synthesizes the internet into one calm, digestible briefing. Delivered to your inbox, on your schedule.
                     </p>
                     <div className="pt-8 space-y-4">
                         <button

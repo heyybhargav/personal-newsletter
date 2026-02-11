@@ -87,7 +87,7 @@ export default function Home() {
                 <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">Control Room</p>
               </div>
               <h1 className="text-5xl md:text-7xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-[0.9]">
-                Morning <span className="italic text-gray-400">Briefing</span>
+                Your <span className="italic text-gray-400">Briefing</span>
               </h1>
             </div>
 

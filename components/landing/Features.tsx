@@ -82,7 +82,7 @@ export default function Features() {
                         </div>
                     </motion.div>
 
-                    {/* Card 4: 8 AM Promise */}
+                    {/* Card 4: Your Schedule */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -92,14 +92,14 @@ export default function Features() {
                     >
                         <div className="relative z-10">
                             <h3 className="text-3xl font-serif font-medium mb-2">
-                                8:00 AM.
+                                On Your Schedule.
                             </h3>
                             <p className="text-gray-400">
-                                Every morning. Like clockwork.
+                                Your time. Your signal. Like clockwork.
                             </p>
                         </div>
                         <div className="text-8xl font-serif opacity-10 absolute right-[-20px] bottom-[-40px]">
-                            8:00
+                            ⏱
                         </div>
                     </motion.div>
 

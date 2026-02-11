@@ -202,7 +202,7 @@ function generateFallbackBriefing(items: ContentItem[]): string {
     ).join('\n');
 
     return `
-Good morning! Here's your quick briefing for ${today}.
+Hey! Here's your quick briefing for ${today}.
 
 Our AI editor is warming up, so here's a streamlined version of today's top stories:
 

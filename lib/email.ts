@@ -306,7 +306,7 @@ export async function sendWelcomeEmail(to: string): Promise<void> {
                     Welcome to the quiet side of the internet.
                   </p>
                   <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
-                    You are now subscribed to <strong>Signal</strong>. Every morning at 8 AM, our AI editor reads hundreds of sources to bring you the one story that matters.
+                    You are now subscribed to <strong>Signal</strong>. At your scheduled time, every day, our AI editor reads hundreds of sources to bring you the one story that matters.
                   </p>
                   <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
                     No noise. No clickbait. Just signal.
