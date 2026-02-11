@@ -256,7 +256,7 @@ export default function SourcesPage() {
             <div className="max-w-3xl mx-auto px-6 pt-16 pb-12">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <Link href="/" className="text-gray-400 hover:text-black mb-6 inline-flex items-center gap-2 text-sm font-medium transition-colors">
+                        <Link href="/" className="text-gray-400 hover:text-black mb-6 flex items-center gap-2 text-sm font-medium transition-colors">
                             <span>←</span> Return to Control Room
                         </Link>
                         <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-4">
