@@ -253,36 +253,36 @@ export default function SourcesPage() {
         <div className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans selection:bg-[#FF5700] selection:text-white">
 
             {/* Header */}
-            <div className="max-w-3xl mx-auto px-6 pt-16 pb-12">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-8 sm:pb-12">
+                <Link href="/" className="text-gray-400 hover:text-black mb-6 flex items-center gap-2 text-sm font-medium transition-colors">
+                    <span>←</span> Return to Control Room
+                </Link>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
                     <div>
-                        <Link href="/" className="text-gray-400 hover:text-black mb-6 flex items-center gap-2 text-sm font-medium transition-colors">
-                            <span>←</span> Return to Control Room
-                        </Link>
-                        <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-4">
+                        <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-3 sm:mb-4">
                             <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Input Streams</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
+                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
                             Intelligence <span className="italic text-gray-400">Sources</span>
                         </h1>
-                        <p className="text-xl text-gray-500 font-light mt-6 max-w-lg leading-relaxed font-serif">
+                        <p className="text-base sm:text-xl text-gray-500 font-light mt-4 sm:mt-6 max-w-lg leading-relaxed font-serif">
                             Curate the signal. All configured streams are synthesized into your daily briefing.
                         </p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="group flex items-center gap-3 px-6 py-3 bg-[#1A1A1A] text-white rounded-full hover:bg-[#FF5700] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                        className="group flex items-center justify-center gap-3 w-full sm:w-auto px-6 py-3 bg-[#1A1A1A] text-white rounded-full hover:bg-[#FF5700] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                     >
                         <span className="font-medium">Add Source</span>
                         <span className="group-hover:translate-x-1 transition-transform">→</span>
                     </button>
                 </div>
 
-                <div className="h-px w-full bg-gray-200/60 mt-12"></div>
+                <div className="h-px w-full bg-gray-200/60 mt-8 sm:mt-12"></div>
             </div>
 
             {/* Main Content */}
-            <div className="max-w-3xl mx-auto px-6 pb-24">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-24">
                 {message && (
                     <div className={`mb-8 p-4 rounded-lg text-sm border flex items-start gap-3 shadow-sm ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-800' : 'bg-green-50 border-green-100 text-green-800'}`}>
                         <div className={`mt-1.5 w-2 h-2 rounded-full ${message.includes('Error') ? 'bg-red-500' : 'bg-green-500'}`}></div>
@@ -310,48 +310,47 @@ export default function SourcesPage() {
                         <div className="relative">
                             <div className="absolute left-6 top-0 bottom-0 w-px bg-gray-200 hidden md:block"></div>
                             {sources.map(source => (
-                                <div key={source.id} className="relative md:pl-12 py-6 group border-b border-gray-100 last:border-0 hover:bg-white/50 transition-colors rounded-lg">
+                                <div key={source.id} className="relative md:pl-12 py-4 sm:py-6 group border-b border-gray-100 last:border-0 hover:bg-white/50 transition-colors rounded-lg">
                                     {/* Timeline Dot */}
                                     <div className={`absolute left-[21px] top-9 w-3 h-3 rounded-full border-2 border-[#FDFBF7] hidden md:block transition-colors duration-300 ${source.enabled ? 'bg-[#FF5700]' : 'bg-gray-300'}`}></div>
 
-                                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                                    <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                {source.favicon && <img src={source.favicon} className="w-4 h-4 object-contain" />}
-                                                <span className={`text-xs font-bold tracking-wider uppercase px-2 py-0.5 rounded border ${getSourceTypeColor(source.type as SourceType)} bg-white`}>
+                                            <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
+                                                {source.favicon && <img src={source.favicon} className="w-4 h-4 object-contain flex-none" />}
+                                                <span className={`text-[10px] sm:text-xs font-bold tracking-wider uppercase px-1.5 sm:px-2 py-0.5 rounded border flex-none ${getSourceTypeColor(source.type as SourceType)} bg-white`}>
                                                     {source.type}
                                                 </span>
                                                 {!source.enabled && (
-                                                    <span className="text-xs font-mono text-gray-400 uppercase tracking-widest">PAUSED</span>
+                                                    <span className="text-[10px] sm:text-xs font-mono text-gray-400 uppercase tracking-widest">PAUSED</span>
                                                 )}
                                             </div>
 
-                                            <div className="flex items-baseline gap-3">
-                                                <h3 className="text-xl font-serif font-medium text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors leading-tight">
-                                                    <a href={source.originalUrl || source.url} target="_blank" rel="noopener noreferrer" className="hover:underline decoration-1 underline-offset-4">
-                                                        {source.name}
-                                                    </a>
-                                                </h3>
-                                            </div>
+                                            <h3 className="text-lg sm:text-xl font-serif font-medium text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors leading-tight">
+                                                <a href={source.originalUrl || source.url} target="_blank" rel="noopener noreferrer" className="hover:underline decoration-1 underline-offset-4">
+                                                    {source.name}
+                                                </a>
+                                            </h3>
 
-                                            <div className="flex items-center gap-2 mt-2 text-sm text-gray-500 font-mono">
-                                                <span className="truncate max-w-[300px] opacity-60 hover:opacity-100 transition-opacity">
+                                            <div className="flex items-center gap-2 mt-1 sm:mt-2 text-xs sm:text-sm text-gray-400 font-mono">
+                                                <span className="truncate opacity-60">
                                                     {source.url.replace(/^https?:\/\//, '').replace(/^www\./, '')}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 mobile-actions-visible">
+                                        {/* Actions: always visible on mobile, hover on desktop */}
+                                        <div className="flex items-center gap-3 sm:gap-4 flex-none sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 pt-1">
                                             <button
                                                 onClick={() => handleToggle(source)}
-                                                className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition py-2"
+                                                className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition py-2"
                                             >
                                                 {source.enabled ? 'Pause' : 'Resume'}
                                             </button>
-                                            <div className="w-px h-3 bg-gray-300"></div>
+                                            <div className="w-px h-3 bg-gray-200"></div>
                                             <button
                                                 onClick={() => handleDelete(source.id)}
-                                                className="text-xs font-bold uppercase tracking-widest text-red-300 hover:text-red-600 transition py-2"
+                                                className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-red-300 hover:text-red-600 transition py-2"
                                             >
                                                 Delete
                                             </button>
@@ -366,13 +365,13 @@ export default function SourcesPage() {
 
             {/* Add Source Modal - Final Refined Design */}
             {showAddModal && (
-                <div className="fixed inset-0 bg-[#FDFBF7]/95 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white w-full max-w-2xl h-[650px] flex flex-col shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-2xl animate-in fade-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 bg-[#FDFBF7]/95 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-50">
+                    <div className="bg-white w-full sm:max-w-2xl h-[85vh] sm:h-[650px] flex flex-col shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-t-2xl sm:rounded-2xl animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
                         {/* Fixed Top Section: Header + Large Input */}
-                        <div className="flex-none bg-white p-8 pb-0 z-20 rounded-t-2xl">
-                            <div className="flex justify-between items-start mb-6">
+                        <div className="flex-none bg-white p-5 sm:p-8 pb-0 z-20 rounded-t-2xl">
+                            <div className="flex justify-between items-start mb-4 sm:mb-6">
                                 <div>
-                                    <h2 className="text-3xl font-serif font-medium text-[#1A1A1A]">New Source</h2>
+                                    <h2 className="text-2xl sm:text-3xl font-serif font-medium text-[#1A1A1A]">New Source</h2>
                                 </div>
                                 <button onClick={resetModal} className="text-gray-400 hover:text-black transition p-2 -mr-2 bg-gray-50 hover:bg-gray-100 rounded-full">
                                     <span className="sr-only">Close</span>
@@ -383,14 +382,14 @@ export default function SourcesPage() {
                             {/* Large Editorial Input (Fixed) */}
                             <div className="relative group pb-4 border-b border-gray-100">
                                 <div className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <svg className="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                 </div>
                                 <input
                                     type="text"
                                     value={inputUrl}
                                     onChange={(e) => setInputUrl(e.target.value)}
                                     placeholder="Paste URL or search..."
-                                    className="w-full pl-10 text-2xl font-serif bg-transparent border-none placeholder:text-gray-300 focus:ring-0 focus:outline-none transition-colors p-0"
+                                    className="w-full pl-8 sm:pl-10 text-lg sm:text-2xl font-serif bg-transparent border-none placeholder:text-gray-300 focus:ring-0 focus:outline-none transition-colors p-0"
                                     autoFocus
                                 />
                                 {detecting && (
@@ -402,7 +401,7 @@ export default function SourcesPage() {
                         </div>
 
                         {/* Scrollable Results Area */}
-                        <div className="flex-1 overflow-y-auto px-8 py-6">
+                        <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-6">
                             {/* Intro Text / Helper (only when empty) */}
                             {!inputUrl && !detectedSource && (
                                 <div className="h-full flex flex-col items-center justify-center opacity-60 pb-10">
@@ -457,9 +456,9 @@ export default function SourcesPage() {
                             {/* Detected Source Preview */}
                             {detectedSource && (
                                 <div className="animate-in slide-in-from-bottom-4">
-                                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                                        <div className="flex items-start gap-6">
-                                            <div className="w-16 h-16 bg-white border border-gray-100 flex-none flex items-center justify-center text-3xl shadow-sm rounded-lg overflow-hidden">
+                                    <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
+                                        <div className="flex items-start gap-4 sm:gap-6">
+                                            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white border border-gray-100 flex-none flex items-center justify-center text-2xl sm:text-3xl shadow-sm rounded-lg overflow-hidden">
                                                 {detectedSource.favicon ? (
                                                     <img src={detectedSource.favicon} alt="" className="w-full h-full object-cover" />
                                                 ) : (
@@ -467,7 +466,7 @@ export default function SourcesPage() {
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-3 mb-2">
+                                                <div className="flex items-center gap-2 sm:gap-3 mb-2">
                                                     <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-wider ${getSourceTypeColor(detectedSource.type)} bg-white`}>
                                                         {detectedSource.type}
                                                     </span>
@@ -480,9 +479,9 @@ export default function SourcesPage() {
                                                     type="text"
                                                     value={editableName}
                                                     onChange={(e) => setEditableName(e.target.value)}
-                                                    className="w-full text-2xl font-serif font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none transition-colors p-0 truncate"
+                                                    className="w-full text-xl sm:text-2xl font-serif font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none transition-colors p-0 truncate"
                                                 />
-                                                <p className="text-sm text-gray-400 mt-1 font-mono truncate">{detectedSource.feedUrl}</p>
+                                                <p className="text-xs sm:text-sm text-gray-400 mt-1 font-mono truncate">{detectedSource.feedUrl}</p>
 
                                                 {/* Preview Items */}
                                                 {sampleItems.length > 0 && (
@@ -502,17 +501,17 @@ export default function SourcesPage() {
                         </div>
 
                         {/* Fixed Actions Bottom Bar */}
-                        <div className="p-6 border-t border-gray-100 bg-white flex-none flex justify-end gap-3 z-20 rounded-b-2xl">
+                        <div className="p-4 sm:p-6 border-t border-gray-100 bg-white flex-none flex justify-end gap-3 z-20 rounded-b-2xl">
                             <button
                                 onClick={resetModal}
-                                className="px-6 py-2.5 text-gray-500 font-medium hover:text-black hover:bg-gray-50 rounded-full transition-colors"
+                                className="px-5 sm:px-6 py-2.5 text-gray-500 font-medium hover:text-black hover:bg-gray-50 rounded-full transition-colors text-sm sm:text-base"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleAdd}
                                 disabled={!detectedSource || detecting}
-                                className="bg-[#1A1A1A] text-white px-8 py-2.5 rounded-full font-medium hover:bg-[#FF5700] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200 flex items-center gap-2"
+                                className="bg-[#1A1A1A] text-white px-6 sm:px-8 py-2.5 rounded-full font-medium hover:bg-[#FF5700] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200 flex items-center gap-2 text-sm sm:text-base"
                             >
                                 {detecting ? 'Detecting...' : detectedSource ? 'Confirm Source' : 'Add Source'}
                                 {!detecting && detectedSource && <span>↵</span>}
@@ -522,19 +521,7 @@ export default function SourcesPage() {
                 </div>
             )}
 
-            <style jsx global>{`
-                .mobile-actions-visible {
-                   opacity: 1; 
-                }
-                @media (min-width: 640px) {
-                   .mobile-actions-visible {
-                       opacity: 0;
-                   }
-                   .group:hover .mobile-actions-visible {
-                       opacity: 1;
-                   }
-                }
-            `}</style>
+
         </div>
     );
 }
