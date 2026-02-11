@@ -256,6 +256,9 @@ export default function SourcesPage() {
             <div className="max-w-3xl mx-auto px-6 pt-16 pb-12">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
+                        <Link href="/" className="text-gray-400 hover:text-black mb-6 inline-flex items-center gap-2 text-sm font-medium transition-colors">
+                            <span>←</span> Return to Control Room
+                        </Link>
                         <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-4">
                             <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Input Streams</p>
                         </div>
@@ -265,10 +268,6 @@ export default function SourcesPage() {
                         <p className="text-xl text-gray-500 font-light mt-6 max-w-lg leading-relaxed font-serif">
                             Curate the signal. All configured streams are synthesized into your daily briefing.
                         </p>
-                        <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-[#FF5700] mt-4 transition-colors group">
-                            <span className="group-hover:-translate-x-1 transition-transform">←</span>
-                            Return to Control Room
-                        </Link>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
