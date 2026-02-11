@@ -140,7 +140,7 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
 
   const msg = {
     to,
-    from: fromEmail,
+    from: { email: fromEmail, name: 'Signal Daily' },
     subject: `☕ Signal: Your Daily Briefing — ${today}`,
     html: await generateUnifiedEmailHTML(briefing, today),
   };
@@ -249,7 +249,7 @@ export async function sendDigestEmail(to: string, sections: DigestSection[]): Pr
 
   const msg = {
     to,
-    from: fromEmail,
+    from: { email: fromEmail, name: 'Signal Daily' },
     subject: `☕️ Your Daily Briefing - ${today}`,
     html: generateEmailHTML(sections, today),
   };
@@ -343,7 +343,7 @@ export async function sendWelcomeEmail(to: string): Promise<void> {
 
   const msg = {
     to,
-    from: fromEmail,
+    from: { email: fromEmail, name: 'Signal Daily' },
     subject,
     html,
   };
