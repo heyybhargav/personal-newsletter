@@ -38,7 +38,7 @@ export default function SettingsPage() {
     };
 
     const handleForceDispatch = async () => {
-        if (!confirm('This will trigger the digest dispatch for ALL users regardless of time settings. Continue?')) return;
+        if (!confirm('This will generate and send your digest now, bypassing the scheduled time. Continue?')) return;
 
         setRunningCron(true);
         setMessage('');
@@ -230,9 +230,9 @@ export default function SettingsPage() {
                                 <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
                                 <span className="text-xs font-mono text-gray-400 tracking-widest uppercase">Manual Override</span>
                             </div>
-                            <h3 className="text-2xl font-serif mb-2 text-white">Force Dispatch</h3>
+                            <h3 className="text-2xl font-serif mb-2 text-white">Send My Digest Now</h3>
                             <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-                                Immediately trigger the digest generation and delivery cycle. This bypasses the scheduled time.
+                                Generate and deliver your personal briefing immediately. Only sends to your email — does not affect other users.
                             </p>
                         </div>
 
