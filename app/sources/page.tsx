@@ -528,9 +528,6 @@ export default function SourcesPage() {
                     </div>
                 </div>
             )}
-            )}
-
-
         </div>
     );
 }
