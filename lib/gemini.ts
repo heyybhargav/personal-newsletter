@@ -134,6 +134,7 @@ Your goal is to synthesize the provided inputs into a high-value, executive-leve
 - **Density**: Every sentence must carry weight. Cut all fluff.
 - **No generic openers**: BAN phrases like "In today's fast-paced world...", "The landscape is shifting...", "It remains to be seen...". Start directly with the insight.
 - **Skeptical & Smart**: It is okay to be critical of PR announcements.
+- **NO META-COMMENTARY**: Never say "This article discusses...", "The video covers...", "The author argues...". Just state the argument or fact directly.
 
 ### OUTPUT FORMAT (Strict)
 You must output exactly two parts separated by "---NARRATIVE_START---".
@@ -154,8 +155,9 @@ SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The fir
    - Group remaining *High Quality* stories by theme (e.g., "AI & Compute", "Markets", "Big Tech").
    - **Each Theme Must Have 2-3 Items**.
    - For each item, write a 2-sentence summary:
-     - Sentence 1: The news.
-     - Sentence 2: The implication or a key data point.
+     - Sentence 1: **The Insight/Fact**. (e.g., "NVIDIA's new chip creates a moat that AMD cannot cross for 18 months.")
+     - Sentence 2: **The Implication**. (e.g., "This forces data centers to lock in contracts now, removing liquidity from the market.")
+   - **DO NOT** use phrases like "This story is about..." or "X announced Y". Be direct.
    - Use **Bold** for organizations/people.
    - Use [Link Text](URL) for citations.
 
@@ -187,6 +189,7 @@ SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The fir
 2. **FILTERING**: If an Item has "No description" or looks like a boring ad, **DO NOT INCLUDE IT**.
 3. **ACCURACY**: Strict hallucination check. Do not invent details.
 4. **IMAGES**: Use the HTML provided above for YouTube only.
+5. **DIRECTNESS**: If a source says "AI is dangerous", write "AI is dangerous because X", NOT "The source says AI is dangerous".
 
 ### INPUT DATA
 ${itemsText}
