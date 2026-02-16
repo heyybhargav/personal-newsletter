@@ -154,6 +154,7 @@ SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The fir
 
 2. **THE BRIEFING** (News & Updates - EXPANDED)
    - Group remaining *High Quality* stories by theme (e.g., "AI & Compute", "Markets", "Big Tech").
+   - **CRITICAL**: Do NOT repeat the story used in "THE LEAD".
    - **Each Theme Must Have 2-3 Items**.
    - For each item, write a 2-sentence summary:
      - Sentence 1: **The Insight/Fact**. (e.g., "NVIDIA's [new chip](URL) creates a moat that AMD cannot cross for 18 months.")
