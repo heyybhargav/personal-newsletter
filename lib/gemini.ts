@@ -2,13 +2,25 @@ import Groq from 'groq-sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ContentItem, DigestSection, SummarizedContent } from './types';
 
-// Initialize Groq
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-});
+// Lazy initialization for clients
+let groqClient: Groq | null = null;
+let genAIClient: GoogleGenerativeAI | null = null;
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+function getGroqClient() {
+    if (!groqClient) {
+        groqClient = new Groq({
+            apiKey: process.env.GROQ_API_KEY,
+        });
+    }
+    return groqClient;
+}
+
+function getGeminiClient() {
+    if (!genAIClient) {
+        genAIClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+    }
+    return genAIClient;
+}
 
 // Using Llama 3.3 70B for high-quality writing
 const MODEL_NAME = 'llama-3.3-70b-versatile';
@@ -19,6 +31,7 @@ const MODEL_NAME = 'llama-3.3-70b-versatile';
 
 export interface UnifiedBriefing {
     narrative: string;       // The main written newsletter
+    subject: string;         // Catchy subject line
     topStories: ContentItem[]; // Curated links for "Deep Dive"
     generatedAt: string;
 }
@@ -59,16 +72,17 @@ export async function generateUnifiedBriefing(allContent: ContentItem[], provide
     // Apply Smart Balancing
     const balancedItems = balanceContent(allContent);
 
-    const narrative = await synthesizeUnifiedNarrative(balancedItems, provider);
+    const { narrative, subject } = await synthesizeUnifiedNarrative(balancedItems, provider);
 
     return {
         narrative,
+        subject,
         topStories: balancedItems.slice(0, 8), // Top 8 for deep dive links
         generatedAt: new Date().toISOString()
     };
 }
 
-async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<string> {
+async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<{ narrative: string; subject: string }> {
     try {
         if (!process.env.GROQ_API_KEY) {
             console.error('[Groq] CRITICAL: GROQ_API_KEY is not set!');
@@ -115,7 +129,14 @@ TODAY: ${today}
 Your goal is to synthesize the provided inputs into a "Smart Brevity" style newsletter (think Axios/Morning Brew but higher IQ). 
 You must filter out "fluff" and "PR speak". If a story has no substance, **IGNORE IT**.
 
-### SECTIONS (Strict Structure)
+### OUTPUT FORMAT (Strict)
+You must output exactly two parts separated by "---NARRATIVE_START---".
+
+SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The first 3-4 words must be a strong hook related to the Lead Story.]
+---NARRATIVE_START---
+[The rest of the newsletter content]
+
+### SECTIONS (Strict Structure for Narrative)
 
 1. **THE LEAD** (1-2 paragraphs)
    - Synthesis of the Single Most Important Story. 
@@ -170,23 +191,46 @@ BEGIN BRIEFING:`;
 
         console.log('[Groq] Sending unified briefing request...');
 
-        const chatCompletion = await groq.chat.completions.create({
+        const chatCompletion = await getGroqClient().chat.completions.create({
             messages: [{ role: 'user', content: prompt }],
             model: MODEL_NAME,
             temperature: 0.5, // Lower temperature for more factual/concise output
             max_tokens: 2500,
         });
 
+        let rawText = '';
         if (provider === 'gemini') {
-            return await callGemini(prompt);
+            rawText = await callGemini(prompt);
+        } else {
+            rawText = chatCompletion.choices[0]?.message?.content || '';
         }
 
-        const text = chatCompletion.choices[0]?.message?.content || '';
-        return text.trim();
+        // Parse Output
+        let subject = `Signal: ${today}`;
+        let narrative = rawText;
+
+        if (rawText.includes('---NARRATIVE_START---')) {
+            const parts = rawText.split('---NARRATIVE_START---');
+            const subjectPart = parts[0].replace('SUBJECT:', '').trim();
+            subject = subjectPart || `Signal: ${today}`;
+            narrative = parts[1].trim();
+        } else if (rawText.startsWith('SUBJECT:')) {
+            // Fallback parsing if separator is missing but SUBJECT: exists
+            const subjectMatch = rawText.match(/^SUBJECT:(.+?)(\n|$)/);
+            if (subjectMatch) {
+                subject = subjectMatch[1].trim();
+                narrative = rawText.replace(subjectMatch[0], '').trim();
+            }
+        }
+
+        return { subject, narrative };
 
     } catch (error: any) {
         console.error('[Groq] Error generating unified narrative:', error.message || error);
-        return generateFallbackBriefing(items);
+        return {
+            subject: `Signal: Your Daily Briefing — ${new Date().toLocaleDateString()}`,
+            narrative: generateFallbackBriefing(items)
+        };
     }
 }
 
@@ -257,7 +301,7 @@ Write a cohesive, engaging paragraph for the "${category}" section. Connect the 
 INPUT:
 ${itemsText}`;
 
-        const chatCompletion = await groq.chat.completions.create({
+        const chatCompletion = await getGroqClient().chat.completions.create({
             messages: [{ role: 'user', content: prompt }],
             model: MODEL_NAME,
             temperature: 0.7,
@@ -288,7 +332,7 @@ async function callGemini(prompt: string): Promise<string> {
         }
 
         console.log('[Gemini] Sending unified briefing request...');
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Using Flash for speed/cost, Pro for quality if needed
+        const model = getGeminiClient().getGenerativeModel({ model: "gemini-1.5-flash" }); // Using Flash for speed/cost, Pro for quality if needed
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
