@@ -1,74 +1,133 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { MousePointerClick, Sparkles, Coffee } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+import { Plus, Clock, FileText, ArrowDown } from 'lucide-react';
 
 const steps = [
     {
-        id: 1,
-        title: "Connect everything.",
-        description: "Add your YouTube channels, RSS feeds, and newsletters. We support them all.",
-        icon: MousePointerClick,
-        quantifier: "Unlimited Sources"
+        id: "01",
+        title: "Curate your feed.",
+        description: "Add any source—YouTube channels, Substack newsletters, or Nitter. We normalize the chaos into one clean stream.",
+        icon: Plus,
+        color: "bg-blue-500",
+        visual: (
+            <div className="relative w-full h-full flex items-center justify-center">
+                <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10" />
+                <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 w-64 space-y-3">
+                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg border border-gray-200/50">
+                        <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xs">YT</div>
+                        <div className="h-2 w-24 bg-gray-200 rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg border border-gray-200/50">
+                        <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 text-xs">RSS</div>
+                        <div className="h-2 w-32 bg-gray-200 rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 bg-white rounded-lg border border-[#FF5700] shadow-sm">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-xs">
+                            <Plus className="w-4 h-4" />
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">Add Source...</div>
+                    </div>
+                </div>
+            </div>
+        )
     },
     {
-        id: 2,
-        title: "We filter the noise.",
-        description: "Our AI reads every single link, filtering out clickbait and fluff to find the signal.",
-        icon: Sparkles,
-        quantifier: "100+ Links Analyzed"
+        id: "02",
+        title: "Set your schedule.",
+        description: "Your inbox, your time. Choose exactly when you want your briefing. 8 AM coffee? 6 PM commute? You decide.",
+        icon: Clock,
+        color: "bg-orange-500",
+        visual: (
+            <div className="relative w-full h-full flex items-center justify-center">
+                <div className="w-64 bg-[#1A1A1A] text-white p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
+                    <div className="text-xs font-mono text-gray-400 uppercase tracking-widest">Delivery Time</div>
+                    <div className="text-5xl font-serif font-medium">08:00</div>
+                    <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="w-1/3 h-full bg-[#FF5700]"></div>
+                    </div>
+                    <div className="flex justify-between w-full text-xs text-gray-500 font-mono">
+                        <span>AM</span>
+                        <span>PM</span>
+                    </div>
+                </div>
+            </div>
+        )
     },
     {
-        id: 3,
-        title: "Read in 5 minutes.",
-        description: "Receive a tailored executive briefing every morning. The stories that matter, zero filler.",
-        icon: Coffee,
-        quantifier: "5 Min Read Time"
+        id: "03",
+        title: "Receive the Signal.",
+        description: "One email, every day. Synthesized intelligence, not just links. Read less, know more.",
+        icon: FileText,
+        color: "bg-green-500",
+        visual: (
+            <div className="relative w-full h-full flex items-center justify-center perspective-1000">
+                <div className="w-64 bg-[#FDFBF7] p-6 rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-200 rotate-y-12 rotate-x-6 hover:rotate-0 transition-transform duration-500">
+                    <div className="h-4 w-4 bg-[#FF5700] rounded-sm mb-4"></div>
+                    <div className="h-4 w-3/4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 w-1/2 bg-gray-200 rounded mb-6"></div>
+                    <div className="space-y-2">
+                        <div className="h-2 w-full bg-gray-100 rounded"></div>
+                        <div className="h-2 w-full bg-gray-100 rounded"></div>
+                        <div className="h-2 w-5/6 bg-gray-100 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 ];
 
 export default function HowItWorks() {
     return (
-        <section className="py-24 px-6 bg-[#FAF9F6] border-t border-gray-100">
-            <div className="max-w-5xl mx-auto">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-serif font-medium text-[#1A1A1A] mb-4">
-                        From chaos to clarity in 3 steps.
+        <section className="py-32 bg-[#FAF9F6] relative overflow-hidden">
+            <div className="max-w-6xl mx-auto px-6">
+                <div className="mb-24 md:text-center max-w-2xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-serif font-medium text-[#1A1A1A] mb-6">
+                        Designed for focus.
                     </h2>
+                    <p className="text-lg text-gray-600 leading-relaxed">
+                        A simple, linear process to reclaim your attention span.
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {steps.map((step, i) => (
-                        <motion.div
-                            key={step.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm relative group hover:border-[#FF5700]/20 transition-colors"
-                        >
-                            {/* Step Number Background */}
-                            <div className="absolute top-4 right-6 text-9xl font-serif text-gray-50 opacity-10 select-none pointer-events-none group-hover:text-[#FF5700]/10 transition-colors">
-                                {step.id}
-                            </div>
+                <div className="relative">
+                    {/* Vertical Line */}
+                    <div className="absolute left-[27px] md:left-1/2 top-0 bottom-0 w-px bg-gray-200 transform md:-translate-x-1/2" />
 
-                            <div className="w-12 h-12 bg-[#FFF4F0] rounded-xl flex items-center justify-center mb-6 text-[#FF5700]">
-                                <step.icon className="w-6 h-6" />
-                            </div>
+                    <div className="space-y-24 md:space-y-32">
+                        {steps.map((step, i) => (
+                            <motion.div
+                                key={step.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ duration: 0.7 }}
+                                className={`relative flex flex-col md:flex-row gap-8 md:gap-16 items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
+                            >
+                                {/* Center Node */}
+                                <div className="absolute left-0 md:left-1/2 w-14 h-14 rounded-full bg-white border-4 border-[#FAF9F6] shadow-sm flex items-center justify-center transform md:-translate-x-1/2 z-10">
+                                    <div className="w-3 h-3 bg-[#FF5700] rounded-full" />
+                                </div>
 
-                            <h3 className="text-xl font-medium text-[#1A1A1A] mb-3 relative z-10">
-                                {step.title}
-                            </h3>
+                                {/* Content Side */}
+                                <div className="pl-20 md:pl-0 flex-1 text-left md:text-right">
+                                    <div className={`md:max-w-md ${i % 2 !== 0 ? 'md:ml-auto md:text-right' : 'md:mr-auto md:text-left'}`}>
+                                        <span className="text-sm font-mono font-bold text-[#FF5700] mb-2 block tracking-widest">{step.id}</span>
+                                        <h3 className="text-3xl font-serif font-medium text-[#1A1A1A] mb-4">{step.title}</h3>
+                                        <p className="text-gray-600 leading-relaxed text-lg">{step.description}</p>
+                                    </div>
+                                </div>
 
-                            <p className="text-[#666666] leading-relaxed mb-6 h-20 text-sm relative z-10">
-                                {step.description}
-                            </p>
-
-                            <div className="inline-flex items-center px-3 py-1 bg-[#F5F5F5] rounded-full text-xs font-semibold text-[#666666] uppercase tracking-wide group-hover:bg-[#FF5700]/10 group-hover:text-[#FF5700] transition-colors relative z-10">
-                                {step.quantifier}
-                            </div>
-                        </motion.div>
-                    ))}
+                                {/* Visual Side */}
+                                <div className="pl-20 md:pl-0 flex-1 w-full">
+                                    <div className={`w-full aspect-[4/3] bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden md:max-w-md flex items-center justify-center mx-auto ${i % 2 !== 0 ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                                        {step.visual}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
