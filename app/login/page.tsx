@@ -110,7 +110,7 @@ export default function LoginPage() {
             {/* Footer */}
             <footer className="py-12 text-center pb-20">
                 <p className="text-base text-[#666666] font-medium flex items-center justify-center gap-2">
-                    Built with <span className="text-red-500 animate-pulse">❤️</span> by <a href="https://twitter.com/heyybhargav" target="_blank" className="text-[#1A1A1A] font-bold underline decoration-2 underline-offset-4 decoration-gray-200 hover:decoration-[#1A1A1A] transition-all cursor-pointer">Bhargav</a>
+                    Signal. <span className="text-gray-400">Open Source Intelligence.</span>
                 </p>
             </footer>
         </main>
