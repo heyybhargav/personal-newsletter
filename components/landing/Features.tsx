@@ -22,10 +22,10 @@ export default function Features() {
                                 <Filter className="w-6 h-6 text-[#1A1A1A]" />
                             </div>
                             <h3 className="text-3xl font-serif font-medium text-[#1A1A1A]">
-                                The firehose stops here.
+                                Never miss a beat.
                             </h3>
                             <p className="text-lg text-[#666666] leading-relaxed max-w-md">
-                                We read 100 links so you don't have to. Our AI synthesizes noise into one high-signal narrative. Zero fluff.
+                                Life gets busy. We track your trusted sources so you don't miss the important stories.
                             </p>
                         </div>
                         <div className="mt-8 flex gap-2">
