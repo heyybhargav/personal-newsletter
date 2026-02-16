@@ -8,6 +8,7 @@ import Hero from '@/components/landing/Hero';
 import AntiList from '@/components/landing/AntiList';
 import Manifesto from '@/components/landing/Manifesto';
 import Features from '@/components/landing/Features';
+import HowItWorks from '@/components/landing/HowItWorks';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -71,6 +72,7 @@ export default function LoginPage() {
 
             <Hero />
             <AntiList />
+            <HowItWorks />
             <Manifesto />
             <Features />
 
