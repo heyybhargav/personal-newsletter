@@ -357,6 +357,9 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
                   <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #666; margin: 10px 0 0 0;">
                     Reply to this email with feedback. We read everything.
                   </p>
+                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #444; margin: 20px 0 0 0; font-style: italic;">
+                    Made with love by Bhargav.
+                  </p>
                 </td>
               </tr>
 
