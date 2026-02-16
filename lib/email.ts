@@ -273,7 +273,7 @@ export async function sendDigestEmail(to: string, sections: DigestSection[]): Pr
 export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://signaldaily.me'): Promise<void> {
   const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to; // Fallback
 
-  const subject = "Welcome to Signal";
+  const subject = "Bhargav from Signal: Welcome! Let's set up your briefing.";
 
   const link = `${baseUrl}/sources`;
 
