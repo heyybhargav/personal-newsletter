@@ -9,6 +9,7 @@ import AntiList from '@/components/landing/AntiList';
 import Manifesto from '@/components/landing/Manifesto';
 import Features from '@/components/landing/Features';
 import HowItWorks from '@/components/landing/HowItWorks';
+import Footer from '@/components/Footer';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -110,11 +111,7 @@ export default function LoginPage() {
             </section>
 
             {/* Footer */}
-            <footer className="py-12 text-center pb-20">
-                <p className="text-base text-[#666666] font-medium flex items-center justify-center gap-2">
-                    Signal. <span className="text-gray-400">Open Source Intelligence.</span>
-                </p>
-            </footer>
+            <Footer />
         </main>
     );
 }
