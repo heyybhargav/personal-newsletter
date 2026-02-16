@@ -282,18 +282,24 @@ export async function sendWelcomeEmail(to: string): Promise<void> {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+      <style>
+        .step-container { margin-bottom: 30px; }
+        .step-number { font-family: 'Helvetica Neue', sans-serif; font-size: 12px; font-weight: bold; color: #ff5700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .step-title { font-family: 'Merriweather', serif; font-size: 18px; font-weight: 700; color: #111; margin: 0 0 5px 0; }
+        .step-desc { font-family: 'Helvetica Neue', sans-serif; font-size: 14px; line-height: 1.5; color: #666; margin: 0; }
+      </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
       
       <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
           <td align="center" style="padding: 40px 0;">
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; background: #ffffff; border: 1px solid #e0e0e0; overflow: hidden;">
               
               <!-- Header -->
               <tr>
-                <td style="padding: 40px 40px 20px 40px; text-align: center;">
-                  <h1 style="font-family: 'Merriweather', serif; font-size: 28px; font-weight: 900; margin: 0; color: #111; letter-spacing: -0.5px;">
+                <td style="padding: 50px 40px 30px 40px; text-align: center; border-bottom: 4px solid #111;">
+                  <h1 style="font-family: 'Merriweather', serif; font-size: 32px; font-weight: 900; margin: 0; color: #111; letter-spacing: -1px;">
                     Signal.
                   </h1>
                 </td>
@@ -301,33 +307,49 @@ export async function sendWelcomeEmail(to: string): Promise<void> {
 
               <!-- Body -->
               <tr>
-                <td style="padding: 0 40px 40px 40px;">
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
+                <td style="padding: 40px;">
+                  <p style="font-family: 'Georgia', serif; font-size: 18px; line-height: 1.6; color: #111; margin-bottom: 30px;">
                     Welcome to the quiet side of the internet.
                   </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
-                    You are now subscribed to <strong>Signal</strong>. At your scheduled time, every day, our AI editor reads hundreds of sources to bring you the one story that matters.
+                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 40px;">
+                    You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Signal:
                   </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
-                    No noise. No clickbait. Just signal.
-                  </p>
-                  <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 30px 0; text-align: center;">
-                      <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; color: #666; margin: 0;">
-                        Next briefing: <strong>Tomorrow, 8:00 AM</strong>
+
+                  <!-- Steps -->
+                  <div class="step-container">
+                    <p class="step-number">01 Curate</p>
+                    <h3 class="step-title">Connect your world.</h3>
+                    <p class="step-desc">Add your favorite YouTube channels, RSS feeds, and newsletters. We normalize the chaos into one stream.</p>
+                  </div>
+
+                  <div class="step-container">
+                    <p class="step-number">02 Schedule</p>
+                    <h3 class="step-title">Set your time.</h3>
+                    <p class="step-desc">Your inbox, your schedule. We send your briefing exactly when you want it. No sooner, no later.</p>
+                  </div>
+
+                  <div class="step-container" style="margin-bottom: 0;">
+                    <p class="step-number">03 Signal</p>
+                    <h3 class="step-title">Receive the Signal.</h3>
+                    <p class="step-desc">One email, every day. Synthesized intelligence, not just links. Read less, know more.</p>
+                  </div>
+
+                  <div style="background: #f8f9fa; padding: 20px; border-radius: 0; margin: 40px 0 0 0; text-align: center; border: 1px solid #eee;">
+                      <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #666; margin: 0;">
+                        Next briefing: <strong>Tomorrow</strong>
                       </p>
                   </div>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.6; color: #333;">
-                    Glad to have you.<br>
-                    — Bhargav
-                  </p>
                 </td>
               </tr>
 
               <!-- Footer -->
               <tr>
-                <td style="padding: 20px; background: #111; text-align: center;">
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #888; margin: 0;">
-                    © ${new Date().getFullYear()} Signal. Open Source.
+                <td style="padding: 30px; background: #111; text-align: center;">
+                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; color: #fff; margin: 0;">
+                    Signal Daily
+                  </p>
+                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #666; margin: 10px 0 0 0;">
+                    Reply to this email with feedback. We read everything.
                   </p>
                 </td>
               </tr>
