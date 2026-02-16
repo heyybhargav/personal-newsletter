@@ -147,6 +147,7 @@ SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The fir
 
 1. **THE LEAD** (2-3 paragraphs)
    - Synthesis of the Single Most Important Story. 
+   - **Hyperlink the core claims** to the source URL provided in the input.
    - **Paragraph 1**: The Event (What actually happened, stripped of PR spin).
    - **Paragraph 2**: The Context (Why this matters *now*).
    - **Paragraph 3**: The Forward Look (Second-order effects, what to watch for next).
@@ -155,11 +156,11 @@ SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The fir
    - Group remaining *High Quality* stories by theme (e.g., "AI & Compute", "Markets", "Big Tech").
    - **Each Theme Must Have 2-3 Items**.
    - For each item, write a 2-sentence summary:
-     - Sentence 1: **The Insight/Fact**. (e.g., "NVIDIA's new chip creates a moat that AMD cannot cross for 18 months.")
+     - Sentence 1: **The Insight/Fact**. (e.g., "NVIDIA's [new chip](URL) creates a moat that AMD cannot cross for 18 months.")
      - Sentence 2: **The Implication**. (e.g., "This forces data centers to lock in contracts now, removing liquidity from the market.")
    - **DO NOT** use phrases like "This story is about..." or "X announced Y". Be direct.
+   - **SMART LINKING**: You **MUST** hyperlinked the specific noun, claim, or entity that the source validates. Do not use "(Read more)" or "(Source)" at the end.
    - Use **Bold** for organizations/people.
-   - Use [Link Text](URL) for citations.
 
 3. **THE PLAYBOOK** (Mental Models & Lessons)
    - *Crucial*: Look at [TYPE: PODCAST] or [TYPE: YOUTUBE VIDEO] items.
