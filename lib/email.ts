@@ -270,10 +270,12 @@ export async function sendDigestEmail(to: string, sections: DigestSection[]): Pr
 // NEW: Welcome Email
 // ============================================================================
 
-export async function sendWelcomeEmail(to: string): Promise<void> {
+export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://signaldaily.me'): Promise<void> {
   const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to; // Fallback
 
   const subject = "Welcome to Signal";
+
+  const link = `${baseUrl}/sources`;
 
   const html = `
     <!DOCTYPE html>
@@ -287,6 +289,7 @@ export async function sendWelcomeEmail(to: string): Promise<void> {
         .step-number { font-family: 'Helvetica Neue', sans-serif; font-size: 12px; font-weight: bold; color: #ff5700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .step-title { font-family: 'Merriweather', serif; font-size: 18px; font-weight: 700; color: #111; margin: 0 0 5px 0; }
         .step-desc { font-family: 'Helvetica Neue', sans-serif; font-size: 14px; line-height: 1.5; color: #666; margin: 0; }
+        .cta-button { display: inline-block; background-color: #111; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Helvetica Neue', sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
@@ -334,10 +337,11 @@ export async function sendWelcomeEmail(to: string): Promise<void> {
                     <p class="step-desc">One email, every day. Synthesized intelligence, not just links. Read less, know more.</p>
                   </div>
 
-                  <div style="background: #f8f9fa; padding: 20px; border-radius: 0; margin: 40px 0 0 0; text-align: center; border: 1px solid #eee;">
-                      <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #666; margin: 0;">
-                        Next briefing: <strong>Tomorrow</strong>
-                      </p>
+                  <!-- CTA -->
+                  <div style="margin: 40px 0 10px 0; text-align: center;">
+                      <a href="${link}" class="cta-button">
+                        Connect Your Sources &rarr;
+                      </a>
                   </div>
                 </td>
               </tr>
