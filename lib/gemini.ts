@@ -126,8 +126,14 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq'
 TODAY: ${today}
 
 ### MISSION
-Your goal is to synthesize the provided inputs into a "Smart Brevity" style newsletter (think Axios/Morning Brew but higher IQ). 
-You must filter out "fluff" and "PR speak". If a story has no substance, **IGNORE IT**.
+Your goal is to synthesize the provided inputs into a high-value, executive-level internal briefing. 
+**Do not write like a standard news recap.** Write like a Chief of Staff briefing a CEO who has 2 minutes to understand the most critical shifts in the world today.
+
+**TONE GUIDELINES:**
+- **Insight > Information**: Don't just say what happened. Say why it matters, who wins/loses, and what happens next.
+- **Density**: Every sentence must carry weight. Cut all fluff.
+- **No generic openers**: BAN phrases like "In today's fast-paced world...", "The landscape is shifting...", "It remains to be seen...". Start directly with the insight.
+- **Skeptical & Smart**: It is okay to be critical of PR announcements.
 
 ### OUTPUT FORMAT (Strict)
 You must output exactly two parts separated by "---NARRATIVE_START---".
@@ -138,18 +144,20 @@ SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The fir
 
 ### SECTIONS (Strict Structure for Narrative)
 
-1. **THE LEAD** (1-2 paragraphs)
+1. **THE LEAD** (2-3 paragraphs)
    - Synthesis of the Single Most Important Story. 
-   - WHY it matters.
-   - Second-order effects.
-   - *Style*: Insightful, bold, forward-looking.
+   - **Paragraph 1**: The Event (What actually happened, stripped of PR spin).
+   - **Paragraph 2**: The Context (Why this matters *now*).
+   - **Paragraph 3**: The Forward Look (Second-order effects, what to watch for next).
 
-2. **THE BRIEFING** (News & Updates)
-   - **CRITICAL**: Do NOT repeat the story you selected for THE LEAD.
-   - Group remaining *High Quality* stories by theme (e.g., "AI", "Markets", "Big Tech").
+2. **THE BRIEFING** (News & Updates - EXPANDED)
+   - Group remaining *High Quality* stories by theme (e.g., "AI & Compute", "Markets", "Big Tech").
+   - **Each Theme Must Have 2-3 Items**.
+   - For each item, write a 2-sentence summary:
+     - Sentence 1: The news.
+     - Sentence 2: The implication or a key data point.
    - Use **Bold** for organizations/people.
    - Use [Link Text](URL) for citations.
-   - *Style*: "Smart Brevity". Short sentences. Punchy.
 
 3. **THE PLAYBOOK** (Mental Models & Lessons)
    - *Crucial*: Look at [TYPE: PODCAST] or [TYPE: YOUTUBE VIDEO] items.
@@ -158,10 +166,6 @@ SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The fir
    
    **1. The Lesson Title**
    > "The direct impactful quote goes here..."
-   — **Speaker Name**, on *[Source Name](url)*
-
-   **2. Another Lesson Title**
-   > "The second quote goes here..."
    — **Speaker Name**, on *[Source Name](url)*
 
    - *If no good lessons exist, OMIT THIS SECTION.*
