@@ -337,8 +337,10 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
                     <p class="step-desc">One email, every day. Synthesized intelligence, not just links. Read less, know more.</p>
                   </div>
 
-                  <!-- CTA -->
                   <div style="margin: 40px 0 10px 0; text-align: center;">
+                      <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 20px;">
+                        Connect your sources now to start receiving your briefing tomorrow.
+                      </p>
                       <a href="${link}" class="cta-button">
                         Connect Your Sources &rarr;
                       </a>
