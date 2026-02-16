@@ -322,7 +322,7 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
                   <div class="step-container">
                     <p class="step-number">01 Curate</p>
                     <h3 class="step-title">Connect your world.</h3>
-                    <p class="step-desc">Add your favorite YouTube channels, RSS feeds, and newsletters. We normalize the chaos into one stream.</p>
+                    <p class="step-desc">Search or paste links to your favorite YouTube channels, blogs, Subreddits or Substacks. We’ll monitor them for you.</p>
                   </div>
 
                   <div class="step-container">
@@ -334,16 +334,16 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
                   <div class="step-container" style="margin-bottom: 0;">
                     <p class="step-number">03 Signal</p>
                     <h3 class="step-title">Receive the Signal.</h3>
-                    <p class="step-desc">One email, every day. Synthesized intelligence, not just links. Read less, know more.</p>
+                    <p class="step-desc">We extract the key updates from all your sources. You get the information without the clicking.</p>
                   </div>
 
                   <div style="margin: 40px 0 10px 0; text-align: center;">
-                      <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 20px;">
-                        Connect your sources now to start receiving your briefing from tomorrow.
-                      </p>
                       <a href="${link}" class="cta-button">
                         Connect Your Sources &rarr;
                       </a>
+                      <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-top: 20px; margin-bottom: 0;">
+                        Connect your sources now to start receiving your briefing from tomorrow.
+                      </p>
                   </div>
                 </td>
               </tr>
