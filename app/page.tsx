@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Radio, Settings2 } from 'lucide-react';
+import { Radio, Settings2, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Source, DigestSection } from '@/lib/types';
+import { SourceIcon } from '@/components/SourceIcon';
 
 export default function Home() {
   const [sources, setSources] = useState<Source[]>([]);
@@ -39,7 +40,7 @@ export default function Home() {
       if (data.error) {
         setMessage(`Error: ${data.error}`);
       } else {
-        setMessage(`✅ Generated digest with ${data.itemCount} items across ${data.sections?.length || 0} sections`);
+        setMessage(`Generated digest with ${data.itemCount} items across ${data.sections?.length || 0} sections`);
         setPreviewSections(data.sections || []);
       }
     } catch (error: any) {
@@ -58,7 +59,7 @@ export default function Home() {
       if (data.error) {
         setMessage(`Error: ${data.error}`);
       } else if (data.sent) {
-        setMessage(`✅ Email sent successfully! (${data.itemCount} items) — Check your Spam folder if you don't see it.`);
+        setMessage(`Email sent successfully! (${data.itemCount} items) — Check your Spam folder if you don't see it.`);
       } else {
         setMessage(data.message || 'No email sent');
       }
@@ -72,9 +73,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-gray-900 font-sans selection:bg-[#FF5700] selection:text-white">
       {/* Spam Warning Banner */}
-      <div className="bg-[#FFE100]/10 border-b border-[#FFE100]/20 px-6 py-2 text-center">
+      <div className="bg-[#FFE100]/10 border-b border-[#FFE100]/20 px-6 py-2 flex items-center justify-center gap-2">
+        <AlertTriangle className="w-3 h-3 text-yellow-800" />
         <p className="text-xs font-medium text-yellow-800 tracking-wide uppercase">
-          ⚠️ Check your spam folder
+          Check your spam folder
         </p>
       </div>
 
@@ -153,11 +155,16 @@ export default function Home() {
                 <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-white/5 blur-[80px] rounded-full pointer-events-none"></div>
               </div>
 
+
               {/* Message Display */}
               {message && (
                 <div className={`mt-6 p-4 rounded-lg text-sm border flex items-start gap-3 shadow-sm ${message.includes('Error') ? 'bg-[#1A1A1A] border-red-900/50 text-red-200' : 'bg-[#1A1A1A] border-green-900/50 text-green-200'}`}>
-                  <div className={`mt-0.5 w-2 h-2 rounded-full ${message.includes('Error') ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'}`}></div>
-                  <div className="flex-1 leading-relaxed font-mono text-xs">
+                  {message.includes('Error') ? (
+                    <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
+                  ) : (
+                    <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
+                  )}
+                  <div className="flex-1 leading-relaxed font-mono text-xs pt-0.5">
                     {message}
                   </div>
                 </div>
@@ -229,7 +236,7 @@ export default function Home() {
                     <div key={source.id} className="group py-4 flex items-center justify-between hover:bg-white hover:px-4 md:-mx-4 transition-all duration-300 rounded-lg">
                       <div className="flex items-center gap-4">
                         <span className="text-xl transition-all">
-                          {source.favicon ? <img src={source.favicon} className="w-5 h-5 object-contain" /> : getSourceTypeEmoji(source.type)}
+                          {source.favicon ? <img src={source.favicon} className="w-5 h-5 object-contain" /> : <SourceIcon type={source.type} className="w-5 h-5" />}
                         </span>
                         <div>
                           <h3 className="font-serif text-lg text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors">{source.name}</h3>

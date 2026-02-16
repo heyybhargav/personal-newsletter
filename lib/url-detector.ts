@@ -280,25 +280,7 @@ export function getFaviconUrl(url: string): string {
     }
 }
 
-/**
- * Get the appropriate emoji for a source type
- */
-export function getSourceTypeEmoji(type: SourceType): string {
-    const emojis: Record<SourceType, string> = {
-        youtube: '📺',
-        reddit: '💬',
-        substack: '📧',
-        medium: '📝',
-        hackernews: '🟠',
-        github: '🐙',
-        twitter: '🐦',
-        podcast: '🎙️',
-        newsletter: '📨',
-        blog: '📰',
-        rss: '📡',
-    };
-    return emojis[type] || '🔖';
-}
+
 
 /**
  * Get color class for source type badge

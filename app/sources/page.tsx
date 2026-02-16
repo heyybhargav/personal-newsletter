@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { getSourceTypeEmoji, getSourceTypeColor, SourceType } from '@/lib/url-detector';
+import {
+    Youtube, Mic, Newspaper, MessageSquare, Mail, FileText, Hash, Github, Twitter, Rss, Bookmark,
+    Inbox, CheckCircle, AlertTriangle, ArrowRight, X, Loader2, Plus
+} from 'lucide-react';
+import { getSourceTypeColor, SourceType } from '@/lib/url-detector';
 
 interface Source {
     id: string;
@@ -37,6 +41,8 @@ interface SearchResult {
     type: string;
     thumbnail?: string;
 }
+
+import { SourceIcon } from '@/components/SourceIcon';
 
 export default function SourcesPage() {
     const [sources, setSources] = useState<Source[]>([]);
@@ -301,7 +307,9 @@ export default function SourcesPage() {
                         </div>
                     ) : sources.length === 0 ? (
                         <div className="text-center py-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
-                            <div className="text-4xl mb-4 opacity-30">📭</div>
+                            <div className="flex justify-center mb-4 opacity-30">
+                                <Inbox className="w-16 h-16 text-gray-400" />
+                            </div>
                             <h3 className="text-lg font-serif font-medium text-gray-900">No sources configured</h3>
                             <p className="text-gray-500 mt-2 mb-8 font-light">Add news sites, YouTube channels, newsletters, or any RSS feed.</p>
                             <button onClick={() => setShowAddModal(true)} className="text-[#FF5700] font-bold hover:underline">Add your first source</button>
@@ -432,7 +440,7 @@ export default function SourcesPage() {
                                                 className="w-full flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all text-left group bg-white"
                                             >
                                                 <div className="w-12 h-12 bg-gray-50 flex-none flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all rounded-lg overflow-hidden border border-gray-100">
-                                                    {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : getSourceTypeEmoji(result.type as SourceType)}
+                                                    {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : <SourceIcon type={result.type} className="w-6 h-6" />}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="font-serif text-lg font-medium text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">
@@ -462,7 +470,7 @@ export default function SourcesPage() {
                                                 {detectedSource.favicon ? (
                                                     <img src={detectedSource.favicon} alt="" className="w-full h-full object-cover" />
                                                 ) : (
-                                                    getSourceTypeEmoji(detectedSource.type)
+                                                    <SourceIcon type={detectedSource.type} className="w-8 h-8" />
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
