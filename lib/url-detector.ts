@@ -302,6 +302,8 @@ export function detectSourceFromUrl(url: string): DetectedSource | null {
     }
 }
 
+export const detectSource = detectSourceFromUrl;
+
 /**
  * Get a better favicon URL with fallbacks
  */
