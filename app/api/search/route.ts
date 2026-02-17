@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { getSubstackFeedUrl, detectSource, SourceType } from '../../lib/url-detector';
+import { parseRSSFeed } from '../../lib/rss-parser';
+import { fetchTwitterSyndication } from '../../lib/twitter-syndication';
 
 interface SearchResult {
     title: string;
@@ -239,101 +242,92 @@ async function searchBlogs(query: string): Promise<SearchResult[]> {
 }
 
 async function searchSocial(query: string): Promise<SearchResult[]> {
-    const results: SearchResult[] = [];
-
-    // Only try if query looks like a username (no spaces, > 2 chars)
     const handle = query.trim().replace(/^@/, '');
     if (handle.includes(' ') || handle.length < 2) return [];
 
-    // Probe Nitter (Twitter) and RSSHub (Instagram) in parallel
-    // We race multiple instances to find one that works (bypass blocks/rate-limits)
-
-    // 1. Twitter Bridges
-    const twitterBridges = [
-        `https://nitter.privacydev.net/${handle}/rss`,
-        `https://nitter.poast.org/${handle}/rss`,
-        `https://nitter.lucabased.xyz/${handle}/rss`,
-        `https://rsshub.app/twitter/user/${handle}`
-    ];
-
-    // 2. Instagram Bridges
-    const instagramBridges = [
-        `https://rsshub.app/instagram/user/${handle}`,
-        `https://rsshub.feeddd.org/instagram/user/${handle}`, // Alternative RSSHub instance
-        `https://pixelfed.social/users/${handle}.atom` // Fallback for Fediverse/Instagram mirrors? rare but possible
-    ];
-
-    const probeBridge = async (url: string): Promise<string | null> => {
+    // 1. Twitter Search (via Syndication)
+    const twitterPromise = (async (): Promise<SearchResult | null> => {
         try {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 4000);
-
-            console.log(`[Search] Probing: ${url}`);
-            const res = await fetch(url, {
-                method: 'GET', // HEAD is often blocked
-                signal: controller.signal,
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Accept': 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'
-                }
-            });
-            clearTimeout(timeout);
-
-            if (res.ok) {
-                const contentType = res.headers.get('content-type');
-                if (contentType && (contentType.includes('xml') || contentType.includes('rss'))) {
-                    return url;
-                }
-                // Nitter returns HTML sometimes on error, so ensure it looks like XML even if 200
-                return url;
+            const tweets = await fetchTwitterSyndication(handle);
+            if (tweets.length > 0) {
+                const user = tweets[0].user;
+                return {
+                    title: `${user.name} (@${user.screen_name})`,
+                    description: user.description || `Twitter feed for @${handle}`,
+                    url: `https://syndication.twitter.com/srv/timeline-profile/screen-name/${handle}`,
+                    type: 'twitter',
+                    thumbnail: user.profile_image_url_https.replace('_normal', '')
+                };
             }
         } catch (e) {
-            // Ignore errors, just try next
+            console.error('Twitter search failed:', e);
         }
         return null;
-    };
+    })();
 
-    // Helper to race bridges and return the first Success
-    const findWorkingBridge = async (urls: string[]): Promise<string | null> => {
-        // We run them in parallel but return as soon as one works
-        // Promise.any is perfect here but requires Node 15+. Next.js usually has it.
-        // If not, we can map and use a custom race.
+    // 2. Instagram Search (via Bridges)
+    // We race multiple instances to find one that works
+    const instagramBridges = [
+        `https://rsshub.app/instagram/user/${handle}`,
+        `https://rsshub.feeddd.org/instagram/user/${handle}`,
+        `https://pixelfed.social/users/${handle}.atom`,
+        `https://rsshub.rss.style/instagram/user/${handle}`
+    ];
+
+    const instagramPromise = (async (): Promise<SearchResult | null> => {
         try {
-            const result = await Promise.any(urls.map(async url => {
-                const validUrl = await probeBridge(url);
-                if (!validUrl) throw new Error('Failed');
-                return validUrl;
-            }));
-            return result;
-        } catch {
-            return null; // All failed
-        }
-    };
+            // Race to find the first working bridge
+            const validBridge = await Promise.any(instagramBridges.map(async (url) => {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 4000);
 
-    const [twitterUrl, instagramUrl] = await Promise.all([
-        findWorkingBridge(twitterBridges),
-        findWorkingBridge(instagramBridges)
+                try {
+                    const res = await fetch(url, {
+                        method: 'GET',
+                        signal: controller.signal,
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                            'Accept': 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'
+                        }
+                    });
+                    clearTimeout(timeout);
+
+                    if (!res.ok) throw new Error(`Status ${res.status}`);
+
+                    const contentType = res.headers.get('content-type');
+                    const text = await res.text();
+
+                    // Simple validation
+                    if (text.length > 50 && (text.includes('<rss') || text.includes('<feed') || contentType?.includes('xml'))) {
+                        return url;
+                    }
+                    throw new Error('Invalid content');
+                } catch (e) {
+                    clearTimeout(timeout);
+                    throw e;
+                }
+            }));
+
+            return {
+                title: `@${handle} (Instagram)`,
+                description: `Instagram Feed via Bridge`,
+                url: validBridge,
+                type: 'instagram',
+                thumbnail: 'https://www.google.com/s2/favicons?domain=instagram.com&sz=128'
+            };
+        } catch {
+            return null;
+        }
+    })();
+
+    const [twitterResult, instagramResult] = await Promise.all([
+        twitterPromise,
+        instagramPromise
     ]);
 
-    if (twitterUrl) {
-        results.push({
-            title: `@${handle} (Twitter)`,
-            description: 'Twitter Feed via Bridge',
-            url: twitterUrl,
-            type: 'twitter',
-            thumbnail: 'https://abs.twimg.com/favicons/twitter.ico'
-        });
-    }
-
-    if (instagramUrl) {
-        results.push({
-            title: `@${handle} (Instagram)`,
-            description: 'Instagram Feed via Bridge',
-            url: instagramUrl,
-            type: 'instagram',
-            thumbnail: 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico'
-        });
-    }
+    const results: SearchResult[] = [];
+    if (twitterResult) results.push(twitterResult);
+    if (instagramResult) results.push(instagramResult);
 
     return results;
 }

@@ -185,18 +185,27 @@ const detectionRules: DetectionRule[] = [
         patterns: [
             /twitter\.com\/([\w]+)/i,
             /x\.com\/([\w]+)/i,
-            /nitter\..+\/([\w]+)/i, // Catch-all for any Nitter instance
-            /rsshub\.app\/twitter\/user\/([\w]+)/i,
+            /twitter\.com\/([a-zA-Z0-9_]+)/,
+            /x\.com\/([a-zA-Z0-9_]+)/,
+            /nitter\.net\/([a-zA-Z0-9_]+)/,
+            /nitter\.privacydev\.net\/([a-zA-Z0-9_]+)/
         ],
-        extractFeedUrl: (url, match) => {
-            // Use Nitter bridge for RSS
-            if (match) {
-                return `https://nitter.net/${match[1]}/rss`;
+        extractFeedUrl: (url) => {
+            const match = url.match(/twitter\.com\/([a-zA-Z0-9_]+)/) ||
+                url.match(/x\.com\/([a-zA-Z0-9_]+)/) ||
+                url.match(/nitter\.net\/([a-zA-Z0-9_]+)/) ||
+                url.match(/nitter\.privacydev\.net\/([a-zA-Z0-9_]+)/);
+            if (match && match[1]) {
+                return `https://syndication.twitter.com/srv/timeline-profile/screen-name/${match[1]}`;
             }
             return url;
         },
-        extractName: (url, match) => match ? `@${match[1]}` : 'Twitter',
-        getFavicon: () => 'https://abs.twimg.com/favicons/twitter.ico',
+        extractName: (url) => {
+            const match = url.match(/twitter\.com\/([a-zA-Z0-9_]+)/) ||
+                url.match(/x\.com\/([a-zA-Z0-9_]+)/);
+            return match ? `@${match[1]}` : 'Twitter User';
+        },
+        getFavicon: () => 'https://abs.twimg.com/favicons/twitter.ico'
     },
 
     // Instagram (via RSSHub)

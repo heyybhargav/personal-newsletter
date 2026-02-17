@@ -1,4 +1,6 @@
 import Parser from 'rss-parser';
+import * as cheerio from 'cheerio';
+import { fetchTwitterSyndication } from './twitter-syndication';
 import { ContentItem, SourceType } from './types';
 
 const parser = new Parser({
@@ -15,6 +17,32 @@ const parser = new Parser({
 });
 
 export async function parseRSSFeed(url: string, sourceType: SourceType, sourceName: string): Promise<ContentItem[]> {
+    // Handle Twitter Syndication URL
+    if (url.includes('syndication.twitter.com') || url.includes('twitter.com/srv/timeline')) {
+        try {
+            const handle = url.split('screen-name/')[1];
+            if (handle) {
+                const tweets = await fetchTwitterSyndication(handle);
+                return tweets.map(tweet => ({
+                    title: `Tweet from ${tweet.user?.name || handle}`,
+                    link: `https://twitter.com/${tweet.user?.screen_name}/status/${tweet.id_str}`,
+                    content: tweet.full_text,
+                    contentSnippet: tweet.full_text,
+                    description: tweet.full_text,
+                    pubDate: new Date(tweet.created_at).toISOString(),
+                    categories: ['Social', 'Twitter'],
+                    thumbnail: tweet.entities?.media?.[0]?.media_url_https || '',
+                    source: sourceName,
+                    sourceType: sourceType,
+                    author: tweet.user?.name
+                }));
+            }
+        } catch (error) {
+            console.error(`Error parsing Twitter syndication for ${url}:`, error);
+            return [];
+        }
+    }
+
     try {
         const feed = await parser.parseURL(url);
 
