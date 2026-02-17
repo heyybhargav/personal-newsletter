@@ -4,9 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
     Youtube, Mic, Newspaper, MessageSquare, Mail, FileText, Hash, Github, Twitter, Rss, Bookmark,
-    Inbox, CheckCircle, AlertTriangle, ArrowRight, X, Loader2, Plus
+    Inbox, CheckCircle, AlertTriangle, ArrowRight, X, Loader2, Plus, Sparkles, TrendingUp,
+    Zap, Globe, Atom, Palette, Bot, RefreshCw
 } from 'lucide-react';
 import { getSourceTypeColor, SourceType } from '@/lib/url-detector';
+import { StarterPack, RecommendedSource, getStarterPacks } from '@/lib/recommendations';
 
 interface Source {
     id: string;
@@ -43,12 +45,27 @@ interface SearchResult {
 }
 
 import { SourceIcon } from '@/components/SourceIcon';
+import { Toast } from '@/components/Toast';
+
+const PackIcon = ({ icon, className }: { icon: string, className?: string }) => {
+    switch (icon) {
+        case 'Zap': return <Zap className={className} />;
+        case 'TrendingUp': return <TrendingUp className={className} />;
+        case 'Bot': return <Bot className={className} />;
+        case 'Globe': return <Globe className={className} />;
+        case 'Atom': return <Atom className={className} />;
+        case 'Palette': return <Palette className={className} />;
+        default: return <Sparkles className={className} />;
+    }
+};
 
 export default function SourcesPage() {
     const [sources, setSources] = useState<Source[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
-    const [message, setMessage] = useState('');
+
+    // Toast State
+    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; description?: string } | null>(null);
 
     // Smart Detection State
     const [inputUrl, setInputUrl] = useState('');
@@ -64,8 +81,15 @@ export default function SourcesPage() {
     // Editable fields after detection
     const [editableName, setEditableName] = useState('');
 
+    // Recommendations State
+    const [recommendations, setRecommendations] = useState<StarterPack[] | RecommendedSource[]>([]);
+    const [recMode, setRecMode] = useState<'starter' | 'contextual'>('starter');
+    const [loadingRecs, setLoadingRecs] = useState(true);
+    const [addingRec, setAddingRec] = useState<string | null>(null); // ID being added
+
     useEffect(() => {
         fetchSources();
+        fetchRecommendations();
     }, []);
 
     const fetchSources = async () => {
@@ -77,6 +101,83 @@ export default function SourcesPage() {
             console.error('Error fetching sources:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchRecommendations = async () => {
+        setLoadingRecs(true);
+        try {
+            const res = await fetch('/api/recommendations');
+            const data = await res.json();
+            setRecMode(data.mode || 'starter');
+            setRecommendations(data.data || []);
+        } catch (error) {
+            console.error('Error fetching recommendations:', error);
+        } finally {
+            setLoadingRecs(false);
+        }
+    };
+
+    const handleAddPack = async (pack: StarterPack) => {
+        setAddingRec(pack.id);
+        // Add all sources in the pack
+        // In a real app, we'd have a batch API. Here we'll just loop sequentially for simplicity
+        // and to reuse the existing logic if possible, or just hit the add endpoint.
+
+        let successCount = 0;
+
+        for (const source of pack.sources) {
+            try {
+                await fetch('/api/sources', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: source.name,
+                        url: source.url,
+                        type: source.type,
+                        favicon: source.favicon,
+                        originalUrl: source.originalUrl,
+                    })
+                });
+                successCount++;
+            } catch (e) {
+                console.error('Failed to add source from pack', source.name);
+            }
+        }
+
+        setAddingRec(null);
+        if (successCount > 0) {
+            setToast({ message: `Added ${successCount} sources`, description: `From ${pack.name}`, type: 'success' });
+            fetchSources();
+            fetchRecommendations();
+        }
+    };
+
+    const handleAddRecommendation = async (rec: RecommendedSource) => {
+        setAddingRec(rec.id);
+        try {
+            const res = await fetch('/api/sources', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: rec.name,
+                    url: rec.url,
+                    type: rec.type,
+                    favicon: rec.favicon,
+                    originalUrl: rec.originalUrl,
+                })
+            });
+
+            if (res.ok) {
+                setToast({ message: `Added ${rec.name}`, type: 'success' });
+                // Remove from local list to avoid duplicates immediately
+                setRecommendations(prev => (prev as RecommendedSource[]).filter(r => r.id !== rec.id));
+                fetchSources();
+            }
+        } catch (error) {
+            console.error('Error adding recommendation:', error);
+        } finally {
+            setAddingRec(null);
         }
     };
 
@@ -204,8 +305,7 @@ export default function SourcesPage() {
             if (res.ok) {
                 await fetchSources();
                 resetModal();
-                setMessage('✅ Source added successfully!');
-                setTimeout(() => setMessage(''), 3000);
+                setToast({ message: 'Source added', type: 'success' });
             } else {
                 const data = await res.json();
                 setDetectionError(data.error || 'Failed to add source');
@@ -231,12 +331,15 @@ export default function SourcesPage() {
         try {
             const res = await fetch(`/api/sources?id=${id}`, { method: 'DELETE' });
             if (res.ok) {
-                await fetchSources();
-                setMessage('✅ Source deleted');
-                setTimeout(() => setMessage(''), 3000);
+                const remaining = sources.filter(s => s.id !== id);
+                setSources(remaining);
+                setToast({ message: 'Source deleted', type: 'success' });
+                // Always re-fetch recommendations after delete
+                // The API will return the correct mode based on remaining sources
+                fetchRecommendations();
             }
         } catch (error: any) {
-            setMessage(`Error: ${error.message}`);
+            setToast({ message: 'Error deleting source', description: error.message, type: 'error' });
         }
     };
 
@@ -289,13 +392,14 @@ export default function SourcesPage() {
 
             {/* Main Content */}
             <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-24">
-                {message && (
-                    <div className={`mb-8 p-4 rounded-lg text-sm border flex items-start gap-3 shadow-sm ${message.includes('Error') ? 'bg-red-50 border-red-100 text-red-800' : 'bg-green-50 border-green-100 text-green-800'}`}>
-                        <div className={`mt-1.5 w-2 h-2 rounded-full ${message.includes('Error') ? 'bg-red-500' : 'bg-green-500'}`}></div>
-                        <div className="flex-1 font-medium">
-                            {message}
-                        </div>
-                    </div>
+                {/* Toast Notification */}
+                {toast && (
+                    <Toast
+                        message={toast.message}
+                        description={toast.description}
+                        type={toast.type}
+                        onClose={() => setToast(null)}
+                    />
                 )}
 
                 {/* Sources List */}
@@ -306,13 +410,64 @@ export default function SourcesPage() {
                             <p className="text-gray-400 font-serif italic">Loading intelligence streams...</p>
                         </div>
                     ) : sources.length === 0 ? (
-                        <div className="text-center py-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
-                            <div className="flex justify-center mb-4 opacity-30">
-                                <Inbox className="w-16 h-16 text-gray-400" />
+                        <div className="py-12">
+                            <div className="text-center mb-12">
+                                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-50 mb-4">
+                                    <Sparkles className="w-6 h-6 text-[#FF5700]" />
+                                </div>
+                                <h3 className="text-2xl font-serif font-medium text-[#1A1A1A]">Choose Your Intelligence Diet</h3>
+                                <p className="text-gray-500 mt-2 max-w-md mx-auto">
+                                    Don&apos;t know where to start? Pick a curated path to instantly populate your briefing with high-signal streams.
+                                </p>
                             </div>
-                            <h3 className="text-lg font-serif font-medium text-gray-900">No sources configured</h3>
-                            <p className="text-gray-500 mt-2 mb-8 font-light">Add news sites, YouTube channels, newsletters, or any RSS feed.</p>
-                            <button onClick={() => setShowAddModal(true)} className="text-[#FF5700] font-bold hover:underline">Add your first source</button>
+
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                {getStarterPacks().map((pack) => {
+                                    const isAdding = addingRec === pack.id;
+                                    return (
+                                        <button
+                                            key={pack.id}
+                                            onClick={() => handleAddPack(pack)}
+                                            disabled={isAdding}
+                                            className="group relative p-6 bg-white border border-gray-100 rounded-xl hover:border-[#FF5700] hover:shadow-lg transition-all text-left flex flex-col h-full"
+                                        >
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-[#FF5700] mb-2">
+                                                    <PackIcon icon={pack.icon} className="w-6 h-6" />
+                                                </div>
+                                                {isAdding ? (
+                                                    <div className="w-5 h-5 border-2 border-gray-200 border-t-[#FF5700] rounded-full animate-spin"></div>
+                                                ) : (
+                                                    <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-[#FF5700] group-hover:text-white transition-colors">
+                                                        <Plus className="w-4 h-4" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <h4 className="font-serif text-lg font-bold text-gray-900 group-hover:text-[#FF5700] transition-colors">{pack.name}</h4>
+                                            <p className="text-sm text-gray-500 mt-2 leading-relaxed mb-6 flex-1">
+                                                {pack.description}
+                                            </p>
+                                            <div className="flex -space-x-2 overflow-hidden">
+                                                {pack.sources?.slice(0, 4).map((s, i) => (
+                                                    <div key={i} className="w-6 h-6 rounded-full border border-white bg-gray-100 flex items-center justify-center text-[10px] uppercase font-bold text-gray-500" title={s.name}>
+                                                        {s.favicon ? <img src={s.favicon} className="w-full h-full object-cover rounded-full" /> : s.name[0]}
+                                                    </div>
+                                                ))}
+                                                {(pack.sources?.length || 0) > 4 && (
+                                                    <div className="w-6 h-6 rounded-full border border-white bg-gray-50 flex items-center justify-center text-[8px] font-bold text-gray-400">
+                                                        +{(pack.sources?.length || 0) - 4}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="mt-12 text-center">
+                                <p className="text-sm text-gray-400 mb-4">or build your own from scratch</p>
+                                <button onClick={() => setShowAddModal(true)} className="text-[#FF5700] font-bold hover:underline">Add a custom source</button>
+                            </div>
                         </div>
                     ) : (
                         <div className="relative">
@@ -369,165 +524,215 @@ export default function SourcesPage() {
                         </div>
                     )}
                 </div>
-            </div>
 
-            {/* Add Source Modal - Final Refined Design */}
-            {showAddModal && (
-                <div className="fixed inset-0 bg-[#FDFBF7]/95 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-50">
-                    <div className="bg-white w-full sm:max-w-2xl h-[85vh] sm:h-[650px] flex flex-col shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-t-2xl sm:rounded-2xl animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
-                        {/* Fixed Top Section: Header + Large Input */}
-                        <div className="flex-none bg-white p-5 sm:p-8 pb-0 z-20 rounded-t-2xl">
-                            <div className="flex justify-between items-start mb-4 sm:mb-6">
-                                <div>
-                                    <h2 className="text-2xl sm:text-3xl font-serif font-medium text-[#1A1A1A]">New Source</h2>
-                                </div>
-                                <button onClick={resetModal} className="text-gray-400 hover:text-black transition p-2 -mr-2 bg-gray-50 hover:bg-gray-100 rounded-full">
-                                    <span className="sr-only">Close</span>
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
-                                </button>
+                {/* Populated State: Discovery Section */}
+                {!loading && sources.length > 0 && recMode === 'contextual' && recommendations.length > 0 && (
+                    <div className="mt-16 pt-12 border-t border-gray-200/60">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-[#FF5700]" />
+                                <h3 className="text-sm font-bold tracking-widest text-gray-900 uppercase">Trending in your network</h3>
                             </div>
-
-                            {/* Large Editorial Input (Fixed) */}
-                            <div className="relative group pb-4 border-b border-gray-100">
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400">
-                                    <svg className="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                                </div>
-                                <input
-                                    type="text"
-                                    value={inputUrl}
-                                    onChange={(e) => setInputUrl(e.target.value)}
-                                    placeholder="Paste URL or search..."
-                                    className="w-full pl-8 sm:pl-10 text-lg sm:text-2xl font-serif bg-transparent border-none placeholder:text-gray-300 focus:ring-0 focus:outline-none transition-colors p-0"
-                                    autoFocus
-                                />
-                                {detecting && (
-                                    <div className="absolute right-0 top-1/2 -translate-y-1/2">
-                                        <div className="w-5 h-5 border-2 border-gray-200 border-t-[#FF5700] rounded-full animate-spin"></div>
-                                    </div>
-                                )}
-                            </div>
+                            <button
+                                onClick={() => fetchRecommendations()}
+                                disabled={loadingRecs}
+                                className="flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-gray-400 hover:text-[#FF5700] transition-colors py-1 px-2 rounded-md hover:bg-orange-50"
+                                title="Show different recommendations"
+                            >
+                                <RefreshCw className={`w-3.5 h-3.5 ${loadingRecs ? 'animate-spin' : ''}`} />
+                                Refresh
+                            </button>
                         </div>
 
-                        {/* Scrollable Results Area */}
-                        <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-6">
-                            {/* Intro Text / Helper (only when empty) */}
-                            {!inputUrl && !detectedSource && (
-                                <div className="h-full flex flex-col items-center justify-center opacity-60 pb-10">
-                                    <p className="font-serif italic text-gray-400 text-lg text-center max-w-sm leading-relaxed">
-                                        Search for YouTube channels, subreddits, podcasts, or paste any RSS link.
-                                    </p>
-                                </div>
-                            )}
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                            {recommendations.map((item) => {
+                                const rec = item as RecommendedSource;
+                                const isAdding = addingRec === rec.id;
+                                return (
+                                    <button
+                                        key={rec.id}
+                                        onClick={() => handleAddRecommendation(rec)}
+                                        disabled={isAdding}
+                                        className="flex items-start gap-4 p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md hover:border-gray-200 transition-all text-left group"
+                                    >
+                                        <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex-none flex items-center justify-center overflow-hidden">
+                                            {rec.favicon ? <img src={rec.favicon} className="w-full h-full object-cover" /> : <SourceIcon type={rec.type} className="w-5 h-5" />}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-serif font-bold text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">{rec.name}</h4>
+                                            <p className="text-xs text-gray-400 mt-1 line-clamp-2">{rec.description || 'Recommended for you'}</p>
+                                        </div>
+                                        <div className="text-gray-300 group-hover:text-[#FF5700] transition-colors">
+                                            {isAdding ? <Loader2 className="w-4 h-4 animate-spin text-[#FF5700]" /> : <Plus className="w-4 h-4" />}
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+            </div >
 
-                            {/* Detection Error */}
-                            {detectionError && (
-                                <div className="mb-6 p-4 bg-red-50 border-l-2 border-red-500 text-red-700 text-sm font-medium rounded-r-lg">
-                                    {detectionError}
-                                </div>
-                            )}
 
-                            {/* Search Results List - Editorial Style */}
-                            {searchResults.length > 0 && !detectedSource && (
-                                <div className="animate-in slide-in-from-bottom-2">
-                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 sticky top-0 bg-white/95 py-2 backdrop-blur-sm z-10 w-full">
-                                        Found {searchResults.length} sources
-                                    </h3>
-                                    <div className="space-y-3 pb-4">
-                                        {searchResults.map((result, idx) => (
-                                            <button
-                                                key={idx}
-                                                onClick={() => handleSelectResult(result)}
-                                                className="w-full flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all text-left group bg-white"
-                                            >
-                                                <div className="w-12 h-12 bg-gray-50 flex-none flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all rounded-lg overflow-hidden border border-gray-100">
-                                                    {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : <SourceIcon type={result.type} className="w-6 h-6" />}
+            {/* Add Source Modal - Final Refined Design */}
+            {
+                showAddModal && (
+                    <div className="fixed inset-0 bg-[#FDFBF7]/95 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-50">
+                        <div className="bg-white w-full sm:max-w-2xl h-[85vh] sm:h-[650px] flex flex-col shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-t-2xl sm:rounded-2xl animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
+                            {/* Fixed Top Section: Header + Large Input */}
+                            <div className="flex-none bg-white p-5 sm:p-8 pb-0 z-20 rounded-t-2xl">
+                                <div className="flex justify-between items-start mb-4 sm:mb-6">
+                                    <div>
+                                        <h2 className="text-2xl sm:text-3xl font-serif font-medium text-[#1A1A1A]">New Source</h2>
+                                    </div>
+                                    <button onClick={resetModal} className="text-gray-400 hover:text-black transition p-2 -mr-2 bg-gray-50 hover:bg-gray-100 rounded-full">
+                                        <span className="sr-only">Close</span>
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                </div>
+
+                                {/* Large Editorial Input (Fixed) */}
+                                <div className="relative group pb-4 border-b border-gray-100">
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400">
+                                        <svg className="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={inputUrl}
+                                        onChange={(e) => setInputUrl(e.target.value)}
+                                        placeholder="Paste URL or search..."
+                                        className="w-full pl-8 sm:pl-10 text-lg sm:text-2xl font-serif bg-transparent border-none placeholder:text-gray-300 focus:ring-0 focus:outline-none transition-colors p-0"
+                                        autoFocus
+                                    />
+                                    {detecting && (
+                                        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                                            <div className="w-5 h-5 border-2 border-gray-200 border-t-[#FF5700] rounded-full animate-spin"></div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Scrollable Results Area */}
+                            <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-6">
+                                {/* Intro Text / Helper (only when empty) */}
+                                {!inputUrl && !detectedSource && (
+                                    <div className="h-full flex flex-col items-center justify-center opacity-60 pb-10">
+                                        <p className="font-serif italic text-gray-400 text-lg text-center max-w-sm leading-relaxed">
+                                            Search for YouTube channels, subreddits, podcasts, or paste any RSS link.
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Detection Error */}
+                                {detectionError && (
+                                    <div className="mb-6 p-4 bg-red-50 border-l-2 border-red-500 text-red-700 text-sm font-medium rounded-r-lg">
+                                        {detectionError}
+                                    </div>
+                                )}
+
+                                {/* Search Results List - Editorial Style */}
+                                {searchResults.length > 0 && !detectedSource && (
+                                    <div className="animate-in slide-in-from-bottom-2">
+                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 sticky top-0 bg-white/95 py-2 backdrop-blur-sm z-10 w-full">
+                                            Found {searchResults.length} sources
+                                        </h3>
+                                        <div className="space-y-3 pb-4">
+                                            {searchResults.map((result, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleSelectResult(result)}
+                                                    className="w-full flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all text-left group bg-white"
+                                                >
+                                                    <div className="w-12 h-12 bg-gray-50 flex-none flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all rounded-lg overflow-hidden border border-gray-100">
+                                                        {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : <SourceIcon type={result.type} className="w-6 h-6" />}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="font-serif text-lg font-medium text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">
+                                                            {result.title}
+                                                        </div>
+                                                        <div className="flex items-center gap-2 text-xs text-gray-500 font-mono mt-0.5">
+                                                            <span className={`uppercase tracking-wider ${getSourceTypeColor(result.type as SourceType)}`}>{result.type}</span>
+                                                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                                                            <span className="truncate max-w-[200px]">{result.description}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-gray-300 group-hover:text-[#FF5700] transition-colors transform group-hover:translate-x-1 flex-none">
+                                                        →
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Detected Source Preview */}
+                                {detectedSource && (
+                                    <div className="animate-in slide-in-from-bottom-4">
+                                        <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
+                                            <div className="flex items-start gap-4 sm:gap-6">
+                                                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white border border-gray-100 flex-none flex items-center justify-center text-2xl sm:text-3xl shadow-sm rounded-lg overflow-hidden">
+                                                    {detectedSource.favicon ? (
+                                                        <img src={detectedSource.favicon} alt="" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <SourceIcon type={detectedSource.type} className="w-8 h-8" />
+                                                    )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="font-serif text-lg font-medium text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">
-                                                        {result.title}
+                                                    <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                                                        <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-wider ${getSourceTypeColor(detectedSource.type)} bg-white`}>
+                                                            {detectedSource.type}
+                                                        </span>
+                                                        <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                                                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                                            Ready to add
+                                                        </span>
                                                     </div>
-                                                    <div className="flex items-center gap-2 text-xs text-gray-500 font-mono mt-0.5">
-                                                        <span className={`uppercase tracking-wider ${getSourceTypeColor(result.type as SourceType)}`}>{result.type}</span>
-                                                        <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                                        <span className="truncate max-w-[200px]">{result.description}</span>
-                                                    </div>
-                                                </div>
-                                                <div className="text-gray-300 group-hover:text-[#FF5700] transition-colors transform group-hover:translate-x-1 flex-none">
-                                                    →
-                                                </div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                                                    <input
+                                                        type="text"
+                                                        value={editableName}
+                                                        onChange={(e) => setEditableName(e.target.value)}
+                                                        className="w-full text-xl sm:text-2xl font-serif font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none transition-colors p-0 truncate"
+                                                    />
+                                                    <p className="text-xs sm:text-sm text-gray-400 mt-1 font-mono truncate">{detectedSource.feedUrl}</p>
 
-                            {/* Detected Source Preview */}
-                            {detectedSource && (
-                                <div className="animate-in slide-in-from-bottom-4">
-                                    <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
-                                        <div className="flex items-start gap-4 sm:gap-6">
-                                            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white border border-gray-100 flex-none flex items-center justify-center text-2xl sm:text-3xl shadow-sm rounded-lg overflow-hidden">
-                                                {detectedSource.favicon ? (
-                                                    <img src={detectedSource.favicon} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <SourceIcon type={detectedSource.type} className="w-8 h-8" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                                                    <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-wider ${getSourceTypeColor(detectedSource.type)} bg-white`}>
-                                                        {detectedSource.type}
-                                                    </span>
-                                                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-                                                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                                                        Ready to add
-                                                    </span>
+                                                    {/* Preview Items */}
+                                                    {sampleItems.length > 0 && (
+                                                        <ul className="mt-4 space-y-2 border-l-2 border-gray-100 pl-4">
+                                                            {sampleItems.slice(0, 3).map((item, i) => (
+                                                                <li key={i} className="text-sm text-gray-500 font-serif italic line-clamp-1">
+                                                                    "{item.title}"
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    )}
                                                 </div>
-                                                <input
-                                                    type="text"
-                                                    value={editableName}
-                                                    onChange={(e) => setEditableName(e.target.value)}
-                                                    className="w-full text-xl sm:text-2xl font-serif font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none transition-colors p-0 truncate"
-                                                />
-                                                <p className="text-xs sm:text-sm text-gray-400 mt-1 font-mono truncate">{detectedSource.feedUrl}</p>
-
-                                                {/* Preview Items */}
-                                                {sampleItems.length > 0 && (
-                                                    <ul className="mt-4 space-y-2 border-l-2 border-gray-100 pl-4">
-                                                        {sampleItems.slice(0, 3).map((item, i) => (
-                                                            <li key={i} className="text-sm text-gray-500 font-serif italic line-clamp-1">
-                                                                "{item.title}"
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
 
-                        {/* Fixed Actions Bottom Bar */}
-                        <div className="p-4 sm:p-6 border-t border-gray-100 bg-white flex-none flex justify-end gap-3 z-20 rounded-b-2xl">
-                            <button
-                                onClick={resetModal}
-                                className="px-5 sm:px-6 py-2.5 text-gray-500 font-medium hover:text-black hover:bg-gray-50 rounded-full transition-colors text-sm sm:text-base"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleAdd}
-                                disabled={!detectedSource || detecting}
-                                className="bg-[#1A1A1A] text-white px-6 sm:px-8 py-2.5 rounded-full font-medium hover:bg-[#FF5700] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200 flex items-center gap-2 text-sm sm:text-base"
-                            >
-                                {detecting ? 'Detecting...' : detectedSource ? 'Confirm Source' : 'Add Source'}
-                                {!detecting && detectedSource && <span>↵</span>}
-                            </button>
+                            {/* Fixed Actions Bottom Bar */}
+                            <div className="p-4 sm:p-6 border-t border-gray-100 bg-white flex-none flex justify-end gap-3 z-20 rounded-b-2xl">
+                                <button
+                                    onClick={resetModal}
+                                    className="px-5 sm:px-6 py-2.5 text-gray-500 font-medium hover:text-black hover:bg-gray-50 rounded-full transition-colors text-sm sm:text-base"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleAdd}
+                                    disabled={!detectedSource || detecting}
+                                    className="bg-[#1A1A1A] text-white px-6 sm:px-8 py-2.5 rounded-full font-medium hover:bg-[#FF5700] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform duration-200 flex items-center gap-2 text-sm sm:text-base"
+                                >
+                                    {detecting ? 'Detecting...' : detectedSource ? 'Confirm Source' : 'Add Source'}
+                                    {!detecting && detectedSource && <span>↵</span>}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

@@ -55,7 +55,7 @@ export default function SettingsPage() {
             if (data.error) {
                 setMessage(`Error: ${data.error}`);
             } else if (data.sent) {
-                setMessage(`✅ Email sent successfully! (${data.itemCount} items) — Check your Spam folder if you don't see it.`);
+                setMessage(`Email sent successfully (${data.itemCount} items). Please check your Spam folder.`);
                 console.log(data);
             } else {
                 setMessage(data.message || 'No email sent');
@@ -87,7 +87,7 @@ export default function SettingsPage() {
             });
 
             if (res.ok) {
-                setMessage('✅ Settings saved successfully!');
+                setMessage('Settings saved successfully.');
                 setTimeout(() => setMessage(''), 3000);
             } else {
                 const data = await res.json();
@@ -100,21 +100,55 @@ export default function SettingsPage() {
         }
     };
 
-    const handlePause = (duration: '7_days' | '15_days' | 'indefinite') => {
-        setSubscriptionStatus('paused');
-        if (duration === 'indefinite') {
-            setPausedUntil(null);
-        } else {
-            const days = duration === '7_days' ? 7 : 15;
-            const date = new Date();
-            date.setDate(date.getDate() + days);
-            setPausedUntil(date.toISOString());
+    const saveSubscriptionPreferences = async (newStatus: 'active' | 'paused', newPausedUntil: string | null) => {
+        setSaving(true);
+        setMessage('');
+
+        // Optimistic update
+        setSubscriptionStatus(newStatus);
+        setPausedUntil(newPausedUntil);
+
+        try {
+            const res = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    deliveryTime,
+                    timezone,
+                    llmProvider,
+                    subscriptionStatus: newStatus,
+                    pausedUntil: newPausedUntil
+                })
+            });
+
+            if (res.ok) {
+                // Success - no message needed for optimistic UI
+            } else {
+                const data = await res.json();
+                setMessage(`Error: ${data.error}`);
+                // Revert on error (optional, but good practice - simplified here for now)
+            }
+        } catch (error: any) {
+            setMessage(`Error: ${error.message}`);
+        } finally {
+            setSaving(false);
         }
     };
 
+    const handlePause = (duration: '7_days' | '15_days' | 'indefinite') => {
+        let newPausedUntil: string | null = null;
+        if (duration !== 'indefinite') {
+            const days = duration === '7_days' ? 7 : 15;
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            newPausedUntil = date.toISOString();
+        }
+        saveSubscriptionPreferences('paused', newPausedUntil);
+    };
+
     const handleResume = () => {
-        setSubscriptionStatus('active');
-        setPausedUntil(null);
+        saveSubscriptionPreferences('active', null);
     };
 
     return (
