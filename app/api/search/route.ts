@@ -22,12 +22,13 @@ export async function GET(request: Request) {
 
         if (type === 'all' || !type) {
             // Universal search: Run all providers in parallel
-            const [youtube, podcasts, reddit, news, blogs] = await Promise.allSettled([
+            const [youtube, podcasts, reddit, news, blogs, social] = await Promise.allSettled([
                 searchYouTube(query),
                 searchPodcasts(query),
                 searchReddit(query),
                 searchNews(query),
-                searchBlogs(query)
+                searchBlogs(query),
+                searchSocial(query)
             ]);
 
             // Helper to get value or empty array
@@ -37,6 +38,7 @@ export async function GET(request: Request) {
             // Interleave results so no single type dominates
             const allBuckets = [
                 getResults(blogs),
+                getResults(social), // Social bridge matches are high intent, prioritize them
                 getResults(youtube),
                 getResults(podcasts),
                 getResults(reddit),
@@ -69,6 +71,11 @@ export async function GET(request: Request) {
                 case 'blog':
                 case 'rss':
                     results = await searchBlogs(query);
+                    break;
+                case 'twitter':
+                case 'instagram':
+                    const socialResults = await searchSocial(query);
+                    results = socialResults.filter(r => r.type === type);
                     break;
                 default:
                     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
@@ -180,9 +187,12 @@ async function searchBlogs(query: string): Promise<SearchResult[]> {
                     if (feedUrl.includes('youtube.com') || feedUrl.includes('reddit.com') || feedUrl.includes('itunes.apple.com')) continue;
 
                     // Determine type based on URL patterns
+                    // Determine type based on URL patterns
                     let type = 'rss';
                     if (feedUrl.includes('substack.com')) type = 'substack';
                     else if (feedUrl.includes('medium.com')) type = 'medium';
+                    else if (feedUrl.includes('nitter') || feed.website?.includes('twitter.com') || feed.website?.includes('x.com')) type = 'twitter';
+                    else if (feedUrl.includes('rsshub') && (feedUrl.includes('instagram') || feed.website?.includes('instagram.com'))) type = 'instagram';
                     else if (feed.description?.toLowerCase().includes('newsletter')) type = 'newsletter';
 
                     results.push({
@@ -224,6 +234,55 @@ async function searchBlogs(query: string): Promise<SearchResult[]> {
             // Substack check failed silently
         }
     }
+
+    return results;
+}
+
+async function searchSocial(query: string): Promise<SearchResult[]> {
+    const results: SearchResult[] = [];
+
+    // Only try if query looks like a username (no spaces, > 2 chars)
+    const handle = query.trim().replace(/^@/, '');
+    if (handle.includes(' ') || handle.length < 2) return [];
+
+    // Probe Nitter (Twitter) and RSSHub (Instagram) in parallel
+    const [twitter, instagram] = await Promise.allSettled([
+        (async () => {
+            const url = `https://nitter.net/${handle}/rss`;
+            try {
+                const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(2000) });
+                if (res.ok) {
+                    return {
+                        title: `@${handle} (Twitter)`,
+                        description: 'Twitter Feed via Nitter',
+                        url: url,
+                        type: 'twitter',
+                        thumbnail: 'https://abs.twimg.com/favicons/twitter.ico'
+                    } as SearchResult;
+                }
+            } catch { }
+            return null;
+        })(),
+        (async () => {
+            const url = `https://rsshub.app/instagram/user/${handle}`;
+            try {
+                const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(2000) });
+                if (res.ok) {
+                    return {
+                        title: `@${handle} (Instagram)`,
+                        description: 'Instagram Feed via RSSHub',
+                        url: url,
+                        type: 'instagram',
+                        thumbnail: 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico'
+                    } as SearchResult;
+                }
+            } catch { }
+            return null;
+        })()
+    ]);
+
+    if (twitter.status === 'fulfilled' && twitter.value) results.push(twitter.value);
+    if (instagram.status === 'fulfilled' && instagram.value) results.push(instagram.value);
 
     return results;
 }
