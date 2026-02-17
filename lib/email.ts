@@ -101,6 +101,9 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string)
                   <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #666; margin: 15px 0 0 0;">
                     Reply to this email with feedback. We read everything.
                   </p>
+                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 11px; color: #444; margin: 15px 0 0 0;">
+                    Want to stop receiving these emails? <a href="https://signaldaily.me/settings" style="color: #666; text-decoration: underline;">Pause them here.</a>
+                  </p>
                 </td>
               </tr>
 

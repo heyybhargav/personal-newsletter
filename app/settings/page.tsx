@@ -8,6 +8,8 @@ export default function SettingsPage() {
     const [deliveryTime, setDeliveryTime] = useState('08:00');
     const [timezone, setTimezone] = useState('');
     const [llmProvider, setLlmProvider] = useState<string>('groq');
+    const [subscriptionStatus, setSubscriptionStatus] = useState<'active' | 'paused'>('active');
+    const [pausedUntil, setPausedUntil] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [runningCron, setRunningCron] = useState(false);
@@ -24,6 +26,9 @@ export default function SettingsPage() {
             setEmail(data.email || '');
             setDeliveryTime(data.deliveryTime || '08:00');
             setLlmProvider(data.llmProvider || 'groq');
+            setSubscriptionStatus(data.subscriptionStatus || 'active');
+            setPausedUntil(data.pausedUntil || null);
+
             // If API returns timezone, use it. Otherwise, auto-detect from browser.
             if (data.timezone) {
                 setTimezone(data.timezone);
@@ -71,7 +76,14 @@ export default function SettingsPage() {
             const res = await fetch('/api/settings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, deliveryTime, timezone, llmProvider })
+                body: JSON.stringify({
+                    email,
+                    deliveryTime,
+                    timezone,
+                    llmProvider,
+                    subscriptionStatus,
+                    pausedUntil
+                })
             });
 
             if (res.ok) {
@@ -86,6 +98,23 @@ export default function SettingsPage() {
         } finally {
             setSaving(false);
         }
+    };
+
+    const handlePause = (duration: '7_days' | '15_days' | 'indefinite') => {
+        setSubscriptionStatus('paused');
+        if (duration === 'indefinite') {
+            setPausedUntil(null);
+        } else {
+            const days = duration === '7_days' ? 7 : 15;
+            const date = new Date();
+            date.setDate(date.getDate() + days);
+            setPausedUntil(date.toISOString());
+        }
+    };
+
+    const handleResume = () => {
+        setSubscriptionStatus('active');
+        setPausedUntil(null);
     };
 
     return (
@@ -122,7 +151,7 @@ export default function SettingsPage() {
                         <div className="py-12 text-center text-gray-400 font-serif italic">Loading details...</div>
                     ) : (
                         <form onSubmit={handleSave} className="space-y-12">
-                            {/* Section 1: Delivery */}
+                            {/* Section 2: Delivery Config */}
                             <section>
                                 <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Delivery Settings</h3>
                                 <div className="grid md:grid-cols-2 gap-8">
@@ -155,7 +184,7 @@ export default function SettingsPage() {
                                 </div>
                             </section>
 
-                            {/* Section 2: Intelligence */}
+                            {/* Section 3: Intelligence */}
                             <section>
                                 <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Intelligence Engine</h3>
                                 <div className="grid md:grid-cols-2 gap-8">
@@ -209,6 +238,59 @@ export default function SettingsPage() {
                                 </div>
                             </section>
 
+
+
+                            {/* Section 3: Subscription Status (Subtle & at the bottom) */}
+                            <section className="pt-8 border-t border-gray-200/60">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-1">Subscription Status</h3>
+                                        <p className="text-gray-500 text-sm">
+                                            {subscriptionStatus === 'active'
+                                                ? 'Your daily briefing is active.'
+                                                : pausedUntil
+                                                    ? `Paused until ${new Date(pausedUntil).toLocaleDateString()}.`
+                                                    : 'Paused indefinitely.'}
+                                        </p>
+                                    </div>
+
+                                    {subscriptionStatus === 'paused' ? (
+                                        <button
+                                            type="button"
+                                            onClick={handleResume}
+                                            className="text-sm text-[#FF5700] font-medium hover:underline"
+                                        >
+                                            Resume Delivery
+                                        </button>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-gray-400 uppercase tracking-wider font-bold mr-2">Pause for:</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handlePause('7_days')}
+                                                className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200"
+                                            >
+                                                7 Days
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handlePause('15_days')}
+                                                className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200"
+                                            >
+                                                15 Days
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handlePause('indefinite')}
+                                                className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200"
+                                            >
+                                                Indefinitely
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </section>
+
                             <div className="pt-8 flex items-center justify-between">
                                 <button
                                     type="submit"
@@ -259,6 +341,6 @@ export default function SettingsPage() {
                     <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-white/5 blur-[100px] rounded-full pointer-events-none"></div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

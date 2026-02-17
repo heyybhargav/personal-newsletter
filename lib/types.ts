@@ -13,6 +13,8 @@ export interface UserPreferences {
   timezone?: string; // e.g., 'Asia/Kolkata'
   digestFormat?: 'simple' | 'comprehensive';
   llmProvider?: 'groq' | 'gemini';
+  subscriptionStatus?: 'active' | 'paused';
+  pausedUntil?: string; // ISO Date string. If null and paused -> indefinite.
 }
 
 export type SourceType =

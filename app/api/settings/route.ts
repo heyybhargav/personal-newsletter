@@ -14,6 +14,8 @@ export async function GET(request: Request) {
             deliveryTime: user.preferences.deliveryTime,
             timezone: user.preferences.timezone,
             llmProvider: user.preferences.llmProvider || 'groq',
+            subscriptionStatus: user.preferences.subscriptionStatus || 'active',
+            pausedUntil: user.preferences.pausedUntil,
             sources: user.sources
         });
     } catch (error) {
@@ -33,7 +35,10 @@ export async function POST(request: Request) {
         // Update preferences
         if (body.deliveryTime !== undefined) user.preferences.deliveryTime = body.deliveryTime;
         if (body.timezone !== undefined) user.preferences.timezone = body.timezone;
+        if (body.timezone !== undefined) user.preferences.timezone = body.timezone;
         if (body.llmProvider !== undefined) user.preferences.llmProvider = body.llmProvider;
+        if (body.subscriptionStatus !== undefined) user.preferences.subscriptionStatus = body.subscriptionStatus;
+        if (body.pausedUntil !== undefined) user.preferences.pausedUntil = body.pausedUntil;
 
         await saveUser(user);
         return NextResponse.json({ success: true });

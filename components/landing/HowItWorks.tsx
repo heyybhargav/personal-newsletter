@@ -103,8 +103,15 @@ export default function HowItWorks() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-100px" }}
                                 transition={{ duration: 0.7 }}
-                                className={`relative flex flex-col md:flex-row gap-8 md:gap-16 items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
                             >
+                                {/* Line Masks to prevent overflow beyond dots */}
+                                {i === 0 && (
+                                    <div className="absolute left-[27px] md:left-1/2 w-4 bg-[#FAF9F6] top-0 h-[28px] md:h-1/2 transform -translate-x-1/2" />
+                                )}
+                                {i === steps.length - 1 && (
+                                    <div className="absolute left-[27px] md:left-1/2 w-4 bg-[#FAF9F6] top-[28px] md:top-1/2 bottom-0 transform -translate-x-1/2" />
+                                )}
+
                                 {/* Center Node */}
                                 <div className="absolute left-0 md:left-1/2 w-14 h-14 rounded-full bg-white border-4 border-[#FAF9F6] shadow-sm flex items-center justify-center transform md:-translate-x-1/2 z-10">
                                     <div className="w-3 h-3 bg-[#FF5700] rounded-full" />

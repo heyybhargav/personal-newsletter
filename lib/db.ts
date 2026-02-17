@@ -35,7 +35,9 @@ export async function createUser(email: string, timezone: string = 'Asia/Kolkata
         preferences: {
             deliveryTime: '08:00',
             timezone,
-            digestFormat: 'comprehensive'
+            timezone,
+            digestFormat: 'comprehensive',
+            subscriptionStatus: 'active'
         },
         sources: [], // Start empty
         createdAt: new Date().toISOString()
