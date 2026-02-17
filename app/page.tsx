@@ -143,7 +143,8 @@ export default function Home() {
                   >
                     {sending ? (
                       <>
-                        <span className="animate-spin">↻</span> Processing...
+                        <span className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-black rounded-full"></span>
+                        <span>Processing...</span>
                       </>
                     ) : (
                       'Run Sequence'

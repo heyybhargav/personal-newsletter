@@ -258,34 +258,36 @@ export default function SettingsPage() {
                                         <button
                                             type="button"
                                             onClick={handleResume}
-                                            className="text-sm text-[#FF5700] font-medium hover:underline"
+                                            className="text-sm text-[#FF5700] font-medium hover:underline mt-2 md:mt-0"
                                         >
                                             Resume Delivery
                                         </button>
                                     ) : (
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-400 uppercase tracking-wider font-bold mr-2">Pause for:</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => handlePause('7_days')}
-                                                className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200"
-                                            >
-                                                7 Days
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => handlePause('15_days')}
-                                                className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200"
-                                            >
-                                                15 Days
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => handlePause('indefinite')}
-                                                className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200"
-                                            >
-                                                Indefinitely
-                                            </button>
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-4 md:mt-0">
+                                            <span className="text-xs text-gray-400 uppercase tracking-wider font-bold sm:mr-2">Pause for:</span>
+                                            <div className="flex flex-wrap gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handlePause('7_days')}
+                                                    className="flex-1 sm:flex-none px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200 whitespace-nowrap"
+                                                >
+                                                    7 Days
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handlePause('15_days')}
+                                                    className="flex-1 sm:flex-none px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200 whitespace-nowrap"
+                                                >
+                                                    15 Days
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handlePause('indefinite')}
+                                                    className="flex-1 sm:flex-none px-4 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 rounded-full hover:border-[#FF5700] hover:text-[#FF5700] hover:bg-[#FF5700]/5 transition-all duration-200 whitespace-nowrap"
+                                                >
+                                                    Indefinitely
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
