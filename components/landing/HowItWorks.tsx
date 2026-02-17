@@ -103,6 +103,7 @@ export default function HowItWorks() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-100px" }}
                                 transition={{ duration: 0.7 }}
+                                className={`relative flex flex-col md:flex-row items-center gap-12 md:gap-0 ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
                             >
                                 {/* Line Masks to prevent overflow beyond dots */}
                                 {i === 0 && (
@@ -113,7 +114,11 @@ export default function HowItWorks() {
                                 )}
 
                                 {/* Center Node */}
-                                <div className="absolute left-0 md:left-1/2 w-14 h-14 rounded-full bg-white border-4 border-[#FAF9F6] shadow-sm flex items-center justify-center transform md:-translate-x-1/2 z-10">
+                                <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 w-14 h-14 rounded-full bg-white border-4 border-[#FAF9F6] shadow-sm flex items-center justify-center transform md:-translate-x-1/2 md:-translate-y-1/2 z-10 hidden md:flex">
+                                    <div className="w-3 h-3 bg-[#FF5700] rounded-full" />
+                                </div>
+                                {/* Mobile Node (Top Left) */}
+                                <div className="absolute left-0 top-0 w-14 h-14 rounded-full bg-white border-4 border-[#FAF9F6] shadow-sm flex items-center justify-center z-10 md:hidden">
                                     <div className="w-3 h-3 bg-[#FF5700] rounded-full" />
                                 </div>
 
