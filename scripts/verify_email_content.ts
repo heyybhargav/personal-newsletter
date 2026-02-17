@@ -21,23 +21,35 @@ const MOCK_CONTENT: ContentItem[] = [
     {
         title: 'OpenAI Releases GPT-5 with 100 Trillion Parameters',
         link: 'https://openai.com/blog/gpt-5',
-        description: 'OpenAI has released GPT-5, claiming it achieves AGI. The model runs on a new architecture that reduces inference costs by 90% while increasing reasoning capabilities.',
+        description: 'The new model creates entire movies from text prompts.',
+        content: '<p>The new model creates entire movies from text prompts.</p>',
         source: 'TechCrunch',
         sourceType: 'news',
         pubDate: new Date().toISOString()
     },
     {
-        title: 'NVIDIA Stock Plummets 50% Amidst Antitrust Lawsuit',
-        link: 'https://bloomberg.com/news/nvidia-antitrust',
-        description: 'The DOJ has filed a massive antitrust lawsuit against NVIDIA, causing shares to drop. Analysts predict a long legal battle that could reshape the chip industry.',
-        source: 'Bloomberg',
-        sourceType: 'news',
+        title: 'How to Center a Div in 2026',
+        link: 'https://css-tricks.com/centering-div',
+        description: 'Just use display: center;',
+        content: '<p>Just use display: center;</p>',
+        source: 'CSS Tricks',
+        sourceType: 'blog',
+        pubDate: new Date().toISOString()
+    },
+    {
+        title: 'Tweet from @elonmusk',
+        link: 'https://twitter.com/elonmusk/status/123456789',
+        description: 'Just bought a new planet. #mars',
+        content: '<p>Just bought a new planet. #mars</p>',
+        source: 'Elon Musk',
+        sourceType: 'twitter',
         pubDate: new Date().toISOString()
     },
     {
         title: 'The Future of Compute is Biological',
         link: 'https://youtube.com/watch?v=12345',
         description: 'Dr. Smith discusses organoid intelligence and biocomputing. Key quote: "Silicon has reached its physical limit; biology is the only way forward for massive scale parallelism."',
+        content: '<p>Dr. Smith discusses organoid intelligence and biocomputing. Key quote: "Silicon has reached its physical limit; biology is the only way forward for massive scale parallelism."</p>',
         source: 'Lex Fridman',
         sourceType: 'youtube',
         pubDate: new Date().toISOString(),

@@ -48,6 +48,10 @@ export interface Source {
 export interface ContentItem {
   title: string;
   description: string;
+  content: string;
+  contentSnippet?: string;
+  categories?: string[];
+  author?: string;
   link: string;
   pubDate: string;
   source: string;

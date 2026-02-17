@@ -23,19 +23,56 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
             const handle = url.split('screen-name/')[1];
             if (handle) {
                 const tweets = await fetchTwitterSyndication(handle);
-                return tweets.map(tweet => ({
-                    title: `Tweet from ${tweet.user?.name || handle}`,
-                    link: `https://twitter.com/${tweet.user?.screen_name}/status/${tweet.id_str}`,
-                    content: tweet.full_text,
-                    contentSnippet: tweet.full_text,
-                    description: tweet.full_text,
-                    pubDate: new Date(tweet.created_at).toISOString(),
-                    categories: ['Social', 'Twitter'],
-                    thumbnail: tweet.entities?.media?.[0]?.media_url_https || '',
-                    source: sourceName,
-                    sourceType: sourceType,
-                    author: tweet.user?.name
-                }));
+                return tweets.map(tweet => {
+                    const isRetweet = !!tweet.retweeted_status;
+                    const displayTweet = isRetweet ? tweet.retweeted_status! : tweet;
+                    const media = displayTweet.extended_entities?.media || displayTweet.entities?.media || [];
+
+                    let contentHtml = `<p>${displayTweet.full_text.replace(/\n/g, '<br/>')}</p>`;
+                    let thumbnail = '';
+
+                    if (media.length > 0) {
+                        thumbnail = media[0].media_url_https;
+                        contentHtml += '<div class="media-grid" style="display: grid; gap: 10px; margin-top: 10px;">';
+
+                        media.forEach(m => {
+                            if (m.type === 'video' || m.type === 'animated_gif') {
+                                const videoUrl = m.video_info?.variants
+                                    .filter(v => v.content_type === 'video/mp4')
+                                    .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0))[0]?.url;
+
+                                if (videoUrl) {
+                                    contentHtml += `
+                                        <div class="video-container">
+                                            <a href="${videoUrl}" target="_blank">
+                                                <img src="${m.media_url_https}" alt="Video Thumbnail" style="width: 100%; max-width: 500px; border-radius: 8px;" />
+                                                <p style="font-size: 12px; color: #666;">▶️ Watch Video</p>
+                                            </a>
+                                        </div>`;
+                                }
+                            } else {
+                                contentHtml += `<img src="${m.media_url_https}" alt="Tweet Image" style="width: 100%; max-width: 500px; border-radius: 8px;" />`;
+                            }
+                        });
+                        contentHtml += '</div>';
+                    }
+
+                    return {
+                        title: isRetweet
+                            ? `Retweet by ${tweet.user?.name} (Original: ${displayTweet.user?.name})`
+                            : `Tweet from ${tweet.user?.name || handle}`,
+                        link: `https://twitter.com/${tweet.user?.screen_name}/status/${tweet.id_str}`,
+                        content: contentHtml,
+                        contentSnippet: displayTweet.full_text,
+                        description: contentHtml,
+                        pubDate: new Date(tweet.created_at).toISOString(),
+                        categories: ['Social', 'Twitter'],
+                        thumbnail: thumbnail,
+                        source: sourceName,
+                        sourceType: sourceType,
+                        author: tweet.user?.name
+                    };
+                });
             }
         } catch (error) {
             console.error(`Error parsing Twitter syndication for ${url}:`, error);
@@ -111,13 +148,19 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
             }
 
             return {
-                title: item.title || 'No title',
+                title: item.title || 'Untitled',
+                link: item.link || url,
                 description: description,
-                link: item.link || '',
-                pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
+                // Add missing fields
+                content: rssItem['content:encoded'] || item.content || rssItem.description || '',
+                contentSnippet: item.contentSnippet || '',
+                categories: item.categories || [],
+                author: item.creator || rssItem.author || '',
+
+                pubDate: item.pubDate || new Date().toISOString(),
                 source: sourceName,
-                sourceType, // Use the passed sourceType
-                thumbnail
+                sourceType: sourceType,
+                thumbnail: thumbnail
             };
         });
     } catch (error) {

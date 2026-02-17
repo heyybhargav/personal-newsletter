@@ -27,6 +27,7 @@ const mockContent: ContentItem[] = [
         link: "https://techcrunch.com/2026/02/16/spacex-starship",
         pubDate: new Date().toISOString(),
         description: "SpaceX has successfully launched its Starship rocket, marking a major milestone in space exploration. The rocket achieved orbit and landed safely.",
+        content: "<p>SpaceX has successfully launched its Starship rocket...</p>",
         sourceType: "rss"
     },
     {
@@ -35,6 +36,7 @@ const mockContent: ContentItem[] = [
         link: "https://theverge.com/2026/02/16/openai-gpt-6",
         pubDate: new Date().toISOString(),
         description: "OpenAI has announced GPT-6, which claims to solve reasoning problems with 99% accuracy. It's available starting today.",
+        content: "<p>OpenAI has announced GPT-6...</p>",
         sourceType: "rss"
     },
     {
@@ -43,6 +45,7 @@ const mockContent: ContentItem[] = [
         link: "https://9to5mac.com/2026/02/16/apple-vision-pro-2",
         pubDate: new Date().toISOString(),
         description: "Apple has unveiled the Vision Pro 2, featuring a lighter design and a lower price point of $1999.",
+        content: "<p>Apple has unveiled the Vision Pro 2...</p>",
         sourceType: "rss"
     }
 ];

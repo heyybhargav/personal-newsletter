@@ -191,11 +191,12 @@ const detectionRules: DetectionRule[] = [
             /nitter\.privacydev\.net\/([a-zA-Z0-9_]+)/
         ],
         extractFeedUrl: (url) => {
+            const reserved = ['home', 'explore', 'notifications', 'messages', 'search', 'compose', 'settings'];
             const match = url.match(/twitter\.com\/([a-zA-Z0-9_]+)/) ||
                 url.match(/x\.com\/([a-zA-Z0-9_]+)/) ||
                 url.match(/nitter\.net\/([a-zA-Z0-9_]+)/) ||
                 url.match(/nitter\.privacydev\.net\/([a-zA-Z0-9_]+)/);
-            if (match && match[1]) {
+            if (match && match[1] && !reserved.includes(match[1].toLowerCase())) {
                 return `https://syndication.twitter.com/srv/timeline-profile/screen-name/${match[1]}`;
             }
             return url;

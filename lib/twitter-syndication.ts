@@ -18,8 +18,29 @@ export interface Tweet {
         media?: Array<{
             media_url_https: string;
             type: string;
+            video_info?: {
+                variants: Array<{
+                    bitrate?: number;
+                    content_type: string;
+                    url: string;
+                }>;
+            };
         }>;
     };
+    extended_entities?: {
+        media?: Array<{
+            media_url_https: string;
+            type: string;
+            video_info?: {
+                variants: Array<{
+                    bitrate?: number;
+                    content_type: string;
+                    url: string;
+                }>;
+            };
+        }>;
+    };
+    retweeted_status?: Tweet;
     permalink?: string;
 }
 
