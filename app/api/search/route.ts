@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getSubstackFeedUrl, detectSource, SourceType } from '../../lib/url-detector';
-import { parseRSSFeed } from '../../lib/rss-parser';
-import { fetchTwitterSyndication } from '../../lib/twitter-syndication';
+import { getSubstackFeedUrl, detectSource, SourceType } from '@/lib/url-detector';
+import { parseRSSFeed } from '@/lib/rss-parser';
+import { fetchTwitterSyndication } from '@/lib/twitter-syndication';
 
 interface SearchResult {
     title: string;

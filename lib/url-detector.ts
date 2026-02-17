@@ -260,6 +260,9 @@ const detectionRules: DetectionRule[] = [
 /**
  * Detect the source type from a URL
  */
+/**
+ * Detect the source type from a URL
+ */
 export function detectSourceFromUrl(url: string): DetectedSource | null {
     // Normalize URL
     let normalizedUrl = url.trim();
@@ -343,4 +346,24 @@ function capitalizeWords(str: string): string {
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(' ');
+}
+
+/**
+ * Helper to get Substack RSS feed URL
+ */
+export function getSubstackFeedUrl(urlStr: string): string | null {
+    try {
+        const urlObj = new URL(urlStr);
+        // subdomain.substack.com
+        if (urlObj.hostname.endsWith('substack.com')) {
+            // Already an RSS feed?
+            if (urlObj.pathname.includes('/feed')) return urlStr;
+
+            // Clean URL
+            return `${urlObj.protocol}//${urlObj.hostname}/feed`;
+        }
+        return null;
+    } catch {
+        return null;
+    }
 }
