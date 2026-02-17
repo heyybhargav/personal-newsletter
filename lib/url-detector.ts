@@ -185,8 +185,8 @@ const detectionRules: DetectionRule[] = [
         patterns: [
             /twitter\.com\/([\w]+)/i,
             /x\.com\/([\w]+)/i,
-            /nitter\.net\/([\w]+)/i,
-            /nitter\.privacydev\.net\/([\w]+)/i,
+            /nitter\..+\/([\w]+)/i, // Catch-all for any Nitter instance
+            /rsshub\.app\/twitter\/user\/([\w]+)/i,
         ],
         extractFeedUrl: (url, match) => {
             // Use Nitter bridge for RSS
@@ -204,7 +204,7 @@ const detectionRules: DetectionRule[] = [
         type: 'instagram',
         patterns: [
             /instagram\.com\/([\w\.]+)/i,
-            /rsshub\.app\/instagram\/user\/([\w\.]+)/i,
+            /rsshub\..+\/instagram\/user\/([\w\.]+)/i, // Catch-all for any RSSHub instance
         ],
         extractFeedUrl: (url, match) => {
             if (match) {
