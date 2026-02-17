@@ -49,7 +49,49 @@ async function resolveOneFavicon(url: string): Promise<string> {
 
     const feedUrl = detected.feedUrl;
 
-    // Try RSS feed image (best for podcasts, newsletters)
+    // YouTube: use multiple strategies to get channel avatar
+    if (detected.type === 'youtube') {
+        // Strategy 1: Parse the YouTube Atom feed — extract channel ID, then use oembed
+        if (feedUrl.includes('channel_id=')) {
+            try {
+                const channelId = new URL(feedUrl).searchParams.get('channel_id');
+                if (channelId) {
+                    // Use YouTube's public oembed endpoint — no API key needed
+                    const oembedRes = await fetch(
+                        `https://www.youtube.com/oembed?url=https://www.youtube.com/channel/${channelId}&format=json`,
+                        { signal: AbortSignal.timeout(5000) }
+                    );
+                    if (oembedRes.ok) {
+                        const data = await oembedRes.json();
+                        if (data.thumbnail_url) return data.thumbnail_url;
+                    }
+                }
+            } catch {
+                // Continue to next strategy
+            }
+        }
+
+        // Strategy 2: Try @handle page scraping (for handle-based URLs)
+        const originalUrl = url.includes('youtube.com/@') ? url : null;
+        if (originalUrl) {
+            try {
+                const res = await fetch(originalUrl, {
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' },
+                    signal: AbortSignal.timeout(5000)
+                });
+                const html = await res.text();
+                const match = html.match(/<meta property="og:image" content="([^"]+)"/);
+                if (match) return match[1];
+            } catch {
+                // Fallback below
+            }
+        }
+
+        // YouTube fallback: generic YouTube favicon
+        return 'https://www.youtube.com/favicon.ico';
+    }
+
+    // Non-YouTube: Try RSS feed image (best for podcasts, newsletters)
     try {
         const feed = await parser.parseURL(feedUrl);
 
@@ -59,38 +101,7 @@ async function resolveOneFavicon(url: string): Promise<string> {
 
         if (feed.image?.url) return feed.image.url;
     } catch {
-        // Feed parsing failed, continue to fallbacks
-    }
-
-    // YouTube: scrape og:image for channel avatar
-    if (detected.type === 'youtube' && feedUrl.includes('channel_id=')) {
-        try {
-            const channelId = new URL(feedUrl).searchParams.get('channel_id');
-            if (channelId) {
-                const res = await fetch(`https://www.youtube.com/channel/${channelId}`, {
-                    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }
-                });
-                const html = await res.text();
-                const match = html.match(/<meta property="og:image" content="([^"]+)"/);
-                if (match) return match[1];
-            }
-        } catch {
-            // Fallback below
-        }
-    }
-
-    // YouTube @handle: try scraping the handle page directly
-    if (detected.type === 'youtube' && url.includes('youtube.com/@')) {
-        try {
-            const res = await fetch(url, {
-                headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }
-            });
-            const html = await res.text();
-            const match = html.match(/<meta property="og:image" content="([^"]+)"/);
-            if (match) return match[1];
-        } catch {
-            // Fallback below
-        }
+        // Feed parsing failed, continue to fallback
     }
 
     // Final fallback: Google favicon service

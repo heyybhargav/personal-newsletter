@@ -64,19 +64,20 @@ export async function GET(request: Request) {
             // User will see a warning that we couldn't preview content
         }
 
-        // Step 2.5: If YouTube, try to fetch high-res channel avatar
+        // Step 2.5: If YouTube, try to fetch high-res channel avatar via oembed
         if (detected.type === 'youtube' && feedUrl.includes('channel_id=')) {
             try {
                 const channelId = new URL(feedUrl).searchParams.get('channel_id');
                 if (channelId) {
-                    const channelPage = await fetch(`https://www.youtube.com/channel/${channelId}`, {
-                        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)' }
-                    });
-                    const html = await channelPage.text();
-                    // Extract og:image
-                    const match = html.match(/<meta property="og:image" content="([^"]+)"/);
-                    if (match) {
-                        detected.favicon = match[1];
+                    const oembedRes = await fetch(
+                        `https://www.youtube.com/oembed?url=https://www.youtube.com/channel/${channelId}&format=json`,
+                        { signal: AbortSignal.timeout(5000) }
+                    );
+                    if (oembedRes.ok) {
+                        const data = await oembedRes.json();
+                        if (data.thumbnail_url) {
+                            detected.favicon = data.thumbnail_url;
+                        }
                     }
                 }
             } catch (e) {

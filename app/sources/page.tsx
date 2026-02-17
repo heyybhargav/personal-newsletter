@@ -118,6 +118,42 @@ export default function SourcesPage() {
             .catch(err => console.error('Failed to resolve favicons:', err));
     }, [starterPacks]);
 
+    // Progressively resolve favicons for existing sources with generic icons
+    useEffect(() => {
+        if (sources.length === 0) return;
+        const genericPatterns = ['favicon.ico', 'favicons?domain=youtube.com', 'favicons?domain=reddit.com'];
+        const needsResolution = sources.filter(s =>
+            !s.favicon || genericPatterns.some(p => s.favicon?.includes(p))
+        );
+        if (needsResolution.length === 0) return;
+        const urlsToResolve = needsResolution.map(s => s.url).filter(u => !resolvedFavicons[u]);
+        if (urlsToResolve.length === 0) return;
+
+        fetch('/api/sources/resolve-favicon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urls: urlsToResolve })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.favicons) {
+                    setResolvedFavicons(prev => ({ ...prev, ...data.favicons }));
+                    // Persist resolved favicons to DB so they're not re-fetched next time
+                    for (const source of needsResolution) {
+                        const newFavicon = data.favicons[source.url];
+                        if (newFavicon && newFavicon !== source.favicon && !genericPatterns.some(p => newFavicon.includes(p))) {
+                            fetch('/api/sources', {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: source.id, favicon: newFavicon })
+                            }).catch(() => { });
+                        }
+                    }
+                }
+            })
+            .catch(err => console.error('Failed to resolve source favicons:', err));
+    }, [sources]);
+
     const fetchSources = async () => {
         try {
             const res = await fetch('/api/sources');
@@ -511,7 +547,7 @@ export default function SourcesPage() {
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-                                                {source.favicon && <img src={source.favicon} className="w-4 h-4 object-contain flex-none" alt={source.name} />}
+                                                {(resolvedFavicons[source.url] || source.favicon) && <img src={resolvedFavicons[source.url] || source.favicon} className="w-4 h-4 object-contain flex-none" alt={source.name} />}
                                                 <span className={`text-[10px] sm:text-xs font-bold tracking-wider uppercase px-1.5 sm:px-2 py-0.5 rounded border flex-none ${getSourceTypeColor(source.type as SourceType)} bg-white`}>
                                                     {source.type}
                                                 </span>
