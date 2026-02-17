@@ -1,5 +1,6 @@
 import { Redis } from '@upstash/redis';
 import { UserProfile, Source } from './types';
+import { randomUUID } from 'crypto';
 
 // Initialize Redis
 const redis = new Redis({
@@ -58,20 +59,24 @@ export async function getAllUsers(): Promise<string[]> {
 
 // --- Source Operations (Scoped to User) ---
 
-export async function addSourceToUser(email: string, source: Omit<Source, 'id' | 'addedAt'>): Promise<Source> {
+export async function addSourceToUser(email: string, source: Omit<Source, 'id' | 'addedAt'>): Promise<Source | null> {
     const user = await getUser(email) || await createUser(email);
+
+    // Avoid duplicates — normalize URLs for comparison
+    const normalizeUrl = (u: string) => u.trim().toLowerCase().replace(/\/$/, '');
+    const isDuplicate = user.sources.some(s => normalizeUrl(s.url) === normalizeUrl(source.url));
+    if (isDuplicate) {
+        return null; // Signal to caller that source was not added
+    }
 
     const newSource: Source = {
         ...source,
-        id: Date.now().toString(),
+        id: randomUUID(),
         addedAt: new Date().toISOString(),
     };
 
-    // Avoid duplicates
-    if (!user.sources.some(s => s.url === source.url)) {
-        user.sources.push(newSource);
-        await saveUser(user);
-    }
+    user.sources.push(newSource);
+    await saveUser(user);
 
     return newSource;
 }

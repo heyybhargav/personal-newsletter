@@ -45,6 +45,10 @@ export async function POST(request: Request) {
             originalUrl: originalUrl || url,
         });
 
+        if (!newSource) {
+            return NextResponse.json({ error: 'Source already exists' }, { status: 409 });
+        }
+
         return NextResponse.json({ source: newSource }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to add source' }, { status: 500 });

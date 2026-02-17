@@ -78,6 +78,7 @@ export default function SourcesPage() {
     const [recMode, setRecMode] = useState<'starter' | 'contextual'>('starter');
     const [loadingRecs, setLoadingRecs] = useState(true);
     const [addingRec, setAddingRec] = useState<string | null>(null); // ID being added
+    const [resolvedFavicons, setResolvedFavicons] = useState<Record<string, string>>({});
 
     useEffect(() => {
         fetchSources();
@@ -93,6 +94,29 @@ export default function SourcesPage() {
             })
             .catch(err => console.error('Failed to update starter packs:', err));
     }, []);
+
+    // Resolve high-quality favicons for starter pack sources
+    useEffect(() => {
+        if (starterPacks.length === 0) return;
+        const allUrls = starterPacks.flatMap(p => p.sources.map(s => s.url));
+        const uniqueUrls = [...new Set(allUrls)];
+        // Skip if already resolved
+        const unresolvedUrls = uniqueUrls.filter(u => !resolvedFavicons[u]);
+        if (unresolvedUrls.length === 0) return;
+
+        fetch('/api/sources/resolve-favicon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urls: unresolvedUrls })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.favicons) {
+                    setResolvedFavicons(prev => ({ ...prev, ...data.favicons }));
+                }
+            })
+            .catch(err => console.error('Failed to resolve favicons:', err));
+    }, [starterPacks]);
 
     const fetchSources = async () => {
         try {
@@ -122,26 +146,26 @@ export default function SourcesPage() {
 
     const handleAddPack = async (pack: StarterPack) => {
         setAddingRec(pack.id);
-        // Add all sources in the pack
-        // In a real app, we'd have a batch API. Here we'll just loop sequentially for simplicity
-        // and to reuse the existing logic if possible, or just hit the add endpoint.
 
         let successCount = 0;
 
         for (const source of pack.sources) {
             try {
-                await fetch('/api/sources', {
+                const res = await fetch('/api/sources', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name: source.name,
                         url: source.url,
                         type: source.type,
-                        favicon: source.favicon,
+                        favicon: resolvedFavicons[source.url] || resolvedFavicons[source.originalUrl || source.url] || source.favicon || '',
                         originalUrl: source.originalUrl,
                     })
                 });
-                successCount++;
+                const data = await res.json();
+                if (res.ok && data.source) {
+                    successCount++;
+                }
             } catch (e) {
                 console.error('Failed to add source from pack', source.name);
             }
@@ -152,6 +176,8 @@ export default function SourcesPage() {
             setToast({ message: `Added ${successCount} sources`, description: `From ${pack.name}`, type: 'success' });
             fetchSources();
             fetchRecommendations();
+        } else {
+            setToast({ message: 'All sources already added', description: `From ${pack.name}`, type: 'success' });
         }
     };
 
@@ -165,7 +191,7 @@ export default function SourcesPage() {
                     name: rec.name,
                     url: rec.url,
                     type: rec.type,
-                    favicon: rec.favicon,
+                    favicon: resolvedFavicons[rec.url] || resolvedFavicons[rec.originalUrl] || rec.favicon,
                     originalUrl: rec.originalUrl,
                 })
             });
@@ -450,11 +476,14 @@ export default function SourcesPage() {
                                                 {pack.description}
                                             </p>
                                             <div className="flex -space-x-2 overflow-hidden">
-                                                {pack.sources?.slice(0, 4).map((s, i) => (
-                                                    <div key={i} className="w-6 h-6 rounded-full border border-white bg-gray-100 flex items-center justify-center text-[10px] uppercase font-bold text-gray-500" title={s.name}>
-                                                        {s.favicon ? <img src={s.favicon} className="w-full h-full object-cover rounded-full" /> : s.name[0]}
-                                                    </div>
-                                                ))}
+                                                {pack.sources?.slice(0, 4).map((s, i) => {
+                                                    const faviconUrl = resolvedFavicons[s.url] || resolvedFavicons[s.originalUrl || s.url] || s.favicon;
+                                                    return (
+                                                        <div key={i} className="w-6 h-6 rounded-full border border-white bg-gray-100 flex items-center justify-center text-[10px] uppercase font-bold text-gray-500 overflow-hidden" title={s.name}>
+                                                            {faviconUrl ? <img src={faviconUrl} className="w-full h-full object-cover rounded-full" alt={s.name} /> : s.name[0]}
+                                                        </div>
+                                                    );
+                                                })}
                                                 {(pack.sources?.length || 0) > 4 && (
                                                     <div className="w-6 h-6 rounded-full border border-white bg-gray-50 flex items-center justify-center text-[8px] font-bold text-gray-400">
                                                         +{(pack.sources?.length || 0) - 4}
@@ -482,7 +511,7 @@ export default function SourcesPage() {
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-                                                {source.favicon && <img src={source.favicon} className="w-4 h-4 object-contain flex-none" />}
+                                                {source.favicon && <img src={source.favicon} className="w-4 h-4 object-contain flex-none" alt={source.name} />}
                                                 <span className={`text-[10px] sm:text-xs font-bold tracking-wider uppercase px-1.5 sm:px-2 py-0.5 rounded border flex-none ${getSourceTypeColor(source.type as SourceType)} bg-white`}>
                                                     {source.type}
                                                 </span>
@@ -573,8 +602,44 @@ export default function SourcesPage() {
                         </div>
                     </div>
                 )}
-            </div >
 
+                {/* Starter Packs - compact view when user already has sources */}
+                {!loading && sources.length > 0 && (
+                    <div className="mt-12 pt-8 border-t border-gray-200/60">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Sparkles className="w-4 h-4 text-[#FF5700]" />
+                            <h3 className="text-sm font-bold tracking-widest text-gray-900 uppercase">Starter Packs</h3>
+                            <span className="text-xs text-gray-400 ml-1">Add a curated bundle</span>
+                        </div>
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            {starterPacks.map((pack) => {
+                                const isAdding = addingRec === pack.id;
+                                return (
+                                    <button
+                                        key={pack.id}
+                                        onClick={() => handleAddPack(pack)}
+                                        disabled={isAdding}
+                                        className="group flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-lg hover:border-[#FF5700] hover:shadow-sm transition-all text-left"
+                                    >
+                                        <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-[#FF5700] flex-none">
+                                            <PackIcon icon={pack.icon} className="w-4 h-4" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="text-sm font-bold text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">{pack.name}</h4>
+                                            <p className="text-[11px] text-gray-400 truncate">{pack.sources?.length || 0} sources</p>
+                                        </div>
+                                        {isAdding ? (
+                                            <div className="w-4 h-4 border-2 border-gray-200 border-t-[#FF5700] rounded-full animate-spin flex-none"></div>
+                                        ) : (
+                                            <Plus className="w-4 h-4 text-gray-300 group-hover:text-[#FF5700] transition-colors flex-none" />
+                                        )}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* Add Source Modal - Final Refined Design */}
             {

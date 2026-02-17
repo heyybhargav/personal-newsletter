@@ -12,6 +12,8 @@ export type SourceType =
     | 'podcast'
     | 'newsletter'
     | 'blog'
+    | 'news'
+    | 'custom'
     | 'rss';
 
 export interface DetectedSource {
@@ -297,6 +299,8 @@ export function getSourceTypeColor(type: SourceType): string {
         podcast: 'bg-violet-100 text-violet-700 border-violet-200',
         newsletter: 'bg-green-100 text-green-700 border-green-200',
         blog: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+        news: 'bg-sky-100 text-sky-700 border-sky-200',
+        custom: 'bg-teal-100 text-teal-700 border-teal-200',
         rss: 'bg-slate-100 text-slate-700 border-slate-200',
     };
     return colors[type] || 'bg-gray-100 text-gray-700 border-gray-200';

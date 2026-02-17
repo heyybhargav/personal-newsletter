@@ -43,6 +43,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://news.ycombinator.com/rss',
         originalUrl: 'https://news.ycombinator.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=news.ycombinator.com&sz=64',
         category: 'tech_startups',
         description: 'The front page of the internet for builders.'
     },
@@ -52,6 +53,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'http://www.aaronsw.com/2002/feeds/pgessays.rss',
         originalUrl: 'http://paulgraham.com/articles.html',
+        favicon: 'https://www.google.com/s2/favicons?domain=paulgraham.com&sz=64',
         category: 'tech_startups',
         description: 'Essays on startups, technology, and life.'
     },
@@ -61,6 +63,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.theverge.com/rss/index.xml',
         originalUrl: 'https://www.theverge.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=theverge.com&sz=64',
         category: 'tech_startups',
         description: 'Technology, science, art, and culture.'
     },
@@ -70,6 +73,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://techcrunch.com/feed/',
         originalUrl: 'https://techcrunch.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=techcrunch.com&sz=64',
         category: 'tech_startups',
         description: 'Startup and technology news.'
     },
@@ -79,6 +83,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://stratechery.com/feed/',
         originalUrl: 'https://stratechery.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=stratechery.com&sz=64',
         category: 'tech_startups',
         description: 'Ben Thompson on strategy and tech business models.'
     },
@@ -88,6 +93,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'podcast',
         url: 'https://feeds.megaphone.fm/all-in-with-chamath-jason-sacks-friedberg',
         originalUrl: 'https://www.allinpodcast.co',
+        favicon: 'https://www.google.com/s2/favicons?domain=allinpodcast.co&sz=64',
         category: 'tech_startups',
         description: 'Industry, tech, politics from four billionaire besties.'
     },
@@ -95,8 +101,9 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         id: 'tech_ycombinator',
         name: 'Y Combinator',
         type: 'youtube',
-        url: 'https://www.youtube.com/@ycombinator',
+        url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCxI5-x_s5V2_OqS62_0z-0A',
         originalUrl: 'https://www.youtube.com/@ycombinator',
+        favicon: 'https://www.google.com/s2/favicons?domain=ycombinator.com&sz=64',
         category: 'tech_startups',
         description: 'Startup school, founder interviews, and demo days.'
     },
@@ -106,6 +113,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'reddit',
         url: 'https://www.reddit.com/r/startups/.rss',
         originalUrl: 'https://www.reddit.com/r/startups',
+        favicon: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
         category: 'tech_startups',
         description: 'Community discussions on building and scaling startups.'
     },
@@ -119,6 +127,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://feeds.bloomberg.com/markets/news.rss',
         originalUrl: 'https://www.bloomberg.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=bloomberg.com&sz=64',
         category: 'finance_markets',
         description: 'Global financial markets and business news.'
     },
@@ -128,6 +137,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.economist.com/global-business-review/rss.xml',
         originalUrl: 'https://www.economist.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=economist.com&sz=64',
         category: 'finance_markets',
         description: 'World news, politics, economics, and business.'
     },
@@ -137,6 +147,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',
         originalUrl: 'https://www.wsj.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=wsj.com&sz=64',
         category: 'finance_markets',
         description: 'Breaking news and analysis from global markets.'
     },
@@ -146,6 +157,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.ft.com/?format=rss',
         originalUrl: 'https://www.ft.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=ft.com&sz=64',
         category: 'finance_markets',
         description: 'Authoritative coverage of global finance.'
     },
@@ -155,6 +167,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'newsletter',
         url: 'https://www.morningbrew.com/daily/rss',
         originalUrl: 'https://www.morningbrew.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=morningbrew.com&sz=64',
         category: 'finance_markets',
         description: 'Business news explained in plain English.'
     },
@@ -164,6 +177,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'podcast',
         url: 'https://feeds.pacific-content.com/acquired',
         originalUrl: 'https://www.acquired.fm',
+        favicon: 'https://www.google.com/s2/favicons?domain=acquired.fm&sz=64',
         category: 'finance_markets',
         description: 'Deep dives into great companies and IPOs.'
     },
@@ -171,8 +185,9 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         id: 'fin_patrickboyle',
         name: 'Patrick Boyle',
         type: 'youtube',
-        url: 'https://www.youtube.com/@PBoyle',
+        url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCQ7mOJ1FjImFIh8LUKhjEfg',
         originalUrl: 'https://www.youtube.com/@PBoyle',
+        favicon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=64',
         category: 'finance_markets',
         description: 'Hedge fund manager explaining finance and economics.'
     },
@@ -182,6 +197,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'reddit',
         url: 'https://www.reddit.com/r/investing/.rss',
         originalUrl: 'https://www.reddit.com/r/investing',
+        favicon: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
         category: 'finance_markets',
         description: 'Community discussions on investing and markets.'
     },
@@ -195,6 +211,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://openai.com/blog/rss.xml',
         originalUrl: 'https://openai.com/blog',
+        favicon: 'https://www.google.com/s2/favicons?domain=openai.com&sz=64',
         category: 'ai_revolution',
         description: 'Research and product updates from OpenAI.'
     },
@@ -204,6 +221,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.anthropic.com/research/rss.xml',
         originalUrl: 'https://www.anthropic.com/research',
+        favicon: 'https://www.google.com/s2/favicons?domain=anthropic.com&sz=64',
         category: 'ai_revolution',
         description: 'Safety-focused AI research and breakthroughs.'
     },
@@ -213,6 +231,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://deepmind.google/blog/rss.xml',
         originalUrl: 'https://deepmind.google/blog',
+        favicon: 'https://www.google.com/s2/favicons?domain=deepmind.google&sz=64',
         category: 'ai_revolution',
         description: 'Cutting-edge AI research from DeepMind.'
     },
@@ -222,6 +241,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'youtube',
         url: 'https://www.youtube.com/@AndrejKarpathy',
         originalUrl: 'https://www.youtube.com/@AndrejKarpathy',
+        favicon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=64',
         category: 'ai_revolution',
         description: 'Deep learning from first principles.'
     },
@@ -231,6 +251,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'youtube',
         url: 'https://www.youtube.com/@TwoMinutePapers',
         originalUrl: 'https://www.youtube.com/@TwoMinutePapers',
+        favicon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=64',
         category: 'ai_revolution',
         description: 'AI research papers explained in minutes.'
     },
@@ -240,6 +261,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'newsletter',
         url: 'https://tldr.tech/ai/feed',
         originalUrl: 'https://tldr.tech/ai',
+        favicon: 'https://www.google.com/s2/favicons?domain=tldr.tech&sz=64',
         category: 'ai_revolution',
         description: 'Daily AI news in 5 minutes.'
     },
@@ -249,6 +271,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'reddit',
         url: 'https://www.reddit.com/r/MachineLearning/.rss',
         originalUrl: 'https://www.reddit.com/r/MachineLearning',
+        favicon: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
         category: 'ai_revolution',
         description: 'Academic ML research and industry discussion.'
     },
@@ -258,6 +281,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'podcast',
         url: 'https://lexfridman.com/feed/podcast/',
         originalUrl: 'https://lexfridman.com/podcast/',
+        favicon: 'https://www.google.com/s2/favicons?domain=lexfridman.com&sz=64',
         category: 'ai_revolution',
         description: 'Long-form conversations on AI, science, and philosophy.'
     },
@@ -271,6 +295,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'http://feeds.bbci.co.uk/news/rss.xml',
         originalUrl: 'https://www.bbc.com/news',
+        favicon: 'https://www.google.com/s2/favicons?domain=bbc.com&sz=64',
         category: 'world_news',
         description: 'Trusted global news coverage.'
     },
@@ -280,6 +305,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.reutersagency.com/feed/',
         originalUrl: 'https://www.reuters.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=reuters.com&sz=64',
         category: 'world_news',
         description: 'Wire service. Facts first, fast.'
     },
@@ -289,6 +315,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.aljazeera.com/xml/rss/all.xml',
         originalUrl: 'https://www.aljazeera.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=aljazeera.com&sz=64',
         category: 'world_news',
         description: 'Global perspective from the Middle East.'
     },
@@ -298,6 +325,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
         originalUrl: 'https://www.nytimes.com/section/world',
+        favicon: 'https://www.google.com/s2/favicons?domain=nytimes.com&sz=64',
         category: 'world_news',
         description: 'In-depth world reporting and analysis.'
     },
@@ -307,6 +335,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.theguardian.com/world/rss',
         originalUrl: 'https://www.theguardian.com/world',
+        favicon: 'https://www.google.com/s2/favicons?domain=theguardian.com&sz=64',
         category: 'world_news',
         description: 'Independent journalism from London.'
     },
@@ -316,6 +345,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.vox.com/rss/index.xml',
         originalUrl: 'https://www.vox.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=vox.com&sz=64',
         category: 'world_news',
         description: 'Explainer journalism on policy and culture.'
     },
@@ -325,6 +355,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'reddit',
         url: 'https://www.reddit.com/r/worldnews/.rss',
         originalUrl: 'https://www.reddit.com/r/worldnews',
+        favicon: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
         category: 'world_news',
         description: 'Breaking world news from across the globe.'
     },
@@ -334,6 +365,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'youtube',
         url: 'https://www.youtube.com/@LastWeekTonight',
         originalUrl: 'https://www.youtube.com/@LastWeekTonight',
+        favicon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=64',
         category: 'world_news',
         description: 'Deep dives into current events with John Oliver.'
     },
@@ -347,6 +379,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.nasa.gov/rss/dyn/breaking_news.rss',
         originalUrl: 'https://www.nasa.gov',
+        favicon: 'https://www.google.com/s2/favicons?domain=nasa.gov&sz=64',
         category: 'science_space',
         description: 'Space exploration, discovery, and missions.'
     },
@@ -356,6 +389,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'http://feeds.nature.com/nature/rss/current',
         originalUrl: 'https://www.nature.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=nature.com&sz=64',
         category: 'science_space',
         description: 'Premier international science journal.'
     },
@@ -365,6 +399,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://api.quantamagazine.org/feed/',
         originalUrl: 'https://www.quantamagazine.org',
+        favicon: 'https://www.google.com/s2/favicons?domain=quantamagazine.org&sz=64',
         category: 'science_space',
         description: 'Math, physics, biology, and computer science stories.'
     },
@@ -374,6 +409,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'http://rss.sciam.com/ScientificAmerican-Global',
         originalUrl: 'https://www.scientificamerican.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=scientificamerican.com&sz=64',
         category: 'science_space',
         description: 'Accessible science journalism since 1845.'
     },
@@ -383,6 +419,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'youtube',
         url: 'https://www.youtube.com/@veritasium',
         originalUrl: 'https://www.youtube.com/@veritasium',
+        favicon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=64',
         category: 'science_space',
         description: 'Science and engineering explained visually.'
     },
@@ -392,6 +429,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'youtube',
         url: 'https://www.youtube.com/@kurzgesagt',
         originalUrl: 'https://www.youtube.com/@kurzgesagt',
+        favicon: 'https://www.google.com/s2/favicons?domain=youtube.com&sz=64',
         category: 'science_space',
         description: 'Animated explainers on science and philosophy.'
     },
@@ -401,6 +439,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'podcast',
         url: 'https://feeds.megaphone.fm/hubermanlab',
         originalUrl: 'https://hubermanlab.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=hubermanlab.com&sz=64',
         category: 'science_space',
         description: 'Neuroscience tools for everyday life.'
     },
@@ -410,6 +449,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'reddit',
         url: 'https://www.reddit.com/r/science/.rss',
         originalUrl: 'https://www.reddit.com/r/science',
+        favicon: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
         category: 'science_space',
         description: 'Peer-reviewed research and scientific discussion.'
     },
@@ -423,6 +463,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://sidebar.io/feed.xml',
         originalUrl: 'https://sidebar.io',
+        favicon: 'https://www.google.com/s2/favicons?domain=sidebar.io&sz=64',
         category: 'design_creativity',
         description: 'Five best design links, every day.'
     },
@@ -432,6 +473,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.smashingmagazine.com/feed',
         originalUrl: 'https://www.smashingmagazine.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=smashingmagazine.com&sz=64',
         category: 'design_creativity',
         description: 'For web designers and developers.'
     },
@@ -441,6 +483,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://alistapart.com/main/feed/',
         originalUrl: 'https://alistapart.com',
+        favicon: 'https://www.google.com/s2/favicons?domain=alistapart.com&sz=64',
         category: 'design_creativity',
         description: 'Web standards, best practices, and design thinking.'
     },
@@ -448,8 +491,9 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         id: 'design_figma',
         name: 'Figma',
         type: 'youtube',
-        url: 'https://www.youtube.com/@Figma',
+        url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCQsVmhSa4X-G3lHlUtejzLA',
         originalUrl: 'https://www.youtube.com/@Figma',
+        favicon: 'https://www.google.com/s2/favicons?domain=figma.com&sz=64',
         category: 'design_creativity',
         description: 'Design tool tutorials, Config talks, and workflows.'
     },
@@ -457,8 +501,9 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         id: 'design_thefutur',
         name: 'The Futur',
         type: 'youtube',
-        url: 'https://www.youtube.com/@thefutur',
+        url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-b3c7kxa5vU-bnmaROgvog',
         originalUrl: 'https://www.youtube.com/@thefutur',
+        favicon: 'https://www.google.com/s2/favicons?domain=thefutur.com&sz=64',
         category: 'design_creativity',
         description: 'Business of design, branding, and creative strategy.'
     },
@@ -468,6 +513,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'podcast',
         url: 'https://feeds.simplecast.com/BqbsxVfO',
         originalUrl: 'https://99percentinvisible.org',
+        favicon: 'https://www.google.com/s2/favicons?domain=99percentinvisible.org&sz=64',
         category: 'design_creativity',
         description: 'Stories about the design and architecture of everything.'
     },
@@ -477,6 +523,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'reddit',
         url: 'https://www.reddit.com/r/design/.rss',
         originalUrl: 'https://www.reddit.com/r/design',
+        favicon: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=64',
         category: 'design_creativity',
         description: 'Community for designers of all disciplines.'
     },
@@ -486,6 +533,7 @@ export const CURATED_LIBRARY: RecommendedSource[] = [
         type: 'rss',
         url: 'https://www.underconsideration.com/brandnew/feed',
         originalUrl: 'https://www.underconsideration.com/brandnew/',
+        favicon: 'https://www.google.com/s2/favicons?domain=underconsideration.com&sz=64',
         category: 'design_creativity',
         description: 'Reviews of corporate and brand identity work.'
     }
@@ -555,11 +603,32 @@ export function getContextualRecommendations(existingSourceUrls: string[]): Reco
     // 1. Filter out sources the user already has
     const candidates = CURATED_LIBRARY.filter(s => !existingSet.has(s.url.trim().toLowerCase()) && !existingSet.has(s.originalUrl.trim().toLowerCase()));
 
-    // 2. Simple recommendation logic:
-    // If they have "Tech", recommend "AI" or other "Tech".
-    // For now, since we want to expose the library, just return a random shuffle of top-tier sources not in their list.
-    // In a real specific logic, we'd check categories.
+    // 2. Category-diverse selection: pick from each category first, then fill remaining
+    const byCategory = new Map<string, RecommendedSource[]>();
+    for (const c of candidates) {
+        const list = byCategory.get(c.category) || [];
+        list.push(c);
+        byCategory.set(c.category, list);
+    }
 
-    // Let's just return a mix of categories to broaden horizons
-    return candidates.sort(() => 0.5 - Math.random()).slice(0, 6);
+    const result: RecommendedSource[] = [];
+    const TARGET = 6;
+
+    // Round-robin: one from each category
+    const categories = [...byCategory.keys()].sort(() => 0.5 - Math.random());
+    for (const cat of categories) {
+        if (result.length >= TARGET) break;
+        const list = byCategory.get(cat)!;
+        const pick = list.splice(Math.floor(Math.random() * list.length), 1)[0];
+        result.push(pick);
+    }
+
+    // Fill remaining slots if needed
+    if (result.length < TARGET) {
+        const remaining = candidates.filter(c => !result.includes(c));
+        const shuffled = remaining.sort(() => 0.5 - Math.random());
+        result.push(...shuffled.slice(0, TARGET - result.length));
+    }
+
+    return result;
 }

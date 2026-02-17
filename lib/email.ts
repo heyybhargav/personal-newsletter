@@ -325,7 +325,7 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
                   <div class="step-container">
                     <p class="step-number">01 Curate</p>
                     <h3 class="step-title">Connect your world.</h3>
-                    <p class="step-desc">Search or paste links to your favorite YouTube channels, blogs, Subreddits or Substacks. We’ll monitor them for you.</p>
+                    <p class="step-desc">Pick from the curated <strong>Starter Packs</strong> (Tech, AI, Finance) or add your own favorite links. We'll monitor them for you.</p>
                   </div>
 
                   <div class="step-container">
