@@ -14,6 +14,8 @@ export type SourceType =
     | 'blog'
     | 'news'
     | 'custom'
+    | 'instagram'
+    | 'twitter'
     | 'rss';
 
 export interface DetectedSource {
@@ -185,8 +187,7 @@ const detectionRules: DetectionRule[] = [
             /x\.com\/([\w]+)/i,
         ],
         extractFeedUrl: (url, match) => {
-            // Twitter doesn't have native RSS, but we can use RSS bridges
-            // User will need to use nitter.net or similar
+            // Use Nitter bridge for RSS
             if (match) {
                 return `https://nitter.net/${match[1]}/rss`;
             }
@@ -194,6 +195,23 @@ const detectionRules: DetectionRule[] = [
         },
         extractName: (url, match) => match ? `@${match[1]}` : 'Twitter',
         getFavicon: () => 'https://abs.twimg.com/favicons/twitter.ico',
+    },
+
+    // Instagram (via RSSHub)
+    {
+        type: 'instagram',
+        patterns: [
+            /instagram\.com\/([\w\.]+)/i,
+        ],
+        extractFeedUrl: (url, match) => {
+            if (match) {
+                // RSSHub bridge
+                return `https://rsshub.app/instagram/user/${match[1]}`;
+            }
+            return url;
+        },
+        extractName: (url, match) => match ? `@${match[1]}` : 'Instagram',
+        getFavicon: () => 'https://www.google.com/s2/favicons?domain=instagram.com&sz=128',
     },
 
     // Generic RSS/Atom feed detection
@@ -301,6 +319,7 @@ export function getSourceTypeColor(type: SourceType): string {
         blog: 'bg-indigo-100 text-indigo-700 border-indigo-200',
         news: 'bg-sky-100 text-sky-700 border-sky-200',
         custom: 'bg-teal-100 text-teal-700 border-teal-200',
+        instagram: 'bg-pink-100 text-pink-700 border-pink-200',
         rss: 'bg-slate-100 text-slate-700 border-slate-200',
     };
     return colors[type] || 'bg-gray-100 text-gray-700 border-gray-200';

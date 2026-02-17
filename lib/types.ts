@@ -30,6 +30,8 @@ export type SourceType =
   | 'blog'
   | 'news'
   | 'rss'
+  | 'instagram'
+  | 'twitter'
   | 'custom';
 
 export interface Source {
