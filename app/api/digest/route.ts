@@ -45,7 +45,8 @@ export async function POST(request: Request) {
 
         // Step 1: Aggregate content from all sources
         console.log('[Digest API] Aggregating content from', sources.length, 'sources for', email);
-        const content = await aggregateContent(sources);
+        // Manual trigger: Look back 3 days to ensure we find content
+        const content = await aggregateContent(sources, { lookbackDays: 3 });
 
         if (content.length === 0) {
             return NextResponse.json({ message: 'No new content found in the last 24h', sent: false });
@@ -104,7 +105,8 @@ export async function GET() {
             return NextResponse.json({ error: 'No sources configured', itemCount: 0 });
         }
 
-        const content = await aggregateContent(sources);
+        // Preview: Look back 3 days
+        const content = await aggregateContent(sources, { lookbackDays: 3 });
 
         console.log('[Digest API] Found', content.length, 'items. Generating unified briefing...');
         const briefing = await generateUnifiedBriefing(content);

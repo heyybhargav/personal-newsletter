@@ -186,6 +186,7 @@ const detectionRules: DetectionRule[] = [
             /twitter\.com\/([\w]+)/i,
             /x\.com\/([\w]+)/i,
             /nitter\.net\/([\w]+)/i,
+            /nitter\.privacydev\.net\/([\w]+)/i,
         ],
         extractFeedUrl: (url, match) => {
             // Use Nitter bridge for RSS

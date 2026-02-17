@@ -2,20 +2,30 @@ import { parseMultipleFeeds } from './rss-parser';
 import { ContentItem, Source } from './types';
 import { subDays, isAfter } from 'date-fns';
 
-export async function aggregateContent(sources: Source[]): Promise<ContentItem[]> {
+export async function aggregateContent(sources: Source[], options: { lookbackDays?: number } = {}): Promise<ContentItem[]> {
     // Parse all feeds
     const allItems = await parseMultipleFeeds(sources);
+    console.log(`[Aggregator] Fetched ${allItems.length} total items from ${sources.length} sources`);
 
-    // Filter to last 24 hours
-    const oneDayAgo = subDays(new Date(), 1);
+    // Filter to last N days (default 1)
+    const days = options.lookbackDays || 1;
+    const cutoff = subDays(new Date(), days);
+
     const recentItems = allItems.filter(item => {
         try {
             const itemDate = new Date(item.pubDate);
-            return isAfter(itemDate, oneDayAgo);
+            const keep = isAfter(itemDate, cutoff);
+            if (!keep && allItems.length < 50) {
+                // Log discarded items only if total volume is low, to avoid spam
+                // console.log(`[Aggregator] Discarded old item: ${item.title} (${item.pubDate}) < ${cutoff.toISOString()}`);
+            }
+            return keep;
         } catch {
             return false;
         }
     });
+
+    console.log(`[Aggregator] Kept ${recentItems.length} items after ${days}-day cutoff`);
 
     // Sort by date (newest first)
     const sorted = recentItems.sort((a, b) => {

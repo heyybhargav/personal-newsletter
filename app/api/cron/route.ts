@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
             // --- Content Generation ---
             console.log(`[Cron] 🚀 Dispatching to ${email} (Timezone: ${timezone})`);
 
-            const content = await aggregateContent(user.sources);
+            const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
             if (content.length === 0) return { email, status: 'skipped_no_content' };
 
             const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);

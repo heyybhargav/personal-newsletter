@@ -248,9 +248,16 @@ async function searchSocial(query: string): Promise<SearchResult[]> {
     // Probe Nitter (Twitter) and RSSHub (Instagram) in parallel
     const [twitter, instagram] = await Promise.allSettled([
         (async () => {
-            const url = `https://nitter.net/${handle}/rss`;
+            // Try privacydev instance which is often more reliable than nitter.net
+            const url = `https://nitter.privacydev.net/${handle}/rss`;
             try {
-                const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(2000) });
+                console.log(`[Search] Probing Twitter: ${url}`);
+                const res = await fetch(url, {
+                    method: 'HEAD',
+                    signal: AbortSignal.timeout(4000),
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Compatible; SignalDaily/1.0)' }
+                });
+                console.log(`[Search] Twitter probe status: ${res.status}`);
                 if (res.ok) {
                     return {
                         title: `@${handle} (Twitter)`,
@@ -260,13 +267,21 @@ async function searchSocial(query: string): Promise<SearchResult[]> {
                         thumbnail: 'https://abs.twimg.com/favicons/twitter.ico'
                     } as SearchResult;
                 }
-            } catch { }
+            } catch (e) {
+                console.log(`[Search] Twitter probe failed:`, e);
+            }
             return null;
         })(),
         (async () => {
             const url = `https://rsshub.app/instagram/user/${handle}`;
             try {
-                const res = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(2000) });
+                console.log(`[Search] Probing Instagram: ${url}`);
+                const res = await fetch(url, {
+                    method: 'HEAD',
+                    signal: AbortSignal.timeout(4000),
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Compatible; SignalDaily/1.0)' }
+                });
+                console.log(`[Search] Instagram probe status: ${res.status}`);
                 if (res.ok) {
                     return {
                         title: `@${handle} (Instagram)`,
@@ -276,7 +291,9 @@ async function searchSocial(query: string): Promise<SearchResult[]> {
                         thumbnail: 'https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico'
                     } as SearchResult;
                 }
-            } catch { }
+            } catch (e) {
+                console.log(`[Search] Instagram probe failed:`, e);
+            }
             return null;
         })()
     ]);

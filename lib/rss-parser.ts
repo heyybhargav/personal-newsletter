@@ -63,6 +63,25 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
                 description = item.content || item.contentSnippet || rssItem.description || '';
             }
 
+            // 4. Fallback: Parse <img> from description/content
+            if (!thumbnail) {
+                const imgMatch = description.match(/<img[^>]+src=["']([^"']+)["']/i) ||
+                    (item.content ? item.content.match(/<img[^>]+src=["']([^"']+)["']/i) : null);
+
+                if (imgMatch) {
+                    thumbnail = imgMatch[1];
+                }
+            }
+
+            // Fix relative URLs (common in Nitter/RSSHub)
+            if (thumbnail && thumbnail.startsWith('/')) {
+                try {
+                    // Try to resolve against link or feed origin
+                    const baseUrl = new URL(item.link || url).origin;
+                    thumbnail = new URL(thumbnail, baseUrl).toString();
+                } catch { }
+            }
+
             return {
                 title: item.title || 'No title',
                 description: description,
