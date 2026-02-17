@@ -700,7 +700,7 @@ export default function SourcesPage() {
                                 {/* Search Results List - Editorial Style */}
                                 {searchResults.length > 0 && !detectedSource && (
                                     <div className="animate-in slide-in-from-bottom-2">
-                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 sticky top-0 bg-white/95 py-2 backdrop-blur-sm z-10 w-full">
+                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
                                             Found {searchResults.length} sources
                                         </h3>
                                         <div className="space-y-3 pb-4">
