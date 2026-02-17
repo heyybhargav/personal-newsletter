@@ -126,4 +126,19 @@ export async function savePreferences(legacyPrefs: any) {
 // Legacy wrappers for sources
 export async function addSource(source: any) { return addSourceToUser(ADMIN_EMAIL, source); }
 export async function removeSource(id: string) { return removeSourceFromUser(ADMIN_EMAIL, id); }
-export async function updateSource(id: string, updates: any) { return updateSourceForUser(ADMIN_EMAIL, id, updates); }
+// --- Starter Pack Operations ---
+const STARTER_PACKS_KEY = 'admin:starter_packs';
+
+export async function saveStarterPacks(packs: any[]): Promise<void> {
+    await redis.set(STARTER_PACKS_KEY, packs);
+}
+
+export async function getAllStarterPacks(): Promise<any[] | null> {
+    try {
+        const packs = await redis.get<any[]>(STARTER_PACKS_KEY);
+        return packs;
+    } catch (error) {
+        console.error('Error fetching starter packs:', error);
+        return null;
+    }
+}

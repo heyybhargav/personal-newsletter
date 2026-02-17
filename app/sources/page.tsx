@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { getSourceTypeColor, SourceType } from '@/lib/url-detector';
 import { StarterPack, RecommendedSource, getStarterPacks } from '@/lib/recommendations';
+import { PackIcon } from '@/components/PackIcon';
 
 interface Source {
     id: string;
@@ -47,17 +48,7 @@ interface SearchResult {
 import { SourceIcon } from '@/components/SourceIcon';
 import { Toast } from '@/components/Toast';
 
-const PackIcon = ({ icon, className }: { icon: string, className?: string }) => {
-    switch (icon) {
-        case 'Zap': return <Zap className={className} />;
-        case 'TrendingUp': return <TrendingUp className={className} />;
-        case 'Bot': return <Bot className={className} />;
-        case 'Globe': return <Globe className={className} />;
-        case 'Atom': return <Atom className={className} />;
-        case 'Palette': return <Palette className={className} />;
-        default: return <Sparkles className={className} />;
-    }
-};
+
 
 export default function SourcesPage() {
     const [sources, setSources] = useState<Source[]>([]);
@@ -82,6 +73,7 @@ export default function SourcesPage() {
     const [editableName, setEditableName] = useState('');
 
     // Recommendations State
+    const [starterPacks, setStarterPacks] = useState<StarterPack[]>(getStarterPacks());
     const [recommendations, setRecommendations] = useState<StarterPack[] | RecommendedSource[]>([]);
     const [recMode, setRecMode] = useState<'starter' | 'contextual'>('starter');
     const [loadingRecs, setLoadingRecs] = useState(true);
@@ -90,6 +82,16 @@ export default function SourcesPage() {
     useEffect(() => {
         fetchSources();
         fetchRecommendations();
+
+        // Fetch dynamic starter packs
+        fetch('/api/starter-packs')
+            .then(res => res.json())
+            .then(data => {
+                if (data.packs && data.packs.length > 0) {
+                    setStarterPacks(data.packs);
+                }
+            })
+            .catch(err => console.error('Failed to update starter packs:', err));
     }, []);
 
     const fetchSources = async () => {
@@ -422,7 +424,7 @@ export default function SourcesPage() {
                             </div>
 
                             <div className="grid sm:grid-cols-2 gap-4">
-                                {getStarterPacks().map((pack) => {
+                                {starterPacks.map((pack) => {
                                     const isAdding = addingRec === pack.id;
                                     return (
                                         <button

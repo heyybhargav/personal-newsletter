@@ -1,5 +1,6 @@
 import { SourceType } from './types';
 
+
 export interface RecommendedSource {
     id: string; // Unique ID for the recommendation system
     name: string;
@@ -24,8 +25,11 @@ export interface StarterPack {
     name: string;
     description: string;
     icon: string; // Emoji
+    category: string; // e.g. 'tech_startups'
     sources: RecommendedSource[];
 }
+
+
 
 // --- The Curated Library (High Signal Sources) ---
 export const CURATED_LIBRARY: RecommendedSource[] = [
@@ -499,6 +503,7 @@ export function getStarterPacks(): StarterPack[] {
             name: 'Tech & Startups',
             description: 'The pulse of Silicon Valley and the startup ecosystem.',
             icon: 'Zap',
+            category: 'tech_startups',
             sources: getSourcesByCategory('tech_startups')
         },
         {
@@ -506,6 +511,7 @@ export function getStarterPacks(): StarterPack[] {
             name: 'Finance & Markets',
             description: 'Global markets, economics, and business intelligence.',
             icon: 'TrendingUp',
+            category: 'finance_markets',
             sources: getSourcesByCategory('finance_markets')
         },
         {
@@ -513,6 +519,7 @@ export function getStarterPacks(): StarterPack[] {
             name: 'AI Revolution',
             description: 'Keep up with the exponential curve of AI progress.',
             icon: 'Bot',
+            category: 'ai_revolution',
             sources: getSourcesByCategory('ai_revolution')
         },
         {
@@ -520,6 +527,7 @@ export function getStarterPacks(): StarterPack[] {
             name: 'World News',
             description: 'Balanced perspectives on global events.',
             icon: 'Globe',
+            category: 'world_news',
             sources: getSourcesByCategory('world_news')
         },
         {
@@ -527,6 +535,7 @@ export function getStarterPacks(): StarterPack[] {
             name: 'Science & Space',
             description: 'Discoveries from the edge of human knowledge.',
             icon: 'Atom',
+            category: 'science_space',
             sources: getSourcesByCategory('science_space')
         },
         {
@@ -534,6 +543,7 @@ export function getStarterPacks(): StarterPack[] {
             name: 'Design & Creativity',
             description: 'Inspiration for pixels, products, and user experiences.',
             icon: 'Palette',
+            category: 'design_creativity',
             sources: getSourcesByCategory('design_creativity')
         }
     ];

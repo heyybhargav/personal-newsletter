@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUser, getAllUsers } from '@/lib/db';
+import { getUser, getAllUsers, getAllStarterPacks } from '@/lib/db';
 import { getStarterPacks, getContextualRecommendations } from '@/lib/recommendations';
 
 export const dynamic = 'force-dynamic'; // Never cache this route
@@ -8,10 +8,17 @@ export async function GET(request: NextRequest) {
     try {
         const userEmails = await getAllUsers();
 
+        // Helper to get packs (DB first, then fallback)
+        const getPacks = async () => {
+            const dbPacks = await getAllStarterPacks();
+            if (dbPacks && dbPacks.length > 0) return dbPacks;
+            return getStarterPacks();
+        };
+
         if (!userEmails.length) {
             return NextResponse.json({
                 mode: 'starter',
-                data: getStarterPacks()
+                data: await getPacks()
             });
         }
 
@@ -21,7 +28,7 @@ export async function GET(request: NextRequest) {
         if (!user) {
             return NextResponse.json({
                 mode: 'starter',
-                data: getStarterPacks()
+                data: await getPacks()
             });
         }
 
@@ -30,7 +37,7 @@ export async function GET(request: NextRequest) {
         if (!hasSources) {
             return NextResponse.json({
                 mode: 'starter',
-                data: getStarterPacks()
+                data: await getPacks()
             });
         }
 
