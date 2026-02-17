@@ -3,6 +3,7 @@ import { getAllUsers, getUser } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
+import { checkSubscriptionStatus } from '@/lib/subscription';
 
 export async function GET(request: NextRequest) {
     try {
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
                 return { email, status: `skipped_${subStatus.reason}`, ...(subStatus.reason === 'paused_temporary' ? { until: subStatus.until } : {}) };
             }
 
-            if (subStatus.action === 'send' && subStatus.reason === 'pause_expired') {
+            if (subStatus.action === 'send' && 'reason' in subStatus && subStatus.reason === 'pause_expired') {
                 console.log(`[Cron] Resuming ${email}: Pause expired.`);
                 // Optional: Auto-update DB to active here if desired, but not strictly required for sending
             }
