@@ -126,10 +126,10 @@ async function formatNarrative(text: string): Promise<string> {
   const html = await marked.parse(text);
 
   // Add custom styling to paragraphs
-  return html.replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333;">')
-    .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline-block; word-break: break-word;" ') // Mobile link fix v2
-    .replace(/<li>/g, '<li style="margin-bottom: 8px;">')
-    .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0;">');
+  return html.replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word;">')
+    .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-all; overflow-wrap: anywhere;" ') // Mobile link fix v3
+    .replace(/<li>/g, '<li style="margin-bottom: 8px; overflow-wrap: break-word;">')
+    .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
 }
 
 // ============================================================================

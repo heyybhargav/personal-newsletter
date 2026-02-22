@@ -215,7 +215,7 @@ export default function Home() {
 
             {/* RIGHT COLUMN: Sources & Preview (8 cols) */}
             <div className="lg:col-span-8">
-              <div className="flex justify-between items-baseline mb-6">
+              <div className="flex flex-col sm:flex-row justify-between items-baseline mb-6 gap-2">
                 <h2 className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Intelligence Feed</h2>
                 <button
                   onClick={handlePreview}
@@ -235,8 +235,8 @@ export default function Home() {
                     exit={{ opacity: 0, height: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="mb-12 py-2">
-                      <div className="flex justify-between items-start mb-6">
+                    <div className="mb-12 py-2 px-2 sm:px-0">
+                      <div className="flex justify-between items-start mb-6 pr-4">
                         <div>
                           <h3 className="font-serif font-bold text-2xl">
                             {isShowingPreview ? 'Preview Output' : 'Latest Briefing'}
@@ -248,7 +248,7 @@ export default function Home() {
                           )}
                         </div>
                         {isShowingPreview && (
-                          <button onClick={() => { setPreviewSections([]); setPreviewBriefing(null); }} className="text-gray-400 hover:text-black mt-1">×</button>
+                          <button onClick={() => { setPreviewSections([]); setPreviewBriefing(null); }} className="text-gray-400 hover:text-black mt-1 p-2">×</button>
                         )}
                       </div>
 
@@ -358,10 +358,10 @@ function EmailStyleMarkdown({ content }: { content: string }) {
       const rawHtml = await marked.parse(content);
 
       const formatted = rawHtml
-        .replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333;">')
-        .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline-block; word-break: break-word;" target="_blank" rel="noopener noreferrer" ')
-        .replace(/<li>/g, '<li style="margin-bottom: 8px;">')
-        .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0;">');
+        .replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word;">')
+        .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-all; overflow-wrap: anywhere;" target="_blank" rel="noopener noreferrer" ')
+        .replace(/<li>/g, '<li style="margin-bottom: 8px; overflow-wrap: break-word;">')
+        .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
 
       setHtml(formatted);
     }
