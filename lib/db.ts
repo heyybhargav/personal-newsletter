@@ -57,6 +57,13 @@ export async function getAllUsers(): Promise<string[]> {
     return await redis.smembers(ALL_USERS_SET);
 }
 
+export async function updateLastDigestAt(email: string): Promise<void> {
+    const user = await getUser(email);
+    if (!user) return;
+    user.lastDigestAt = new Date().toISOString();
+    await saveUser(user);
+}
+
 // --- Briefing Operations ---
 export async function saveLatestBriefing(email: string, briefing: any): Promise<void> {
     await redis.set(`${USER_KEY_PREFIX}${email}:latest_briefing`, briefing);

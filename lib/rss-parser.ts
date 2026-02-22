@@ -1,5 +1,5 @@
 import Parser from 'rss-parser';
-import * as cheerio from 'cheerio';
+
 import { fetchTwitterSyndication } from './twitter-syndication';
 import { ContentItem, SourceType } from './types';
 

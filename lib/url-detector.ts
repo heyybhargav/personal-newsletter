@@ -16,6 +16,7 @@ export type SourceType =
     | 'custom'
     | 'instagram'
     | 'twitter'
+    | 'x'
     | 'rss';
 
 export interface DetectedSource {
@@ -185,6 +186,7 @@ const detectionRules: DetectionRule[] = [
         patterns: [
             /twitter\.com\/([\w]+)/i,
             /x\.com\/([\w]+)/i,
+            /syndication\.twitter\.com\/srv\/timeline-profile\/screen-name\/([\w]+)/i,
             /twitter\.com\/([a-zA-Z0-9_]+)/,
             /x\.com\/([a-zA-Z0-9_]+)/,
             /nitter\.net\/([a-zA-Z0-9_]+)/,
@@ -202,11 +204,12 @@ const detectionRules: DetectionRule[] = [
             return url;
         },
         extractName: (url) => {
-            const match = url.match(/twitter\.com\/([a-zA-Z0-9_]+)/) ||
+            const match = url.match(/syndication\.twitter\.com\/srv\/timeline-profile\/screen-name\/([\w]+)/i) ||
+                url.match(/twitter\.com\/([a-zA-Z0-9_]+)/) ||
                 url.match(/x\.com\/([a-zA-Z0-9_]+)/);
-            return match ? `@${match[1]}` : 'Twitter User';
+            return match ? `@${match[1]}` : 'X User';
         },
-        getFavicon: () => 'https://abs.twimg.com/favicons/twitter.ico'
+        getFavicon: () => 'https://www.google.com/s2/favicons?domain=x.com&sz=64'
     },
 
     // Instagram (via RSSHub)
@@ -331,7 +334,8 @@ export function getSourceTypeColor(type: SourceType): string {
         medium: 'bg-gray-100 text-gray-700 border-gray-200',
         hackernews: 'bg-orange-100 text-orange-700 border-orange-200',
         github: 'bg-purple-100 text-purple-700 border-purple-200',
-        twitter: 'bg-blue-100 text-blue-700 border-blue-200',
+        twitter: 'bg-neutral-900 text-white border-neutral-700',
+        x: 'bg-neutral-900 text-white border-neutral-700',
         podcast: 'bg-violet-100 text-violet-700 border-violet-200',
         newsletter: 'bg-green-100 text-green-700 border-green-200',
         blog: 'bg-indigo-100 text-indigo-700 border-indigo-200',
