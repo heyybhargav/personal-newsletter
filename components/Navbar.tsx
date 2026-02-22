@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-export default function Navbar() {
+export default function Navbar({ initialUser }: { initialUser: { email: string } | null }) {
     const pathname = usePathname();
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [user, setUser] = useState<{ email: string } | null>(null);
+    const [user, setUser] = useState<{ email: string } | null>(initialUser);
 
     // Check auth on mount
     useEffect(() => {
