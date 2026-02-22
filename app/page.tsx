@@ -235,7 +235,7 @@ export default function Home() {
                     exit={{ opacity: 0, height: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="mb-12 border-l-2 border-[#FF5700] pl-6 py-2">
+                    <div className="mb-12 py-2">
                       <div className="flex justify-between items-start mb-6">
                         <div>
                           <h3 className="font-serif font-bold text-2xl">
