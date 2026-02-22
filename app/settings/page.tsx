@@ -12,7 +12,6 @@ export default function SettingsPage() {
     const [pausedUntil, setPausedUntil] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [runningCron, setRunningCron] = useState(false);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
@@ -42,30 +41,7 @@ export default function SettingsPage() {
         }
     };
 
-    const handleForceDispatch = async () => {
-        if (!confirm('This will generate and send your digest now, bypassing the scheduled time. Continue?')) return;
 
-        setRunningCron(true);
-        setMessage('');
-
-        try {
-            const res = await fetch('/api/digest', { method: 'POST' });
-            const data = await res.json();
-
-            if (data.error) {
-                setMessage(`Error: ${data.error}`);
-            } else if (data.sent) {
-                setMessage(`Email sent successfully (${data.itemCount} items). Please check your Spam folder.`);
-                console.log(data);
-            } else {
-                setMessage(data.message || 'No email sent');
-            }
-        } catch (error: any) {
-            setMessage(`Failed to trigger dispatch: ${error.message}`);
-        } finally {
-            setRunningCron(false);
-        }
-    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -340,41 +316,24 @@ export default function SettingsPage() {
                     )}
                 </div>
 
-                {/* Manual Override Section - Redesigned */}
-                <div className="mt-20 p-8 bg-[#1A1A1A] rounded-2xl text-white relative overflow-hidden group shadow-2xl">
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                        <div>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
-                                <span className="text-xs font-mono text-gray-400 tracking-widest uppercase">Manual Override</span>
-                            </div>
-                            <h3 className="text-2xl font-serif mb-2 text-white">Send My Digest Now</h3>
-                            <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-                                Generate and deliver your briefing immediately, bypassing the scheduled time.
-                            </p>
+                {/* Promo Section - Replaces Manual Override */}
+                <div className="mt-20 p-8 md:p-10 bg-[#FF5700]/5 border border-[#FF5700]/10 rounded-2xl relative overflow-hidden flex flex-col items-center text-center">
+                    <div className="relative z-10 max-w-2xl mx-auto">
+                        <div className="flex items-center justify-center gap-2 mb-6">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
+                            <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">The Signal Advantage</span>
                         </div>
-
-                        <button
-                            onClick={handleForceDispatch}
-                            disabled={runningCron}
-                            className="w-full md:w-auto px-8 py-4 bg-white text-black font-medium text-sm rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-                        >
-                            {runningCron ? (
-                                <>
-                                    <span className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-black rounded-full"></span>
-                                    <span>Processing...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <span>Run Sequence</span>
-                                    <span>→</span>
-                                </>
-                            )}
-                        </button>
+                        <h3 className="text-3xl font-serif mb-6 text-[#1A1A1A]">Reclaim your attention.</h3>
+                        <p className="text-gray-600 leading-relaxed font-serif text-lg">
+                            Signal is designed to be the quietest part of your internet experience. We monitor your selected sources 24/7, aggressively filter out PR fluff and noise, and synthesize the actionable insights into one concise executive briefing.
+                        </p>
+                        <hr className="my-8 border-t border-[#FF5700]/20 w-24 mx-auto" />
+                        <p className="text-gray-600 leading-relaxed font-serif text-lg">
+                            By reading Signal instead of doomscrolling feeds, the average user saves <b>14 hours a week</b> while staying better informed. No algorithms. No engagement traps. Just what matters, delivered exactly when you want it.
+                        </p>
                     </div>
-
-                    {/* Decorative noise/gradient */}
-                    <div className="absolute top-[-50%] right-[-50%] w-full h-full bg-white/5 blur-[100px] rounded-full pointer-events-none"></div>
                 </div>
             </div>
         </div >
