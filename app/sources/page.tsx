@@ -219,7 +219,7 @@ export default function SourcesPage() {
         setAddingRec(null);
         if (successCount > 0) {
             setToast({ message: `Added ${successCount} sources`, description: `From ${pack.name}`, type: 'success' });
-            fetchSources();
+            mutate('/api/sources');
             fetchRecommendations();
         } else {
             setToast({ message: 'All sources already added', description: `From ${pack.name}`, type: 'success' });
@@ -245,7 +245,7 @@ export default function SourcesPage() {
                 setToast({ message: `Added ${rec.name}`, type: 'success' });
                 // Remove from local list to avoid duplicates immediately
                 setRecommendations(prev => (prev as RecommendedSource[]).filter(r => r.id !== rec.id));
-                fetchSources();
+                mutate('/api/sources');
             }
         } catch (error) {
             console.error('Error adding recommendation:', error);
