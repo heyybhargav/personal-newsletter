@@ -10,7 +10,7 @@ export default function Navbar({ initialUser }: { initialUser: { email: string }
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [user, setUser] = useState<{ email: string } | null>(initialUser);
 
-    // Check auth on mount
+    // Check auth on mount and path change
     useEffect(() => {
         fetch('/api/auth/me')
             .then(res => res.ok ? res.json() : null)
@@ -18,7 +18,7 @@ export default function Navbar({ initialUser }: { initialUser: { email: string }
                 if (data?.user) setUser(data.user);
             })
             .catch(() => setUser(null));
-    }, []);
+    }, [pathname]);
 
     const handleLogout = async () => {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -76,12 +76,7 @@ export default function Navbar({ initialUser }: { initialUser: { email: string }
                                 </button>
                             </div>
                         ) : (
-                            <Link
-                                href="/login"
-                                className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
-                            >
-                                Sign In
-                            </Link>
+                            <div className="w-24 h-6 animate-pulse bg-gray-200/50 rounded-md"></div>
                         )}
                     </div>
 
@@ -141,13 +136,7 @@ export default function Navbar({ initialUser }: { initialUser: { email: string }
                                 </button>
                             </>
                         ) : (
-                            <Link
-                                href="/login"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="block pl-3 pr-4 py-3 border-l-4 border-transparent text-base font-medium text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
-                            >
-                                Sign In
-                            </Link>
+                            <div className="px-4 py-3 text-sm text-gray-400 animate-pulse">Loading profile...</div>
                         )}
                     </div>
                 </div>
