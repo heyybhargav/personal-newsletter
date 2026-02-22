@@ -235,7 +235,7 @@ export default function Home() {
                     exit={{ opacity: 0, height: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="mb-12 py-2 px-2 sm:px-0">
+                    <div className="mb-12 py-2 px-4 sm:px-0">
                       <div className="flex justify-between items-start mb-6 pr-4">
                         <div>
                           <h3 className="font-serif font-bold text-2xl">
@@ -358,9 +358,10 @@ function EmailStyleMarkdown({ content }: { content: string }) {
       const rawHtml = await marked.parse(content);
 
       const formatted = rawHtml
-        .replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word;">')
-        .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-all; overflow-wrap: anywhere;" target="_blank" rel="noopener noreferrer" ')
-        .replace(/<li>/g, '<li style="margin-bottom: 8px; overflow-wrap: break-word;">')
+        .replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; hyphens: auto;">')
+        .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: normal; overflow-wrap: break-word;" target="_blank" rel="noopener noreferrer" ')
+        .replace(/<ul>/g, '<ul style="padding-left: 20px; margin-bottom: 18px;">')
+        .replace(/<li>/g, '<li style="margin-bottom: 8px; overflow-wrap: break-word; padding-left: 4px;">')
         .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
 
       setHtml(formatted);
