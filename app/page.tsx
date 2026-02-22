@@ -103,7 +103,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-12">
 
             {/* LEFT COLUMN: Actions (4 cols) */}
-            <div className="lg:col-span-4 space-y-8">
+            <div className="lg:col-span-4 space-y-8 order-2 lg:order-1">
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -214,7 +214,7 @@ export default function Home() {
             </div>
 
             {/* RIGHT COLUMN: Sources & Preview (8 cols) */}
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-8 order-1 lg:order-2">
               <div className="flex flex-col sm:flex-row justify-between items-baseline mb-6 gap-2">
                 <h2 className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Intelligence Feed</h2>
                 <button
