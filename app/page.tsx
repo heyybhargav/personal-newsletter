@@ -16,35 +16,13 @@ export default function Home() {
   const sources: Source[] = data?.sources || [];
   const loading = isLoading;
 
-  const { data: latestData } = useSWR('/api/latest-briefing', fetcher);
+  const { data: latestData, mutate: mutateLatest } = useSWR('/api/latest-briefing', fetcher);
 
-  const [generating, setGenerating] = useState(false);
-  const [previewSections, setPreviewSections] = useState<DigestSection[]>([]);
-  const [previewBriefing, setPreviewBriefing] = useState<any>(null);
+
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState('');
 
-  const handlePreview = async () => {
-    setGenerating(true);
-    setMessage('');
-    setPreviewSections([]);
-    setPreviewBriefing(null);
-    try {
-      const res = await fetch('/api/digest');
-      const data = await res.json();
-      if (data.error) {
-        setMessage(`Error: ${data.error}`);
-      } else {
-        setMessage(`Generated digest with ${data.itemCount} items across ${data.sections?.length || 0} sections`);
-        setPreviewSections(data.sections || []);
-        setPreviewBriefing(data.briefing || null);
-      }
-    } catch (error: any) {
-      setMessage(`Error: ${error.message}`);
-    } finally {
-      setGenerating(false);
-    }
-  };
+
 
   const handleSendTest = async () => {
     setSending(true);
@@ -56,6 +34,7 @@ export default function Home() {
         setMessage(`Error: ${data.error}`);
       } else if (data.sent) {
         setMessage(`Email dispatched. Please check your spam folder if you cannot find it in your inbox!`);
+        mutateLatest(); // Refresh the latest briefing display
       } else {
         setMessage(data.message || 'No email sent');
       }
@@ -66,9 +45,8 @@ export default function Home() {
     }
   };
 
-  const displaySections = previewSections.length > 0 ? previewSections : (latestData?.sections || []);
-  const displayContext = previewBriefing || latestData?.briefing;
-  const isShowingPreview = previewSections.length > 0;
+  const displaySections = latestData?.sections || [];
+  const displayContext = latestData?.briefing;
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-gray-900 font-sans selection:bg-[#FF5700] selection:text-white">
@@ -217,13 +195,6 @@ export default function Home() {
             <div className="lg:col-span-8 order-1 lg:order-2">
               <div className="flex flex-col sm:flex-row justify-between items-baseline mb-6 gap-2">
                 <h2 className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Intelligence Feed</h2>
-                <button
-                  onClick={handlePreview}
-                  disabled={generating}
-                  className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition disabled:opacity-50"
-                >
-                  {generating ? 'Compiling...' : 'Preview Output'}
-                </button>
               </div>
 
               {/* PREVIEW AREA */}
@@ -238,18 +209,13 @@ export default function Home() {
                     <div className="mb-12 py-2 px-4 sm:px-0">
                       <div className="flex justify-between items-start mb-6 pr-4">
                         <div>
-                          <h3 className="font-serif font-bold text-2xl">
-                            {isShowingPreview ? 'Preview Output' : 'Latest Briefing'}
-                          </h3>
+                          <h3 className="font-serif font-bold text-2xl">Latest Briefing</h3>
                           {displayContext?.generatedAt && (
                             <p className="text-xs font-mono text-gray-500 mt-1 uppercase tracking-wider">
                               Generated: {new Date(displayContext.generatedAt).toLocaleString()}
                             </p>
                           )}
                         </div>
-                        {isShowingPreview && (
-                          <button onClick={() => { setPreviewSections([]); setPreviewBriefing(null); }} className="text-gray-400 hover:text-black mt-1 p-2">×</button>
-                        )}
                       </div>
 
                       <div className="space-y-8">
