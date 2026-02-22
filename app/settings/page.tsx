@@ -190,8 +190,8 @@ export default function SettingsPage() {
                                 <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Delivery Settings</h3>
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <div className="space-y-3">
-                                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
-                                            Admin Email
+                                        <label className="block text-[10px] font-bold tracking-widest text-[#1A1A1A] uppercase mb-4">
+                                            Delivery Email
                                         </label>
                                         <input
                                             type="email"
