@@ -33,7 +33,7 @@ export async function GET() {
                 subject: briefing.subject
             },
             sections: [{
-                title: briefing.subject || `Briefing — ${new Date(briefing.generatedAt).toLocaleDateString()}`,
+                title: briefing.subject || `Briefing - ${new Date(briefing.generatedAt).toLocaleDateString()}`,
                 summary: briefing.narrative,
                 items: briefing.topStories?.map((item: any) => ({ ...item, summary: '' })) || []
             }]

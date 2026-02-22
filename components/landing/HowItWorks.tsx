@@ -8,7 +8,7 @@ const steps = [
     {
         id: "01",
         title: "Curate your feed.",
-        description: "Add any source—YouTube channels, Substack newsletters, or Nitter. We normalize the chaos into one clean stream.",
+        description: "Add any source. YouTube channels, Substack newsletters, or News sites. We normalize the chaos into one clean stream.",
         icon: Plus,
         color: "bg-blue-500",
         visual: (

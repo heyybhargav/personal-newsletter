@@ -144,7 +144,7 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
   const msg = {
     to,
     from: { email: fromEmail, name: process.env.SENDER_NAME || 'Signal Daily' },
-    subject: briefing.subject || `☕ Signal: Your Daily Briefing — ${today}`,
+    subject: briefing.subject || `☕ Signal: Your Daily Briefing | ${today}`,
     html: await generateUnifiedEmailHTML(briefing, today),
   };
 
