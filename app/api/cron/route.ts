@@ -5,6 +5,9 @@ import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
 import { checkSubscriptionStatus } from '@/lib/subscription';
 
+export const maxDuration = 60; // Max allowed for Vercel Hobby plan
+export const dynamic = 'force-dynamic'; // Ensure it's never cached
+
 export async function GET(request: NextRequest) {
     try {
         const authHeader = request.headers.get('authorization');
