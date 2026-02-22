@@ -225,7 +225,7 @@ export default function Home() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="prose prose-sm max-w-none"
+                            className="max-w-none"
                           >
                             <h4 className="text-lg font-serif font-bold mb-3">{section.title}</h4>
 
@@ -324,10 +324,15 @@ function EmailStyleMarkdown({ content }: { content: string }) {
       const rawHtml = await marked.parse(content);
 
       const formatted = rawHtml
+        .replace(/<h1/g, '<h1 style="font-family: \'Georgia\', serif; font-weight: bold; font-size: 24px; margin: 24px 0 16px 0; color: #000;"')
+        .replace(/<h2/g, '<h2 style="font-family: \'Georgia\', serif; font-weight: bold; font-size: 20px; margin: 20px 0 12px 0; color: #000;"')
+        .replace(/<h3/g, '<h3 style="font-family: \'Georgia\', serif; font-weight: bold; font-size: 18px; margin: 18px 0 10px 0; color: #000;"')
+        .replace(/<h4/g, '<h4 style="font-family: \'Georgia\', serif; font-weight: bold; font-size: 17px; margin: 16px 0 8px 0; color: #000;"')
         .replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; hyphens: auto;">')
         .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: normal; overflow-wrap: break-word;" target="_blank" rel="noopener noreferrer" ')
-        .replace(/<ul>/g, '<ul style="padding-left: 20px; margin-bottom: 18px;">')
-        .replace(/<li>/g, '<li style="margin-bottom: 8px; overflow-wrap: break-word; padding-left: 4px;">')
+        .replace(/<ul>/g, '<ul style="padding-left: 20px; margin-bottom: 18px; list-style-type: disc;">')
+        .replace(/<ol>/g, '<ol style="padding-left: 20px; margin-bottom: 18px; list-style-type: decimal;">')
+        .replace(/<li>/g, '<li style="margin-bottom: 8px; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; padding-left: 4px;">')
         .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
 
       setHtml(formatted);
