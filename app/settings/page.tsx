@@ -321,7 +321,7 @@ export default function SettingsPage() {
                     <div className="relative z-10 max-w-2xl mx-auto">
                         <div className="flex items-center justify-center gap-2 mb-6">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                             </svg>
                             <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">The Signal Advantage</span>
                         </div>
@@ -331,7 +331,7 @@ export default function SettingsPage() {
                         </p>
                         <hr className="my-8 border-t border-[#FF5700]/20 w-24 mx-auto" />
                         <p className="text-gray-600 leading-relaxed font-serif text-lg">
-                            By reading Signal instead of doomscrolling feeds, the average user saves <b>14 hours a week</b> while staying better informed. No algorithms. No engagement traps. Just what matters, delivered exactly when you want it.
+                            By reading Signal instead of doomscrolling feeds, you save <b>hours every week</b> while staying better informed. No algorithms. No engagement traps. Just what matters, delivered exactly when you want it.
                         </p>
                     </div>
                 </div>
