@@ -57,6 +57,19 @@ export async function getAllUsers(): Promise<string[]> {
     return await redis.smembers(ALL_USERS_SET);
 }
 
+// --- Briefing Operations ---
+export async function saveLatestBriefing(email: string, briefing: any): Promise<void> {
+    await redis.set(`${USER_KEY_PREFIX}${email}:latest_briefing`, briefing);
+}
+
+export async function getLatestBriefing(email: string): Promise<any | null> {
+    try {
+        return await redis.get<any>(`${USER_KEY_PREFIX}${email}:latest_briefing`);
+    } catch (e) {
+        return null; // Handle parse errors from ancient formats gracefully
+    }
+}
+
 // --- Source Operations (Scoped to User) ---
 
 export async function addSourceToUser(email: string, source: Omit<Source, 'id' | 'addedAt'>): Promise<Source | null> {

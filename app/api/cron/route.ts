@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllUsers, getUser } from '@/lib/db';
+import { getAllUsers, getUser, saveLatestBriefing } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
@@ -66,6 +66,7 @@ export async function GET(request: NextRequest) {
 
             const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
             await sendUnifiedDigestEmail(user.email, briefing);
+            await saveLatestBriefing(email, briefing);
 
             console.log(`[Cron] ✅ Sent to ${email}`);
             return { email, status: 'sent', items: content.length };

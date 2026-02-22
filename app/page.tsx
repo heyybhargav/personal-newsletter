@@ -16,8 +16,11 @@ export default function Home() {
   const sources: Source[] = data?.sources || [];
   const loading = isLoading;
 
+  const { data: latestData } = useSWR('/api/latest-briefing', fetcher);
+
   const [generating, setGenerating] = useState(false);
   const [previewSections, setPreviewSections] = useState<DigestSection[]>([]);
+  const [previewBriefing, setPreviewBriefing] = useState<any>(null);
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -25,6 +28,7 @@ export default function Home() {
     setGenerating(true);
     setMessage('');
     setPreviewSections([]);
+    setPreviewBriefing(null);
     try {
       const res = await fetch('/api/digest');
       const data = await res.json();
@@ -33,6 +37,7 @@ export default function Home() {
       } else {
         setMessage(`Generated digest with ${data.itemCount} items across ${data.sections?.length || 0} sections`);
         setPreviewSections(data.sections || []);
+        setPreviewBriefing(data.briefing || null);
       }
     } catch (error: any) {
       setMessage(`Error: ${error.message}`);
@@ -60,6 +65,10 @@ export default function Home() {
       setSending(false);
     }
   };
+
+  const displaySections = previewSections.length > 0 ? previewSections : (latestData?.sections || []);
+  const displayContext = previewBriefing || latestData?.briefing;
+  const isShowingPreview = previewSections.length > 0;
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-gray-900 font-sans selection:bg-[#FF5700] selection:text-white">
@@ -219,7 +228,7 @@ export default function Home() {
 
               {/* PREVIEW AREA */}
               <AnimatePresence>
-                {previewSections.length > 0 && (
+                {displaySections.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
@@ -227,13 +236,24 @@ export default function Home() {
                     className="overflow-hidden"
                   >
                     <div className="mb-12 border-l-2 border-[#FF5700] pl-6 py-2">
-                      <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-serif font-bold text-2xl">Latest Briefing</h3>
-                        <button onClick={() => setPreviewSections([])} className="text-gray-400 hover:text-black">×</button>
+                      <div className="flex justify-between items-start mb-6">
+                        <div>
+                          <h3 className="font-serif font-bold text-2xl">
+                            {isShowingPreview ? 'Preview Output' : 'Latest Briefing'}
+                          </h3>
+                          {displayContext?.generatedAt && (
+                            <p className="text-xs font-mono text-gray-500 mt-1 uppercase tracking-wider">
+                              Generated: {new Date(displayContext.generatedAt).toLocaleString()}
+                            </p>
+                          )}
+                        </div>
+                        {isShowingPreview && (
+                          <button onClick={() => { setPreviewSections([]); setPreviewBriefing(null); }} className="text-gray-400 hover:text-black mt-1">×</button>
+                        )}
                       </div>
 
                       <div className="space-y-8">
-                        {previewSections.map((section, idx) => (
+                        {displaySections.map((section: DigestSection, idx: number) => (
                           <motion.div
                             key={idx}
                             initial={{ opacity: 0, x: -20 }}

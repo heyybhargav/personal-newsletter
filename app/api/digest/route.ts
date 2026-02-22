@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPreferences, getUser } from '@/lib/db';
+import { getPreferences, getUser, saveLatestBriefing } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
@@ -59,8 +59,9 @@ export async function POST(request: Request) {
 
         console.log('[Digest API] Briefing generated. Sending email to', email);
 
-        // Step 3: Send the unified email
+        // Step 3: Send the unified email and save to DB
         await sendUnifiedDigestEmail(email, briefing);
+        await saveLatestBriefing(email, briefing);
 
         return NextResponse.json({
             success: true,
