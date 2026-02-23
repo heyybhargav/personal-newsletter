@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { getSession } from "@/lib/auth";
 
+import { Analytics } from "@vercel/analytics/react";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const newsreader = Newsreader({
   subsets: ["latin"],
@@ -49,6 +51,7 @@ export default async function RootLayout({
       <body className={`${inter.variable} ${newsreader.variable} font-sans antialiased`}>
         <Navbar initialUser={initialUser} />
         {children}
+        <Analytics />
         <div className="fixed inset-0 z-50 pointer-events-none bg-noise opacity-[0.03] mix-blend-overlay"></div>
       </body>
     </html>
