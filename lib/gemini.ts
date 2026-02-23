@@ -249,6 +249,8 @@ BEGIN BRIEFING:`;
         subject = subject.replace(/\*/g, '').trim();
         preheader = preheader.replace(/\*/g, '').trim();
 
+        console.log(`[Groq] Parsed Preheader: "${preheader}"`);
+
         return { subject, narrative, preheader };
 
     } catch (error: any) {

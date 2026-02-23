@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         // Step 2: Generate UNIFIED briefing (new approach!)
         const briefing = await generateUnifiedBriefing(content);
 
-        console.log('[Digest API] Briefing generated. Sending email to', email);
+        console.log(`[Digest API] Briefing generated. Preheader length: ${briefing.preheader ? briefing.preheader.length : 'NULL'}. Sending email to`, email);
 
         // Step 3: Send the unified email and save to DB
         await sendUnifiedDigestEmail(email, briefing);
