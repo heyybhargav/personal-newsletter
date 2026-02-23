@@ -52,13 +52,13 @@ export async function GET(request: NextRequest) {
             const targetHour = parseInt(targetHourStr, 10);
             const targetMinute = parseInt(targetMinStr || '0', 10);
 
-            // Compare total minutes since midnight, with ±2 min tolerance
+            // Exact minute match — cron-job.org fires every minute, so this matches once per day
             const currentTotal = currentHour * 60 + currentMinute;
             const targetTotal = targetHour * 60 + targetMinute;
             let minuteDiff = Math.abs(currentTotal - targetTotal);
             if (minuteDiff > 720) minuteDiff = 1440 - minuteDiff; // Handle midnight wrap
 
-            if (!force && minuteDiff > 2) {
+            if (!force && minuteDiff !== 0) {
                 results.push({ email, status: 'skipped', detail: `wrong_time (now: ${currentHour}:${String(currentMinute).padStart(2, '0')}, target: ${deliveryTime})` });
                 continue;
             }
