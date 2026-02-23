@@ -65,16 +65,6 @@ export async function GET(request: NextRequest) {
                 continue;
             }
 
-            // --- Already sent today? ---
-            if (!force && user.lastDigestAt) {
-                const lastSent = new Date(user.lastDigestAt);
-                const hoursSinceLastSent = (Date.now() - lastSent.getTime()) / (1000 * 60 * 60);
-                if (hoursSinceLastSent < 20) {
-                    skipped.push({ email, reason: `already_sent (${Math.round(hoursSinceLastSent)}h ago)` });
-                    continue;
-                }
-            }
-
             // --- DISPATCH: Fire-and-forget to /api/digest ---
             console.log(`[Cron] 🚀 Dispatching digest for ${email} (TZ: ${timezone}, hour: ${currentHour})`);
 
