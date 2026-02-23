@@ -38,20 +38,23 @@ export async function GET(request: NextRequest) {
                 continue;
             }
 
-            // --- Timezone-aware hour check (reliable method) ---
+            // --- Timezone-aware time check with MINUTE precision ---
             const timezone = user.preferences.timezone || 'Asia/Kolkata';
             const deliveryTime = user.preferences.deliveryTime || '08:00';
 
-            const currentHour = getCurrentHourInTimezone(timezone);
-            const [targetHourStr] = deliveryTime.split(':');
+            const { hour: currentHour, minute: currentMinute } = getCurrentTimeInTimezone(timezone);
+            const [targetHourStr, targetMinStr] = deliveryTime.split(':');
             const targetHour = parseInt(targetHourStr, 10);
+            const targetMinute = parseInt(targetMinStr || '0', 10);
 
-            // Allow ±1 hour window to absorb cron jitter
-            const hourDiff = Math.abs(currentHour - targetHour);
-            const isInWindow = hourDiff <= 1 || hourDiff >= 23; // Handle midnight wrap (e.g., 23 vs 0)
+            // Compare total minutes since midnight, with ±2 min tolerance
+            const currentTotal = currentHour * 60 + currentMinute;
+            const targetTotal = targetHour * 60 + targetMinute;
+            let minuteDiff = Math.abs(currentTotal - targetTotal);
+            if (minuteDiff > 720) minuteDiff = 1440 - minuteDiff; // Handle midnight wrap
 
-            if (!force && !isInWindow) {
-                skipped.push({ email, reason: `wrong_time (user: ${currentHour}:00, target: ${targetHour}:00)` });
+            if (!force && minuteDiff > 2) {
+                skipped.push({ email, reason: `wrong_time (now: ${currentHour}:${String(currentMinute).padStart(2, '0')}, target: ${deliveryTime})` });
                 continue;
             }
 
@@ -106,16 +109,24 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * Reliably get the current hour in any timezone using Intl.DateTimeFormat.
+ * Reliably get the current hour AND minute in any timezone using Intl.DateTimeFormat.
  * This avoids the broken `toLocaleString` → `new Date()` roundtrip.
  */
-function getCurrentHourInTimezone(timezone: string): number {
-    const formatter = new Intl.DateTimeFormat('en-US', {
+function getCurrentTimeInTimezone(timezone: string): { hour: number; minute: number } {
+    const now = new Date();
+    const hourFormatter = new Intl.DateTimeFormat('en-US', {
         timeZone: timezone,
         hour: 'numeric',
         hour12: false,
     });
-    return parseInt(formatter.format(new Date()), 10);
+    const minuteFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        minute: 'numeric',
+    });
+    return {
+        hour: parseInt(hourFormatter.format(now), 10),
+        minute: parseInt(minuteFormatter.format(now), 10),
+    };
 }
 
 /**
