@@ -11,28 +11,50 @@ import { getSession } from '@/lib/auth';
 
 export async function POST(request: Request) {
     try {
-        console.log('[Digest API] POST: Starting manual dispatch...');
+        const body = await request.json().catch(() => ({}));
+        const isInternalDispatch = body.internal === true;
 
-        // 1. Identify User
-        const session = await getSession();
+        // --- Auth: Internal cron dispatch OR session-based dashboard trigger ---
         let email: string | undefined;
         let sources: Source[] = [];
+        let lookbackDays = 3; // Default for manual triggers
 
-        if (session?.email) {
-            console.log(`[Digest API] Session found for: ${session.email}`);
-            const user = await getUser(session.email);
-            if (user) {
-                email = user.email;
-                sources = user.sources;
+        if (isInternalDispatch) {
+            // Internal dispatch from /api/cron — authenticate with shared secret
+            const cronSecret = request.headers.get('x-cron-secret');
+            if (!cronSecret || cronSecret !== process.env.CRON_SECRET) {
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
             }
-        }
 
-        // Fallback to Admin if no session (e.g. external trigger, though usually that's /api/cron)
-        if (!email) {
-            console.log('[Digest API] No session, falling back to Admin preferences');
-            const prefs = await getPreferences();
-            email = prefs.email;
-            sources = prefs.sources as Source[];
+            console.log(`[Digest API] 🤖 Internal dispatch for: ${body.email}`);
+            const user = await getUser(body.email);
+            if (!user || !user.sources.length) {
+                return NextResponse.json({ error: 'User not found or no sources', sent: false }, { status: 404 });
+            }
+            email = user.email;
+            sources = user.sources;
+            lookbackDays = 1; // Cron: only look back 1 day
+        } else {
+            // Manual trigger from dashboard
+            console.log('[Digest API] POST: Starting manual dispatch...');
+            const session = await getSession();
+
+            if (session?.email) {
+                console.log(`[Digest API] Session found for: ${session.email}`);
+                const user = await getUser(session.email);
+                if (user) {
+                    email = user.email;
+                    sources = user.sources;
+                }
+            }
+
+            // Fallback to Admin if no session
+            if (!email) {
+                console.log('[Digest API] No session, falling back to Admin preferences');
+                const prefs = await getPreferences();
+                email = prefs.email;
+                sources = prefs.sources as Source[];
+            }
         }
 
         if (!email) {
@@ -45,24 +67,25 @@ export async function POST(request: Request) {
 
         // Step 1: Aggregate content from all sources
         console.log('[Digest API] Aggregating content from', sources.length, 'sources for', email);
-        // Manual trigger: Look back 3 days to ensure we find content
-        const content = await aggregateContent(sources, { lookbackDays: 3 });
+        const content = await aggregateContent(sources, { lookbackDays });
 
         if (content.length === 0) {
-            return NextResponse.json({ message: 'No new content found in the last 24h', sent: false });
+            return NextResponse.json({ message: 'No new content found', sent: false });
         }
 
         console.log('[Digest API] Found', content.length, 'items. Generating unified briefing...');
 
-        // Step 2: Generate UNIFIED briefing (new approach!)
+        // Step 2: Generate UNIFIED briefing
         const briefing = await generateUnifiedBriefing(content);
 
-        console.log(`[Digest API] Briefing generated. Preheader length: ${briefing.preheader ? briefing.preheader.length : 'NULL'}. Sending email to`, email);
+        console.log(`[Digest API] Briefing generated. Preheader: "${briefing.preheader?.substring(0, 50)}...". Sending to ${email}`);
 
         // Step 3: Send the unified email and save to DB
         await sendUnifiedDigestEmail(email, briefing);
         await saveLatestBriefing(email, briefing);
         await updateLastDigestAt(email);
+
+        console.log(`[Digest API] ✅ Successfully sent digest to ${email}`);
 
         return NextResponse.json({
             success: true,

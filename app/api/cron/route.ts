@@ -1,85 +1,133 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllUsers, getUser, saveLatestBriefing, updateLastDigestAt } from '@/lib/db';
-import { aggregateContent } from '@/lib/content-aggregator';
-import { generateUnifiedBriefing } from '@/lib/gemini';
-import { sendUnifiedDigestEmail } from '@/lib/email';
+import { getAllUsers, getUser } from '@/lib/db';
 import { checkSubscriptionStatus } from '@/lib/subscription';
 
-export const maxDuration = 60; // Max allowed for Vercel Hobby plan
-export const dynamic = 'force-dynamic'; // Ensure it's never cached
+export const maxDuration = 30; // Dispatcher is lightweight — 30s is plenty
+export const dynamic = 'force-dynamic';
 
+/**
+ * CRON DISPATCHER — Lightweight fan-out architecture
+ * 
+ * This endpoint is called hourly by cron-job.org.
+ * It does NOT generate any emails itself.
+ * It identifies which users are due for delivery, then dispatches
+ * independent POST requests to /api/digest for each one.
+ * Each /api/digest call gets its own 60s Vercel function execution.
+ */
 export async function GET(request: NextRequest) {
     try {
+        // --- Auth ---
         const authHeader = request.headers.get('authorization');
         if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        const { searchParams } = new URL(request.url);
+        const force = searchParams.get('force') === 'true';
+
         const userEmails = await getAllUsers();
         console.log(`[Cron] ⏰ Hourly check for ${userEmails.length} users...`);
 
-        const results = await Promise.allSettled(userEmails.map(async (email) => {
+        const dispatched: string[] = [];
+        const skipped: { email: string; reason: string }[] = [];
+
+        for (const email of userEmails) {
             const user = await getUser(email);
-            if (!user || !user.sources.length) return { email, status: 'skipped_no_sources' };
+            if (!user || !user.sources.length) {
+                skipped.push({ email, reason: 'no_sources' });
+                continue;
+            }
 
-            // --- Timezone Logic ---
+            // --- Timezone-aware hour check (reliable method) ---
             const timezone = user.preferences.timezone || 'Asia/Kolkata';
-            const deliveryTime = user.preferences.deliveryTime || '08:00'; // "HH:MM" format
+            const deliveryTime = user.preferences.deliveryTime || '08:00';
 
-            // Get current time in USER'S timezone
-            const userNow = new Date().toLocaleString('en-US', { timeZone: timezone, hour12: false });
-            const currentHour = new Date(userNow).getHours();
-
-            // Parse target delivery hour
+            const currentHour = getCurrentHourInTimezone(timezone);
             const [targetHourStr] = deliveryTime.split(':');
             const targetHour = parseInt(targetHourStr, 10);
 
-            // Check if it's the right hour (allow 5 min window or just check hour equality)
-            // Since cron runs at top of hour, equality is sufficient
-            // Check if it's the right hour (allow 5 min window or just check hour equality)
-            // UNLESS ?force=true is passed
-            const { searchParams } = new URL(request.url);
-            const force = searchParams.get('force') === 'true';
+            // Allow ±1 hour window to absorb cron jitter
+            const hourDiff = Math.abs(currentHour - targetHour);
+            const isInWindow = hourDiff <= 1 || hourDiff >= 23; // Handle midnight wrap (e.g., 23 vs 0)
 
-            if (!force && currentHour !== targetHour) {
-                // console.log(`[Cron] Skipping ${email}: ${currentHour}:00 (User) != ${targetHour}:00 (Target)`);
-                return { email, status: 'skipped_wrong_time', userTime: `${currentHour}:00` };
+            if (!force && !isInWindow) {
+                skipped.push({ email, reason: `wrong_time (user: ${currentHour}:00, target: ${targetHour}:00)` });
+                continue;
             }
 
             // --- Pause Logic ---
             const subStatus = checkSubscriptionStatus(user);
             if (subStatus.action === 'skip') {
-                console.log(`[Cron] Skipping ${email}: ${subStatus.reason} ${subStatus.reason === 'paused_temporary' ? `until ${subStatus.until}` : ''}`);
-                return { email, status: `skipped_${subStatus.reason}`, ...(subStatus.reason === 'paused_temporary' ? { until: subStatus.until } : {}) };
+                skipped.push({ email, reason: subStatus.reason });
+                continue;
             }
 
-            if (subStatus.action === 'send' && 'reason' in subStatus && subStatus.reason === 'pause_expired') {
-                console.log(`[Cron] Resuming ${email}: Pause expired.`);
-                // Optional: Auto-update DB to active here if desired, but not strictly required for sending
+            // --- Already sent today? ---
+            if (!force && user.lastDigestAt) {
+                const lastSent = new Date(user.lastDigestAt);
+                const hoursSinceLastSent = (Date.now() - lastSent.getTime()) / (1000 * 60 * 60);
+                if (hoursSinceLastSent < 20) {
+                    skipped.push({ email, reason: `already_sent (${Math.round(hoursSinceLastSent)}h ago)` });
+                    continue;
+                }
             }
 
-            // --- Content Generation ---
-            console.log(`[Cron] 🚀 Dispatching to ${email} (Timezone: ${timezone})`);
+            // --- DISPATCH: Fire-and-forget to /api/digest ---
+            console.log(`[Cron] 🚀 Dispatching digest for ${email} (TZ: ${timezone}, hour: ${currentHour})`);
 
-            const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
-            if (content.length === 0) return { email, status: 'skipped_no_content' };
+            const baseUrl = getBaseUrl(request);
+            // Fire the request but don't await the full response — just confirm it was accepted
+            fetch(`${baseUrl}/api/digest`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-cron-secret': process.env.CRON_SECRET || '',
+                },
+                body: JSON.stringify({ email, internal: true }),
+            }).catch(err => {
+                console.error(`[Cron] Failed to dispatch to ${email}:`, err.message);
+            });
 
-            const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
-            await sendUnifiedDigestEmail(user.email, briefing);
-            await saveLatestBriefing(email, briefing);
-            await updateLastDigestAt(email);
+            dispatched.push(email);
+        }
 
-            console.log(`[Cron] ✅ Sent to ${email}`);
-            return { email, status: 'sent', items: content.length };
-        }));
+        console.log(`[Cron] ✅ Dispatched: ${dispatched.length}, Skipped: ${skipped.length}`);
 
         return NextResponse.json({
             success: true,
             timestamp: new Date().toISOString(),
-            results: results.map(r => r.status === 'fulfilled' ? r.value : r.reason)
+            dispatched,
+            skipped,
         });
     } catch (error: any) {
         console.error('[Cron] Error:', error);
-        return NextResponse.json({ error: 'Cron job failed', details: error.message }, { status: 500 });
+        return NextResponse.json({ error: 'Cron dispatcher failed', details: error.message }, { status: 500 });
     }
+}
+
+/**
+ * Reliably get the current hour in any timezone using Intl.DateTimeFormat.
+ * This avoids the broken `toLocaleString` → `new Date()` roundtrip.
+ */
+function getCurrentHourInTimezone(timezone: string): number {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        hour: 'numeric',
+        hour12: false,
+    });
+    return parseInt(formatter.format(new Date()), 10);
+}
+
+/**
+ * Get the base URL for internal API calls.
+ * Works in both local dev and production.
+ */
+function getBaseUrl(request: NextRequest): string {
+    // In production, use the canonical URL
+    if (process.env.NEXT_PUBLIC_CRON_URL) {
+        return process.env.NEXT_PUBLIC_CRON_URL;
+    }
+    // Fallback: derive from the incoming request
+    const url = new URL(request.url);
+    return `${url.protocol}//${url.host}`;
 }
