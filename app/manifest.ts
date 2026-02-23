@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'Your AI-curated daily executive briefing. Less scrolling, more knowing.',
         start_url: '/',
         display: 'standalone',
-        background_color: '#FDFBF7',
-        theme_color: '#FF5700',
+        background_color: '#ffffff',
+        theme_color: '#ffffff',
         icons: [
             {
                 src: '/icon.svg',

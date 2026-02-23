@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "Signal",
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
 
 };
