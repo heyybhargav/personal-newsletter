@@ -7,8 +7,8 @@ import { Plus, Clock, FileText, ArrowDown } from 'lucide-react';
 const steps = [
     {
         id: "01",
-        title: "Curate your feed.",
-        description: "Add any source. YouTube channels, Substack newsletters, or News sites. We normalize the chaos into one clean stream.",
+        title: "Add your sources.",
+        description: "YouTube channels, blogs, newsletters, news sites — add anything with an RSS feed.",
         icon: Plus,
         color: "bg-blue-500",
         visual: (
@@ -35,8 +35,8 @@ const steps = [
     },
     {
         id: "02",
-        title: "Set your schedule.",
-        description: "Your inbox, your time. Choose exactly when you want your briefing. 8 AM coffee? 6 PM commute? You decide.",
+        title: "Pick your time.",
+        description: "Choose when your briefing arrives. Morning coffee or evening wind-down — you decide.",
         icon: Clock,
         color: "bg-orange-500",
         visual: (
@@ -57,8 +57,8 @@ const steps = [
     },
     {
         id: "03",
-        title: "Receive the Signal.",
-        description: "One email, every day. Synthesized intelligence, not just links. Read less, know more.",
+        title: "Get your briefing.",
+        description: "One email, once a day. AI-synthesized insights from everything you follow.",
         icon: FileText,
         color: "bg-green-500",
         visual: (
@@ -84,10 +84,10 @@ export default function HowItWorks() {
             <div className="max-w-6xl mx-auto px-6">
                 <div className="mb-24 md:text-center max-w-2xl mx-auto">
                     <h2 className="text-4xl md:text-5xl font-serif font-medium text-[#1A1A1A] mb-6">
-                        Designed for focus.
+                        How it works.
                     </h2>
                     <p className="text-lg text-gray-600 leading-relaxed">
-                        A simple, linear process to reclaim your attention span.
+                        Three steps. That's it.
                     </p>
                 </div>
 

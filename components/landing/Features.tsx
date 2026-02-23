@@ -22,10 +22,10 @@ export default function Features() {
                                 <Filter className="w-6 h-6 text-[#1A1A1A]" />
                             </div>
                             <h3 className="text-3xl font-serif font-medium text-[#1A1A1A]">
-                                Never miss a beat.
+                                Stay informed.
                             </h3>
                             <p className="text-lg text-[#666666] leading-relaxed max-w-md">
-                                Life gets busy. We track your trusted sources so you don't miss the important stories.
+                                Add the sources you trust. We monitor them daily and surface only what's worth your time.
                             </p>
                         </div>
                         <div className="mt-8 flex gap-2">
@@ -48,10 +48,10 @@ export default function Features() {
                                 <Globe className="w-6 h-6 text-[#1A1A1A]" />
                             </div>
                             <h3 className="text-2xl font-serif font-medium text-[#1A1A1A] mb-2">
-                                Your Sources.
+                                Any source.
                             </h3>
                             <p className="text-base text-[#666666]">
-                                RSS, YouTube, Newsletters. We normalize it all.
+                                RSS feeds, YouTube channels, newsletters. All in one place.
                             </p>
                         </div>
                         <div className="flex -space-x-2 mt-8">
@@ -74,10 +74,10 @@ export default function Features() {
                                 <Lock className="w-6 h-6 text-[#1A1A1A]" />
                             </div>
                             <h3 className="text-2xl font-serif font-medium text-[#1A1A1A] mb-2">
-                                Private.
+                                No tracking.
                             </h3>
                             <p className="text-base text-[#666666]">
-                                No tracking pixels. No click data sold. Just reading.
+                                No pixels. No analytics. No data sold. Just your briefing.
                             </p>
                         </div>
                     </motion.div>
@@ -92,13 +92,13 @@ export default function Features() {
                     >
                         <div className="relative z-10">
                             <h3 className="text-3xl font-serif font-medium mb-2">
-                                On Your Schedule.
+                                Delivered on your time.
                             </h3>
                             <p className="text-gray-400">
-                                Your time. Your signal. Like clockwork.
+                                Pick your time. Pick your timezone. It just shows up.
                             </p>
                         </div>
-                        <div className="text-8xl font-serif opacity-10 absolute right-[-20px] bottom-[-40px]">
+                        <div className="text-[12rem] md:text-[24rem] font-serif opacity-[0.04] absolute right-[-2rem] md:right-[-4rem] bottom-[-4rem] md:bottom-[-8rem] leading-none select-none pointer-events-none transform rotate-[-15deg]">
                             ⏱
                         </div>
                     </motion.div>

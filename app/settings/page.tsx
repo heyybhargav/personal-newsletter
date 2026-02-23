@@ -135,11 +135,8 @@ export default function SettingsPage() {
                     <span>←</span> Return to Home
                 </Link>
                 <div>
-                    <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-3 sm:mb-4">
-                        <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Settings</p>
-                    </div>
                     <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-medium tracking-tight text-[#1A1A1A]">Settings</h1>
-                    <p className="text-base sm:text-xl text-gray-500 font-light mt-4 font-serif">Manage global delivery preferences and AI logic.</p>
+                    <p className="text-base sm:text-xl text-gray-500 font-light mt-4 font-serif">Delivery time, timezone, and AI model.</p>
                 </div>
                 <div className="h-px w-full bg-gray-200/60 mt-8 sm:mt-12"></div>
             </div>

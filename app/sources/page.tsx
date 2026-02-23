@@ -455,9 +455,6 @@ export default function SourcesPage() {
                 </Link>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
                     <motion.div>
-                        <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-3 sm:mb-4">
-                            <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Sources</p>
-                        </div>
                         <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
                             Sources
                         </h1>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Hero from '@/components/landing/Hero';
 import AntiList from '@/components/landing/AntiList';
 import Manifesto from '@/components/landing/Manifesto';
@@ -77,36 +78,49 @@ export default function LoginPage() {
             <Manifesto />
             <Features />
 
-            {/* Final CTA */}
-            <section className="py-24 px-6 text-center border-t border-gray-100">
-                <div className="max-w-xl mx-auto space-y-8">
-                    <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A]">
-                        Ready to own your signal?
-                    </h2>
-                    <p className="text-lg text-gray-500 font-light leading-relaxed">
-                        Signal synthesizes the internet into one calm, digestible briefing. Delivered to your inbox, on your schedule.
-                    </p>
-                    <div className="pt-8 space-y-4">
-                        <button
-                            onClick={triggerLogin}
-                            className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 text-lg font-medium text-white bg-[#111111] rounded-full transition-all duration-300 shadow-xl shadow-black/5 overflow-hidden cursor-pointer z-30"
-                        >
-                            {/* Shimmer Effect */}
-                            <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10 pointer-events-none" />
+            {/* The Banger Final CTA (Editorial & Elegant) */}
+            <section className="py-32 md:py-40 px-6 bg-[#FDFBF7] relative overflow-hidden">
+                <div className="max-w-5xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="relative bg-white rounded-[3rem] p-12 md:p-24 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 overflow-hidden group"
+                    >
+                        {/* Hover Gradient Aura */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FF5700]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
-                            {/* Google Logo */}
-                            <svg className="w-5 h-5 pointer-events-none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                            </svg>
+                        <div className="relative z-10 max-w-3xl mx-auto space-y-10">
+                            <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-full bg-gray-50 border border-gray-100 mx-auto">
+                                <div className="w-2 h-2 rounded-full bg-[#FF5700] animate-pulse"></div>
+                                <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Signal is ready</span>
+                            </div>
 
-                            <span className="relative z-20 pointer-events-none">Continue with Google</span>
-                            <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover:translate-x-1 opacity-50 pointer-events-none" />
-                        </button>
-                        <p className="text-sm text-gray-400 font-medium tracking-wide">NO CREDIT CARD REQUIRED</p>
-                    </div>
+                            <h2 className="text-5xl md:text-7xl lg:text-[80px] font-serif font-medium text-[#1A1A1A] tracking-tighter leading-[1.05]">
+                                Stop scrolling.<br className="hidden md:block" />
+                                <span className="italic text-gray-400">Start reading.</span>
+                            </h2>
+
+                            <p className="text-xl md:text-2xl text-gray-500 font-serif leading-relaxed">
+                                Get your customized briefing delivered tomorrow morning. One clean email. Zero ads.
+                            </p>
+
+                            <div className="pt-8">
+                                <button
+                                    onClick={triggerLogin}
+                                    className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 text-lg font-medium text-white bg-[#1A1A1A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 w-full md:w-auto overflow-hidden cursor-pointer z-30"
+                                >
+                                    {/* Shimmer Effect */}
+                                    <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10 pointer-events-none" />
+
+                                    <span className="relative z-20 pointer-events-none">Setup your Briefing</span>
+                                    <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover:translate-x-1 opacity-50 pointer-events-none" />
+                                </button>
+                                <p className="mt-6 text-sm font-medium tracking-wide text-gray-400 uppercase">Takes 10 seconds</p>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 

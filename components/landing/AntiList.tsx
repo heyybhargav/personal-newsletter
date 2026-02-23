@@ -8,7 +8,7 @@ const antiFeatures = [
     "Tracking Pixels",
     "Algorithms",
     "Popups",
-    "Noise"
+    "Ads"
 ];
 
 export default function AntiList() {
