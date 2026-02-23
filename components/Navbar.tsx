@@ -30,7 +30,7 @@ export default function Navbar({ initialUser }: { initialUser: { email: string }
     const isActive = (path: string) => pathname === path;
 
     const navLinks = [
-        { name: 'Dashboard', path: '/' },
+        { name: 'Home', path: '/' },
         { name: 'Sources', path: '/sources' },
         { name: 'Settings', path: '/settings' },
     ];
@@ -42,7 +42,7 @@ export default function Navbar({ initialUser }: { initialUser: { email: string }
         <nav className="bg-[#FDFBF7] border-b border-gray-200/50 sticky top-0 z-40 backdrop-blur-md">
             <div className="max-w-5xl mx-auto px-6 lg:px-8">
                 <div className="flex justify-between h-20">
-                    <div className="flex">
+                    <div className="flex items-center">
                         <div className="flex-shrink-0 flex items-center">
                             <Link href="/">
                                 <span className="font-serif font-bold text-2xl tracking-tight text-[#1A1A1A]">Signal.</span>

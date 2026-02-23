@@ -451,15 +451,15 @@ export default function SourcesPage() {
                 className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-8 sm:pb-12"
             >
                 <Link href="/" className="text-gray-400 hover:text-black mb-6 flex items-center gap-2 text-sm font-medium transition-colors">
-                    <span>←</span> Return to Control Room
+                    <span>←</span> Return to Home
                 </Link>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
                     <motion.div>
                         <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm mb-3 sm:mb-4">
-                            <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Input Streams</p>
+                            <p className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Sources</p>
                         </div>
                         <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
-                            Intelligence <span className="italic text-gray-400">Sources</span>
+                            Sources
                         </h1>
                         <p className="text-base sm:text-xl text-gray-500 font-light mt-4 sm:mt-6 max-w-lg leading-relaxed font-serif">
                             Curate the signal. All configured streams are synthesized into your daily briefing.

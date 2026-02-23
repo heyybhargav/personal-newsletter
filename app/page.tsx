@@ -60,9 +60,6 @@ export default function Home() {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="space-y-4"
             >
-              <div className="px-3 py-1 rounded-full border border-gray-200 inline-block bg-white/50 backdrop-blur-sm">
-                <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">Control Room</p>
-              </div>
               <h1 className="text-5xl md:text-7xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-[0.9]">
                 Your <span className="italic text-gray-400">Briefing</span>
               </h1>
@@ -87,7 +84,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h3 className="text-xs font-bold tracking-widest text-[#FF5700] uppercase mb-6">Operations</h3>
+                <h3 className="text-xs font-bold tracking-widest text-[#FF5700] uppercase mb-6">Quick Access</h3>
                 <div className="space-y-3">
                   <Link href="/sources">
                     <div
@@ -97,7 +94,7 @@ export default function Home() {
                         <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-sm group-hover:bg-[#FF5700] group-hover:text-white transition-colors">
                           <Radio className="w-4 h-4 text-[#FF5700] group-hover:text-white transition-colors" />
                         </div>
-                        <span className="font-medium text-gray-900">Manage Sources</span>
+                        <span className="font-medium text-gray-900">Sources</span>
                       </div>
                       <span className="text-gray-300 group-hover:text-black transition-colors transform group-hover:translate-x-1">→</span>
                     </div>
@@ -111,7 +108,7 @@ export default function Home() {
                         <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-sm group-hover:bg-gray-800 group-hover:text-white transition-colors">
                           <Settings2 className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
                         </div>
-                        <span className="font-medium text-gray-900">System Config</span>
+                        <span className="font-medium text-gray-900">Settings</span>
                       </div>
                       <span className="text-gray-300 group-hover:text-black transition-colors transform group-hover:translate-x-1">→</span>
                     </div>
@@ -128,10 +125,10 @@ export default function Home() {
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-8">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-[pulse_2s_ease-in-out_infinite]"></div>
-                    <span className="text-xs font-mono text-gray-500">SYSTEM READY</span>
+                    <span className="text-xs font-mono text-gray-500">READY</span>
                   </div>
-                  <h3 className="text-xl font-serif mb-2">Send My Digest</h3>
-                  <p className="text-gray-400 text-sm mb-6 leading-relaxed">Generate and deliver your briefing now.</p>
+                  <h3 className="text-xl font-serif mb-2">Force Dispatch</h3>
+                  <p className="text-gray-400 text-sm mb-6 leading-relaxed">Skip the schedule. Get your briefing instantly.</p>
 
                   <motion.button
                     whileHover={{ opacity: 0.9 }}
@@ -147,10 +144,10 @@ export default function Home() {
                           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                           className="w-4 h-4 border-2 border-transparent border-t-black border-l-black rounded-full"
                         ></motion.span>
-                        <span>Processing...</span>
+                        <span>Generating...</span>
                       </>
                     ) : (
-                      'Run Sequence'
+                      'Send Now'
                     )}
                   </motion.button>
                 </div>
@@ -252,12 +249,12 @@ export default function Home() {
               </AnimatePresence>
 
               {loading ? (
-                <div className="py-12 text-center text-gray-400 font-mono text-sm animate-pulse">Initializing feed protocols...</div>
+                <div className="py-12 text-center text-gray-400 font-mono text-sm animate-pulse">Loading sources...</div>
               ) : sources.length === 0 ? (
                 <div className="py-12 border border-dashed border-gray-300 rounded-xl text-center">
-                  <p className="text-gray-500 font-serif italic mb-4">"Silence is golden, but news is essential."</p>
+                  <p className="text-gray-500 font-serif italic mb-4">No sources configured yet.</p>
                   <Link href="/sources" className="text-sm font-bold underline decoration-[#FF5700] decoration-2 underline-offset-4 hover:bg-[#FF5700] hover:text-white hover:no-underline transition-all px-2 py-1 rounded">
-                    Initialize Sources
+                    Add Sources
                   </Link>
                 </div>
               ) : (
