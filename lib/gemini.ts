@@ -86,9 +86,17 @@ export async function generateUnifiedBriefing(allContent: ContentItem[], provide
 
 async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<{ narrative: string; subject: string; preheader: string }> {
     try {
-        if (!process.env.GROQ_API_KEY) {
-            console.error('[Groq] CRITICAL: GROQ_API_KEY is not set!');
-            throw new Error('API key missing');
+        // Validate the correct API key for the selected provider
+        if (provider === 'gemini') {
+            if (!process.env.GEMINI_API_KEY) {
+                console.error('[LLM] CRITICAL: GEMINI_API_KEY is not set!');
+                throw new Error('Gemini API key missing');
+            }
+        } else {
+            if (!process.env.GROQ_API_KEY) {
+                console.error('[LLM] CRITICAL: GROQ_API_KEY is not set!');
+                throw new Error('Groq API key missing');
+            }
         }
 
         const today = new Date().toLocaleDateString('en-US', {
@@ -202,19 +210,18 @@ ${itemsText}
 
 BEGIN BRIEFING:`;
 
-        console.log('[Groq] Sending unified briefing request...');
-
-        const chatCompletion = await getGroqClient().chat.completions.create({
-            messages: [{ role: 'user', content: prompt }],
-            model: MODEL_NAME,
-            temperature: 0.5, // Lower temperature for more factual/concise output
-            max_tokens: 2500,
-        });
+        console.log(`[LLM] Sending unified briefing request via ${provider}...`);
 
         let rawText = '';
         if (provider === 'gemini') {
             rawText = await callGemini(prompt);
         } else {
+            const chatCompletion = await getGroqClient().chat.completions.create({
+                messages: [{ role: 'user', content: prompt }],
+                model: MODEL_NAME,
+                temperature: 0.5,
+                max_tokens: 2500,
+            });
             rawText = chatCompletion.choices[0]?.message?.content || '';
         }
 
