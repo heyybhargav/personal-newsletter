@@ -28,6 +28,12 @@ export const metadata: Metadata = {
     title: "Signal - High-Signal Intelligence Briefing",
     description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
   },
+  appleWebApp: {
+    capable: true,
+    title: "Signal",
+    statusBarStyle: "black-translucent",
+  },
+
 };
 
 export default async function RootLayout({
