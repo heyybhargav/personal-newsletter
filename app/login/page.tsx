@@ -86,38 +86,38 @@ export default function LoginPage() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative bg-white rounded-[3rem] p-12 md:p-24 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 overflow-hidden group"
+                        className="relative bg-white rounded-3xl md:rounded-[3rem] p-8 sm:p-12 md:p-24 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 overflow-hidden group"
                     >
                         {/* Hover Gradient Aura */}
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FF5700]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
-                        <div className="relative z-10 max-w-3xl mx-auto space-y-10">
+                        <div className="relative z-10 max-w-3xl mx-auto space-y-8 md:space-y-10">
                             <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-full bg-gray-50 border border-gray-100 mx-auto">
                                 <div className="w-2 h-2 rounded-full bg-[#FF5700] animate-pulse"></div>
-                                <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">Signal is ready</span>
+                                <span className="text-[10px] sm:text-xs font-bold tracking-widest text-[#FF5700] uppercase">Signal is ready</span>
                             </div>
 
-                            <h2 className="text-5xl md:text-7xl lg:text-[80px] font-serif font-medium text-[#1A1A1A] tracking-tighter leading-[1.05]">
-                                Stop scrolling.<br className="hidden md:block" />
-                                <span className="italic text-gray-400">Start reading.</span>
+                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-serif font-medium text-[#1A1A1A] tracking-tighter leading-[1.05]">
+                                Stop scrolling.<br className="hidden sm:block" />
+                                <span className="italic text-gray-400 block sm:inline"> Start reading.</span>
                             </h2>
 
-                            <p className="text-xl md:text-2xl text-gray-500 font-serif leading-relaxed">
+                            <p className="text-lg sm:text-xl md:text-2xl text-gray-500 font-serif leading-relaxed px-2">
                                 Get your customized briefing delivered tomorrow morning. One clean email. Zero ads.
                             </p>
 
-                            <div className="pt-8">
+                            <div className="pt-6 md:pt-8 w-full">
                                 <button
                                     onClick={triggerLogin}
-                                    className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 text-lg font-medium text-white bg-[#1A1A1A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 w-full md:w-auto overflow-hidden cursor-pointer z-30"
+                                    className="group relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-4 text-base sm:text-lg font-medium text-white bg-[#1A1A1A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 w-full sm:w-auto overflow-hidden cursor-pointer z-30"
                                 >
                                     {/* Shimmer Effect */}
                                     <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10 pointer-events-none" />
 
                                     <span className="relative z-20 pointer-events-none">Setup your Briefing</span>
-                                    <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover:translate-x-1 opacity-50 pointer-events-none" />
+                                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 transition-transform group-hover:translate-x-1 opacity-50 pointer-events-none" />
                                 </button>
-                                <p className="mt-6 text-sm font-medium tracking-wide text-gray-400 uppercase">Takes 10 seconds</p>
+                                <p className="mt-4 md:mt-6 text-xs sm:text-sm font-medium tracking-wide text-gray-400 uppercase">Takes 10 seconds</p>
                             </div>
                         </div>
                     </motion.div>
