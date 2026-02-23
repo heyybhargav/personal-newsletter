@@ -32,6 +32,7 @@ const MODEL_NAME = 'llama-3.3-70b-versatile';
 export interface UnifiedBriefing {
     narrative: string;       // The main written newsletter
     subject: string;         // Catchy subject line
+    preheader: string;       // Hidden preview text for inbox hook
     topStories: ContentItem[]; // Curated links for "Deep Dive"
     generatedAt: string;
 }
@@ -72,17 +73,18 @@ export async function generateUnifiedBriefing(allContent: ContentItem[], provide
     // Apply Smart Balancing
     const balancedItems = balanceContent(allContent);
 
-    const { narrative, subject } = await synthesizeUnifiedNarrative(balancedItems, provider);
+    const { narrative, subject, preheader } = await synthesizeUnifiedNarrative(balancedItems, provider);
 
     return {
         narrative,
         subject,
+        preheader,
         topStories: balancedItems.slice(0, 8), // Top 8 for deep dive links
         generatedAt: new Date().toISOString()
     };
 }
 
-async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<{ narrative: string; subject: string }> {
+async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<{ narrative: string; subject: string; preheader: string }> {
     try {
         if (!process.env.GROQ_API_KEY) {
             console.error('[Groq] CRITICAL: GROQ_API_KEY is not set!');
@@ -137,9 +139,11 @@ Your goal is to synthesize the provided inputs into a high-value, executive-leve
 - **NO META-COMMENTARY**: Never say "This article discusses...", "The video covers...", "The author argues...". Just state the argument or fact directly.
 
 ### OUTPUT FORMAT (Strict)
-You must output exactly two parts separated by "---NARRATIVE_START---".
+You must output exactly three parts: SUBJECT, PREHEADER, and then the NARRATIVE (separated by "---NARRATIVE_START---").
+**CRITICAL: DO NOT use any markdown formatting (like **bold**) in the SUBJECT or PREHEADER.**
 
-SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The first 3-4 words must be a strong hook related to the Lead Story.]
+SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The first 3-4 words must be a strong hook related to the Lead Story. NO MARKDOWN.]
+PREHEADER: [Write a punchy, 1-sentence hook based on the Lead Story. This connects with the subject line. NO MARKDOWN. e.g. "The Supreme Court strikes down tariffs, while Apple announces..."]
 ---NARRATIVE_START---
 [The rest of the newsletter content]
 
@@ -216,15 +220,24 @@ BEGIN BRIEFING:`;
 
         // Parse Output
         let subject = `Signal: ${today}`;
+        let preheader = `Your daily intelligence briefing for ${today}.`;
         let narrative = rawText;
 
         if (rawText.includes('---NARRATIVE_START---')) {
             const parts = rawText.split('---NARRATIVE_START---');
-            const subjectPart = parts[0].replace('SUBJECT:', '').trim();
-            subject = subjectPart || `Signal: ${today}`;
+            const metaPart = parts[0].trim();
+
+            // Extract Subject (match anything up until \nPREHEADER: or end of string)
+            const subjectMatch = metaPart.match(/SUBJECT:([\s\S]+?)(?=\nPREHEADER:|$)/);
+            if (subjectMatch) subject = subjectMatch[1].trim();
+
+            // Extract Preheader
+            const preheaderMatch = metaPart.match(/PREHEADER:([\s\S]+?)$/);
+            if (preheaderMatch) preheader = preheaderMatch[1].trim();
+
             narrative = parts[1].trim();
         } else if (rawText.startsWith('SUBJECT:')) {
-            // Fallback parsing if separator is missing but SUBJECT: exists
+            // Fallback parsing
             const subjectMatch = rawText.match(/^SUBJECT:(.+?)(\n|$)/);
             if (subjectMatch) {
                 subject = subjectMatch[1].trim();
@@ -232,12 +245,17 @@ BEGIN BRIEFING:`;
             }
         }
 
-        return { subject, narrative };
+        // Failsafe: Strip any stray markdown asterisks from subject and preheader
+        subject = subject.replace(/\*/g, '').trim();
+        preheader = preheader.replace(/\*/g, '').trim();
+
+        return { subject, narrative, preheader };
 
     } catch (error: any) {
         console.error('[Groq] Error generating unified narrative:', error.message || error);
         return {
             subject: `Signal: Your Daily Briefing — ${new Date().toLocaleDateString()}`,
+            preheader: `Quick intelligence updates for today.`,
             narrative: generateFallbackBriefing(items)
         };
     }
