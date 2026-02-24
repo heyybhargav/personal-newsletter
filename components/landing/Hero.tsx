@@ -7,7 +7,8 @@ import { useRef } from 'react';
 export default function Hero() {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollY } = useScroll();
-    const y = useTransform(scrollY, [0, 500], [0, 200]);
+    // Start parallax later (after 300px scroll) and move it up instead of down so it doesn't clip
+    const y = useTransform(scrollY, [300, 800], [0, 150]);
 
     const triggerLogin = () => {
         const googleButton = document.querySelector('[role="button"]') as HTMLElement;
@@ -17,11 +18,7 @@ export default function Hero() {
     return (
         <section ref={containerRef} className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 pt-32 pb-24 overflow-hidden">
 
-            {/* Mesh Gradient Background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-gradient-to-r from-[#FF4F00]/30 to-[#FFE100]/30 rounded-full blur-[100px] animate-blob mix-blend-multiply opacity-70"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-gradient-to-r from-[#FF4F00]/30 to-[#FFE100]/30 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply opacity-70"></div>
-            </div>
+
 
             <div className="max-w-5xl mx-auto text-center space-y-12 relative z-10">
                 <div className="space-y-4">
@@ -61,10 +58,10 @@ export default function Hero() {
                 >
                     <button
                         onClick={triggerLogin}
-                        className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 text-lg font-medium text-white bg-[#1A1A1A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 w-full md:w-auto overflow-hidden cursor-pointer z-30"
+                        className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 text-lg font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-2xl hover:shadow-black/20 w-full md:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5"
                     >
                         {/* Shimmer Effect */}
-                        <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10 pointer-events-none" />
+                        <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10 pointer-events-none" />
 
                         {/* Google Logo */}
                         <svg className="w-5 h-5 pointer-events-none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

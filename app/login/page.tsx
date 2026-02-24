@@ -88,9 +88,6 @@ export default function LoginPage() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="relative bg-white rounded-3xl md:rounded-[3rem] p-8 sm:p-12 md:p-24 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 overflow-hidden group"
                     >
-                        {/* Hover Gradient Aura */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FF5700]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-
                         <div className="relative z-10 max-w-3xl mx-auto space-y-8 md:space-y-10">
                             <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-full bg-gray-50 border border-gray-100 mx-auto">
                                 <div className="w-2 h-2 rounded-full bg-[#FF5700] animate-pulse"></div>
@@ -109,10 +106,10 @@ export default function LoginPage() {
                             <div className="pt-6 md:pt-8 w-full">
                                 <button
                                     onClick={triggerLogin}
-                                    className="group relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-4 text-base sm:text-lg font-medium text-white bg-[#1A1A1A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 w-full sm:w-auto overflow-hidden cursor-pointer z-30"
+                                    className="group relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-4 text-base sm:text-lg font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-2xl hover:shadow-black/20 w-full sm:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5"
                                 >
                                     {/* Shimmer Effect */}
-                                    <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10 pointer-events-none" />
+                                    <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10 pointer-events-none" />
 
                                     <span className="relative z-20 pointer-events-none">Setup your Briefing</span>
                                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 transition-transform group-hover:translate-x-1 opacity-50 pointer-events-none" />

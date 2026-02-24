@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllUsers, getUser, saveLatestBriefing, updateLastDigestAt } from '@/lib/db';
-import { aggregateContent } from '@/lib/content-aggregator';
-import { generateUnifiedBriefing } from '@/lib/gemini';
-import { sendUnifiedDigestEmail } from '@/lib/email';
-import { checkSubscriptionStatus } from '@/lib/subscription';
+import { getAllUsers, getUser } from '@/lib/db';
 
 export const maxDuration = 60; // Max allowed for Vercel Hobby plan
 export const dynamic = 'force-dynamic';
@@ -31,7 +27,13 @@ export async function GET(request: NextRequest) {
         const userEmails = await getAllUsers();
         console.log(`[Cron] ⏰ Check for ${userEmails.length} users...`);
 
+        const dispatchPromises: Promise<any>[] = [];
         const results: { email: string; status: string; detail?: string }[] = [];
+
+        // Ensure base URL works in Vercel and local dev
+        const host = request.headers.get('host');
+        const protocol = host?.includes('localhost') ? 'http' : 'https';
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (host ? `${protocol}://${host}` : 'http://localhost:3000');
 
         for (const email of userEmails) {
             // If a specific email is targeted, skip all others
@@ -63,46 +65,37 @@ export async function GET(request: NextRequest) {
                 continue;
             }
 
-            // --- Pause Logic ---
-            const subStatus = checkSubscriptionStatus(user);
-            if (subStatus.action === 'skip') {
-                results.push({ email, status: 'skipped', detail: subStatus.reason });
-                continue;
-            }
+            // --- Dispatch the Worker ---
+            console.log(`[Cron Dispatcher] 🚀 Dispatching worker for ${email} (TZ: ${timezone}, Time: ${currentHour}:${String(currentMinute).padStart(2, '0')})`);
+            results.push({ email, status: 'dispatched' });
 
-            // --- Process this user ---
-            try {
-                console.log(`[Cron] 🚀 Processing ${email} (TZ: ${timezone}, ${currentHour}:${String(currentMinute).padStart(2, '0')})`);
+            const workerUrl = `${baseUrl}/api/digest/generate`;
 
-                const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
-                if (content.length === 0) {
-                    results.push({ email, status: 'skipped', detail: 'no_content' });
-                    continue;
-                }
+            // Fire and forget fetch request
+            const promise = fetch(workerUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(process.env.CRON_SECRET ? { 'Authorization': `Bearer ${process.env.CRON_SECRET}` } : {})
+                },
+                body: JSON.stringify({ email, force })
+            }).catch(err => {
+                console.error(`[Cron Dispatcher] ❌ Failed to dispatch ${email}:`, err);
+            });
 
-                const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
-                await sendUnifiedDigestEmail(user.email, briefing);
-                await saveLatestBriefing(email, briefing);
-                await updateLastDigestAt(email);
-
-                console.log(`[Cron] ✅ Sent to ${email} (${content.length} items)`);
-                results.push({ email, status: 'sent', detail: `${content.length} items` });
-            } catch (err: any) {
-                console.error(`[Cron] ❌ Failed for ${email}:`, err.message);
-                results.push({ email, status: 'failed', detail: err.message });
-                // Continue to next user — don't let one failure stop others
-            }
+            dispatchPromises.push(promise);
         }
 
-        const sent = results.filter(r => r.status === 'sent').length;
-        const skipped = results.filter(r => r.status === 'skipped').length;
-        const failed = results.filter(r => r.status === 'failed').length;
-        console.log(`[Cron] Done: ${sent} sent, ${skipped} skipped, ${failed} failed`);
+        // Wait for all fetch POST requests to be INITIATED to the worker endpoints 
+        // to ensure Vercel doesn't kill the cron before the network requests actually go out.
+        await Promise.allSettled(dispatchPromises);
+
+        console.log(`[Cron Dispatcher] Done: Dispatched ${dispatchPromises.length} workers.`);
 
         return NextResponse.json({
             success: true,
             timestamp: new Date().toISOString(),
-            summary: { sent, skipped, failed },
+            summary: { dispatched: dispatchPromises.length },
             results,
         });
     } catch (error: any) {
