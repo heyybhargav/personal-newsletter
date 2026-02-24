@@ -13,9 +13,18 @@ export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
+    const [availableModels, setAvailableModels] = useState<{ id: string, name: string }[]>([
+        { id: 'groq', name: 'Llama 3.3 70B (Groq)' },
+        { id: 'gemini', name: 'Gemini 3 Flash Preview' },
+    ]);
 
     useEffect(() => {
         fetchSettings();
+        // Fetch available models from admin-controlled registry
+        fetch('/api/models')
+            .then(r => r.json())
+            .then(d => { if (d.models?.length) setAvailableModels(d.models); })
+            .catch(() => { });
     }, []);
 
     const fetchSettings = async () => {
@@ -205,8 +214,9 @@ export default function SettingsPage() {
                                                 onChange={e => setLlmProvider(e.target.value)}
                                                 className="w-full bg-transparent border-b-2 border-gray-200 py-3 pr-8 text-xl font-serif focus:border-[#FF5700] focus:outline-none appearance-none cursor-pointer"
                                             >
-                                                <option value="groq">Llama 3.3 70B (Groq)</option>
-                                                <option value="gemini">Gemini 1.5 Flash</option>
+                                                {availableModels.map(m => (
+                                                    <option key={m.id} value={m.id}>{m.name}</option>
+                                                ))}
                                             </select>
                                             <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">
                                                 ▼

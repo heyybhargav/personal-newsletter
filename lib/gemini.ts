@@ -1,10 +1,10 @@
 import Groq from 'groq-sdk';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { ContentItem, DigestSection, SummarizedContent } from './types';
 
 // Lazy initialization for clients
 let groqClient: Groq | null = null;
-let genAIClient: GoogleGenerativeAI | null = null;
+let genAIClient: GoogleGenAI | null = null;
 
 function getGroqClient() {
     if (!groqClient) {
@@ -17,7 +17,7 @@ function getGroqClient() {
 
 function getGeminiClient() {
     if (!genAIClient) {
-        genAIClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+        genAIClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
     }
     return genAIClient;
 }
@@ -35,6 +35,12 @@ export interface UnifiedBriefing {
     preheader: string;       // Hidden preview text for inbox hook
     topStories: ContentItem[]; // Curated links for "Deep Dive"
     generatedAt: string;
+    tokenUsage?: {
+        input: number;
+        output: number;
+        model: string;
+        provider: string;
+    };
 }
 
 // ============================================================================
@@ -69,25 +75,33 @@ function balanceContent(items: ContentItem[]): ContentItem[] {
     return balanced.slice(0, MAX_TOTAL_ITEMS);
 }
 
-export async function generateUnifiedBriefing(allContent: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<UnifiedBriefing> {
+export async function generateUnifiedBriefing(allContent: ContentItem[], provider: string = 'groq'): Promise<UnifiedBriefing> {
     // Apply Smart Balancing
     const balancedItems = balanceContent(allContent);
 
-    const { narrative, subject, preheader } = await synthesizeUnifiedNarrative(balancedItems, provider);
+    const result = await synthesizeUnifiedNarrative(balancedItems, provider);
 
     return {
-        narrative,
-        subject,
-        preheader,
-        topStories: balancedItems.slice(0, 8), // Top 8 for deep dive links
-        generatedAt: new Date().toISOString()
+        narrative: result.narrative,
+        subject: result.subject,
+        preheader: result.preheader,
+        topStories: balancedItems.slice(0, 8),
+        generatedAt: new Date().toISOString(),
+        tokenUsage: result.tokenUsage
     };
 }
 
-async function synthesizeUnifiedNarrative(items: ContentItem[], provider: 'groq' | 'gemini' = 'groq'): Promise<{ narrative: string; subject: string; preheader: string }> {
+interface TokenUsageResult {
+    input: number;
+    output: number;
+    model: string;
+    provider: string;
+}
+
+async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string = 'groq'): Promise<{ narrative: string; subject: string; preheader: string; tokenUsage: TokenUsageResult }> {
     try {
         // Validate the correct API key for the selected provider
-        if (provider === 'gemini') {
+        if (provider === 'gemini' || provider === 'gemini-pro') {
             if (!process.env.GEMINI_API_KEY) {
                 console.error('[LLM] CRITICAL: GEMINI_API_KEY is not set!');
                 throw new Error('Gemini API key missing');
@@ -213,8 +227,18 @@ BEGIN BRIEFING:`;
         console.log(`[LLM] Sending unified briefing request via ${provider}...`);
 
         let rawText = '';
-        if (provider === 'gemini') {
-            rawText = await callGemini(prompt);
+        let tokenUsage: TokenUsageResult = { input: 0, output: 0, model: '', provider: '' };
+
+        if (provider === 'gemini' || provider === 'gemini-pro') {
+            const modelId = provider === 'gemini-pro' ? 'gemini-3-pro-preview' : 'gemini-3-flash-preview';
+            const geminiRes = await callGemini(prompt, modelId);
+            rawText = geminiRes.text;
+            tokenUsage = {
+                input: geminiRes.inputTokens,
+                output: geminiRes.outputTokens,
+                model: modelId,
+                provider: provider
+            };
         } else {
             const chatCompletion = await getGroqClient().chat.completions.create({
                 messages: [{ role: 'user', content: prompt }],
@@ -223,6 +247,12 @@ BEGIN BRIEFING:`;
                 max_tokens: 2500,
             });
             rawText = chatCompletion.choices[0]?.message?.content || '';
+            tokenUsage = {
+                input: chatCompletion.usage?.prompt_tokens || 0,
+                output: chatCompletion.usage?.completion_tokens || 0,
+                model: MODEL_NAME,
+                provider: 'groq'
+            };
         }
 
         // Parse Output
@@ -256,16 +286,18 @@ BEGIN BRIEFING:`;
         subject = subject.replace(/\*/g, '').trim();
         preheader = preheader.replace(/\*/g, '').trim();
 
-        console.log(`[Groq] Parsed Preheader: "${preheader}"`);
+        console.log(`[LLM] Parsed Preheader: "${preheader}"`);
+        console.log(`[LLM] Token Usage: ${tokenUsage.input} input, ${tokenUsage.output} output (${tokenUsage.provider}/${tokenUsage.model})`);
 
-        return { subject, narrative, preheader };
+        return { subject, narrative, preheader, tokenUsage };
 
     } catch (error: any) {
-        console.error('[Groq] Error generating unified narrative:', error.message || error);
+        console.error('[LLM] Error generating unified narrative:', error.message || error);
         return {
             subject: `Signal: Your Daily Briefing — ${new Date().toLocaleDateString()}`,
             preheader: `Quick intelligence updates for today.`,
-            narrative: generateFallbackBriefing(items)
+            narrative: generateFallbackBriefing(items),
+            tokenUsage: { input: 0, output: 0, model: (provider === 'gemini' || provider === 'gemini-pro') ? 'gemini-3-flash-preview' : MODEL_NAME, provider: provider || 'groq' }
         };
     }
 }
@@ -360,21 +392,28 @@ export async function summarizeContent(item: ContentItem): Promise<string> {
 // GEMINI IMPLEMENTATION
 // ============================================================================
 
-async function callGemini(prompt: string): Promise<string> {
+async function callGemini(prompt: string, modelId: string = 'gemini-3-flash-preview'): Promise<{ text: string, inputTokens: number, outputTokens: number }> {
     try {
         if (!process.env.GEMINI_API_KEY) {
             console.error('[Gemini] CRITICAL: GEMINI_API_KEY is not set!');
             throw new Error('Gemini API key missing');
         }
 
-        console.log('[Gemini] Sending unified briefing request...');
-        const model = getGeminiClient().getGenerativeModel({ model: "gemini-1.5-flash" }); // Using Flash for speed/cost, Pro for quality if needed
+        console.log(`[Gemini] Sending request via model: ${modelId}...`);
+        const client = getGeminiClient();
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        return response.text().trim();
+        const response = await client.models.generateContent({
+            model: modelId,
+            contents: prompt,
+        });
+
+        return {
+            text: (response.text || '').trim(),
+            inputTokens: response.usageMetadata?.promptTokenCount || 0,
+            outputTokens: response.usageMetadata?.candidatesTokenCount || 0
+        };
     } catch (error: any) {
-        console.error('[Gemini] Error:', error.message || error);
-        throw error; // Let the caller handle fallback
+        console.error(`[Gemini] Error with model ${modelId}:`, error.message || error);
+        throw error;
     }
 }

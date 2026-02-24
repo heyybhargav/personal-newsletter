@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUser, saveLatestBriefing, updateLastDigestAt } from '@/lib/db';
+import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
@@ -34,7 +34,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ status: 'skipped', detail: subStatus.reason });
         }
 
-        console.log(`[Worker] 🚀 Processing ${email}`);
+        console.log(`[Worker] Processing ${email}`);
+        console.log(`[Worker] LLM Provider: "${user.preferences.llmProvider || 'groq (default)'}"`);
+
 
         const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
         if (content.length === 0) {
@@ -43,19 +45,45 @@ export async function POST(request: NextRequest) {
 
         const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
         await sendUnifiedDigestEmail(user.email, briefing);
+
+        // Track granular stats
+        const tu = briefing.tokenUsage;
+        const currentStats = user.stats || { inputTokens: 0, outputTokens: 0, totalBriefingsSent: 0 };
+        user.stats = {
+            inputTokens: currentStats.inputTokens + (tu?.input || 0),
+            outputTokens: currentStats.outputTokens + (tu?.output || 0),
+            totalBriefingsSent: currentStats.totalBriefingsSent + 1
+        };
+        await saveUser(user);
+
+        // Log usage event for day-wise analytics
+        if (tu && (tu.input > 0 || tu.output > 0)) {
+            await logUsageEvent({
+                email: user.email,
+                provider: tu.provider,
+                model: tu.model,
+                inputTokens: tu.input,
+                outputTokens: tu.output,
+                cost: calculateCost(tu.provider, tu.input, tu.output),
+                timestamp: new Date().toISOString()
+            });
+        }
+
         await saveLatestBriefing(email, briefing);
         await updateLastDigestAt(email);
 
-        console.log(`[Worker] ✅ Sent to ${email} (${content.length} items)`);
+        console.log(`[Worker] Sent to ${email} (${content.length} items, ${tu?.input || 0}in/${tu?.output || 0}out tokens)`);
 
         return NextResponse.json({
             success: true,
             status: 'sent',
             email,
-            detail: `${content.length} items`
+            detail: `${content.length} items`,
+            provider: user.preferences.llmProvider || 'groq',
+            tokens: tu ? { input: tu.input, output: tu.output, model: tu.model, provider: tu.provider, cost: calculateCost(tu.provider, tu.input, tu.output).toFixed(6) } : null
         });
     } catch (error: any) {
-        console.error(`[Worker] ❌ Failed for user:`, error);
+        console.error('[Worker] Failed for user:', error);
         return NextResponse.json({ error: 'Worker failed', details: error.message }, { status: 500 });
     }
 }

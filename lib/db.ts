@@ -167,3 +167,110 @@ export async function getAllStarterPacks(): Promise<any[] | null> {
         return null;
     }
 }
+
+// --- Usage Event Logging ---
+
+export interface UsageEvent {
+    email: string;
+    provider: string;
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    cost: number;
+    timestamp: string;
+}
+
+// ============================================================================
+// Model Registry
+// ============================================================================
+
+export interface ModelConfig {
+    id: string;
+    name: string;
+    provider: string;     // 'groq' | 'gemini'
+    modelId: string;      // actual API model string
+    enabled: boolean;
+    costInput: number;    // $ per 1M input tokens
+    costOutput: number;   // $ per 1M output tokens
+}
+
+const MODEL_REGISTRY_KEY = 'config:models';
+
+const DEFAULT_MODELS: ModelConfig[] = [
+    { id: 'groq', name: 'Llama 3.3 70B (Groq)', provider: 'groq', modelId: 'llama-3.3-70b-versatile', enabled: true, costInput: 0.59, costOutput: 0.79 },
+    { id: 'gemini', name: 'Gemini 3 Flash Preview', provider: 'gemini', modelId: 'gemini-3-flash-preview', enabled: true, costInput: 0.50, costOutput: 3.00 },
+    { id: 'gemini-pro', name: 'Gemini 3 Pro Preview', provider: 'gemini', modelId: 'gemini-3-pro-preview', enabled: true, costInput: 2.00, costOutput: 12.00 },
+];
+
+export async function getModelRegistry(): Promise<ModelConfig[]> {
+    const raw = await redis.get(MODEL_REGISTRY_KEY);
+    if (!raw) {
+        // Seed defaults on first access
+        await saveModelRegistry(DEFAULT_MODELS);
+        return DEFAULT_MODELS;
+    }
+    return typeof raw === 'string' ? JSON.parse(raw) : raw as ModelConfig[];
+}
+
+export async function saveModelRegistry(models: ModelConfig[]): Promise<void> {
+    await redis.set(MODEL_REGISTRY_KEY, JSON.stringify(models));
+}
+
+export async function getEnabledModels(): Promise<ModelConfig[]> {
+    const all = await getModelRegistry();
+    return all.filter(m => m.enabled);
+}
+
+export async function getModelById(id: string): Promise<ModelConfig | undefined> {
+    const all = await getModelRegistry();
+    return all.find(m => m.id === id);
+}
+
+// Cost calculation using registry rates
+export function calculateCost(provider: string, inputTokens: number, outputTokens: number): number {
+    // Fallback rates matching the default registry
+    const fallbackRates: Record<string, { input: number; output: number }> = {
+        groq: { input: 0.59, output: 0.79 },
+        gemini: { input: 0.50, output: 3.00 },
+        'gemini-pro': { input: 2.00, output: 12.00 },
+    };
+    const rates = fallbackRates[provider] || fallbackRates.groq;
+    return (inputTokens * rates.input / 1_000_000) + (outputTokens * rates.output / 1_000_000);
+}
+
+const USAGE_KEY_PREFIX = 'usage:events:';
+const USAGE_TTL_SECONDS = 90 * 24 * 60 * 60; // 90 days
+
+export async function logUsageEvent(event: UsageEvent): Promise<void> {
+    const dateKey = event.timestamp.split('T')[0]; // YYYY-MM-DD
+    const redisKey = `${USAGE_KEY_PREFIX}${dateKey}`;
+
+    const pipeline = redis.pipeline();
+    pipeline.lpush(redisKey, JSON.stringify(event));
+    pipeline.expire(redisKey, USAGE_TTL_SECONDS);
+    await pipeline.exec();
+
+    console.log(`[Usage] Logged event for ${event.email}: ${event.inputTokens}in/${event.outputTokens}out ($${event.cost.toFixed(6)}) via ${event.provider}`);
+}
+
+export async function getUsageEvents(date: string): Promise<UsageEvent[]> {
+    const redisKey = `${USAGE_KEY_PREFIX}${date}`;
+    const raw = await redis.lrange(redisKey, 0, -1);
+    return raw.map((item: any) => typeof item === 'string' ? JSON.parse(item) : item);
+}
+
+export async function getUsageEventRange(startDate: string, endDate: string): Promise<{ date: string; events: UsageEvent[] }[]> {
+    const results: { date: string; events: UsageEvent[] }[] = [];
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        const events = await getUsageEvents(dateStr);
+        if (events.length > 0) {
+            results.push({ date: dateStr, events });
+        }
+    }
+
+    return results;
+}

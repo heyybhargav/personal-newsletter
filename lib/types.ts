@@ -3,6 +3,11 @@ export interface UserProfile {
   email: string;
   preferences: UserPreferences;
   sources: Source[];
+  stats?: {
+    inputTokens: number;
+    outputTokens: number;
+    totalBriefingsSent: number;
+  };
   createdAt: string;
   lastDigestAt?: string;
 }
@@ -12,7 +17,7 @@ export interface UserPreferences {
   deliveryTime: string; // HH:MM
   timezone?: string; // e.g., 'Asia/Kolkata'
   digestFormat?: 'simple' | 'comprehensive';
-  llmProvider?: 'groq' | 'gemini';
+  llmProvider?: string;
   subscriptionStatus?: 'active' | 'paused';
   pausedUntil?: string; // ISO Date string. If null and paused -> indefinite.
 }
