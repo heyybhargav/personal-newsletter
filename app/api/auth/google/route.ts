@@ -39,7 +39,7 @@ export async function POST(request: Request) {
             // Send Welcome Email
             try {
                 const origin = request.headers.get('origin') || 'https://signaldaily.me';
-                await sendWelcomeEmail(email, origin);
+                await sendWelcomeEmail(email, origin, { isTrial: true, trialDays: 7 });
             } catch (emailError) {
                 console.error('[Auth] Failed to send welcome email:', emailError);
                 // Continue with login even if email fails

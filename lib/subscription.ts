@@ -1,12 +1,19 @@
 import { UserProfile } from './types';
+import { hasAccess } from './db';
 
 type SendStatus =
     | { action: 'send' }
+    | { action: 'skip', reason: 'trial_expired' }
     | { action: 'skip', reason: 'paused_indefinite' }
     | { action: 'skip', reason: 'paused_temporary', until: string }
     | { action: 'send', reason: 'pause_expired' }; // Technically a 'send', but specific context
 
 export function checkSubscriptionStatus(user: UserProfile): SendStatus {
+    // Check trial/subscription access first
+    if (!hasAccess(user)) {
+        return { action: 'skip', reason: 'trial_expired' };
+    }
+
     const { subscriptionStatus, pausedUntil } = user.preferences;
 
     // Default to active if undefined

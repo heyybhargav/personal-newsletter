@@ -9,6 +9,8 @@ export default function SettingsPage() {
     const [timezone, setTimezone] = useState('');
     const [llmProvider, setLlmProvider] = useState<string>('groq');
     const [subscriptionStatus, setSubscriptionStatus] = useState<'active' | 'paused'>('active');
+    const [tier, setTier] = useState<string>('active');
+    const [trialDaysRemaining, setTrialDaysRemaining] = useState<number>(0);
     const [pausedUntil, setPausedUntil] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -35,6 +37,8 @@ export default function SettingsPage() {
             setDeliveryTime(data.deliveryTime || '08:00');
             setLlmProvider(data.llmProvider || 'groq');
             setSubscriptionStatus(data.subscriptionStatus || 'active');
+            setTier(data.tier || 'active');
+            setTrialDaysRemaining(data.trialDaysRemaining || 0);
             setPausedUntil(data.pausedUntil || null);
 
             // If API returns timezone, use it. Otherwise, auto-detect from browser.
@@ -167,6 +171,48 @@ export default function SettingsPage() {
                         <div className="py-12 text-center text-gray-400 font-serif italic">Loading details...</div>
                     ) : (
                         <form onSubmit={handleSave} className="space-y-12">
+                            {/* Section 1: Subscription Tier (NEW) */}
+                            <section>
+                                <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Subscription</h3>
+                                <div className="bg-white p-6 md:p-8 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <h4 className="text-xl font-serif font-bold text-gray-900">
+                                                {tier === 'active' ? 'Signal Pro' : 'Signal Trial'}
+                                            </h4>
+                                            {tier === 'active' && (
+                                                <span className="bg-green-100 text-green-800 text-xs px-2.5 py-0.5 rounded-full font-medium tracking-wide">ACTIVE</span>
+                                            )}
+                                            {tier === 'trial' && (
+                                                <span className="bg-orange-100 text-orange-800 text-xs px-2.5 py-0.5 rounded-full font-medium tracking-wide">TRIAL ONGOING</span>
+                                            )}
+                                        </div>
+                                        <p className="text-gray-500 text-sm font-serif">
+                                            {tier === 'active'
+                                                ? 'Unlimited daily briefings powered by Gemini.'
+                                                : `You have ${trialDaysRemaining} day${trialDaysRemaining === 1 ? '' : 's'} remaining in your free trial.`}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        {tier === 'trial' ? (
+                                            <Link
+                                                href="/subscribe"
+                                                className="inline-block px-6 py-3 bg-[#FF5700] hover:bg-[#E64600] text-white font-bold rounded-lg transition-colors shadow-sm text-sm"
+                                            >
+                                                Subscribe for $4/mo
+                                            </Link>
+                                        ) : (
+                                            <a
+                                                href={process.env.NEXT_PUBLIC_POLAR_CUSTOMER_PORTAL || "#"}
+                                                className="inline-block px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-colors text-sm"
+                                            >
+                                                Manage Billing
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </section>
+
                             {/* Section 2: Delivery Config */}
                             <section>
                                 <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Delivery Settings</h3>

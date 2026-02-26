@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost } from '@/lib/db';
+import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost, getTrialDaysRemaining } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
@@ -37,14 +37,17 @@ export async function POST(request: NextRequest) {
         console.log(`[Worker] Processing ${email}`);
         console.log(`[Worker] LLM Provider: "${user.preferences.llmProvider || 'groq (default)'}"`);
 
-
         const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
         if (content.length === 0) {
             return NextResponse.json({ status: 'skipped', detail: 'no_content' });
         }
 
         const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
-        await sendUnifiedDigestEmail(user.email, briefing);
+
+        // Pass trial context to email for the countdown footer
+        const isTrial = user.tier === 'trial';
+        const trialDaysRemaining = isTrial ? getTrialDaysRemaining(user) : 0;
+        await sendUnifiedDigestEmail(user.email, briefing, isTrial ? { isTrial, trialDaysRemaining } : undefined);
 
         // Track granular stats
         const tu = briefing.tokenUsage;

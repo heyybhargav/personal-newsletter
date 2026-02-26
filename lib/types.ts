@@ -3,6 +3,9 @@ export interface UserProfile {
   email: string;
   preferences: UserPreferences;
   sources: Source[];
+  tier?: 'trial' | 'active' | 'expired';
+  trialEndsAt?: string; // ISO date string
+  polarCustomerId?: string; // Polar.sh customer ID for webhook matching
   stats?: {
     inputTokens: number;
     outputTokens: number;

@@ -36,11 +36,12 @@ export async function createUser(email: string, timezone: string = 'Asia/Kolkata
         preferences: {
             deliveryTime: '08:00',
             timezone,
-
             digestFormat: 'comprehensive',
             subscriptionStatus: 'active'
         },
-        sources: [], // Start empty
+        sources: [],
+        tier: 'trial',
+        trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         createdAt: new Date().toISOString()
     };
 
@@ -55,6 +56,38 @@ export async function saveUser(user: UserProfile): Promise<void> {
 
 export async function getAllUsers(): Promise<string[]> {
     return await redis.smembers(ALL_USERS_SET);
+}
+
+// --- Trial & Access Helpers ---
+
+export function hasAccess(user: UserProfile): boolean {
+    // Grandfather existing users who don't have tier set
+    if (!user.tier) return true;
+    if (user.tier === 'active') return true;
+    if (user.tier === 'trial') {
+        return user.trialEndsAt ? new Date(user.trialEndsAt) > new Date() : false;
+    }
+    return false;
+}
+
+export function getTrialDaysRemaining(user: UserProfile): number {
+    if (!user.tier || user.tier !== 'trial' || !user.trialEndsAt) return 0;
+    const diff = new Date(user.trialEndsAt).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+export async function updateUserTier(
+    email: string,
+    tier: 'trial' | 'active' | 'expired',
+    polarCustomerId?: string
+): Promise<void> {
+    const user = await getUser(email);
+    if (!user) return;
+
+    user.tier = tier;
+    if (polarCustomerId) user.polarCustomerId = polarCustomerId;
+
+    await saveUser(user);
 }
 
 export async function updateLastDigestAt(email: string): Promise<void> {

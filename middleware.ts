@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifySession } from '@/lib/auth';
+import { getUser, hasAccess } from '@/lib/db';
 
 // Paths that require authentication
-const PROTECTED_PATHS = ['/', '/settings', '/sources', '/api/sources', '/api/settings'];
+const PROTECTED_PATHS = ['/', '/settings', '/sources', '/api/sources', '/api/settings', '/api/latest-briefing', '/api/digest'];
 
 // Public paths that should not be protected
 const PUBLIC_PATHS = ['/login', '/api/auth', '/api/cron', '/api/webhook', '/api/debug'];
+
+// Paths that expired users can still access (they need these to subscribe)
+const EXPIRED_ALLOWED_PATHS = ['/subscribe', '/api/webhook', '/api/auth'];
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
@@ -33,7 +37,6 @@ export async function middleware(request: NextRequest) {
         // Redirect to login for page requests
         if (!pathname.startsWith('/api')) {
             const loginUrl = new URL('/login', request.url);
-            // loginUrl.searchParams.set('from', pathname); // Optional: redirect back
             return NextResponse.redirect(loginUrl);
         } else {
             // Return 401 for API requests
@@ -41,7 +44,21 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    // 4. Inject User Identity for Backend
+    // 4. Check trial/subscription access
+    const user = await getUser(session.email);
+    if (user && !hasAccess(user)) {
+        // Allow expired users to access subscribe page and webhooks
+        const isExpiredAllowed = EXPIRED_ALLOWED_PATHS.some(path => pathname.startsWith(path));
+        if (!isExpiredAllowed) {
+            if (!pathname.startsWith('/api')) {
+                return NextResponse.redirect(new URL('/subscribe', request.url));
+            } else {
+                return NextResponse.json({ error: 'Trial expired. Please subscribe to continue.' }, { status: 403 });
+            }
+        }
+    }
+
+    // 5. Inject User Identity for Backend
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-user-email', session.email);
 
@@ -64,3 +81,4 @@ export const config = {
         '/((?!_next/static|_next/image|favicon.ico|public).*)',
     ],
 };
+

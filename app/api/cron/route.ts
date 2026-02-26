@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllUsers, getUser } from '@/lib/db';
+import { getAllUsers, getUser, hasAccess, getTrialDaysRemaining } from '@/lib/db';
+import { sendTrialNudgeEmail } from '@/lib/email';
 
 export const maxDuration = 60; // Max allowed for Vercel Hobby plan
 export const dynamic = 'force-dynamic';
@@ -62,6 +63,41 @@ export async function GET(request: NextRequest) {
 
             if (!force && minuteDiff !== 0) {
                 results.push({ email, status: 'skipped', detail: `wrong_time (now: ${currentHour}:${String(currentMinute).padStart(2, '0')}, target: ${deliveryTime})` });
+                continue;
+            }
+
+            // --- Nudge Logic (Runs at the exact time they USUALLY get a digest) ---
+            const trialDays = getTrialDaysRemaining(user);
+            const stats = {
+                daysRemaining: trialDays,
+                totalSources: user.sources.length,
+                briefingsSent: user.stats?.totalBriefingsSent || 0
+            };
+
+            // If trial is actively expiring (Day 5)
+            if (user.tier === 'trial' && trialDays === 2) {
+                console.log(`[Cron Dispatcher] 📬 Sending 'expiring_soon' nudge to ${email}`);
+                // Don't await, send side-by-side with regular digest dispatch
+                sendTrialNudgeEmail(email, 'expiring_soon', stats).catch(err => console.error(err));
+            }
+
+            // Expiry nudges (only check if they don't have access anymore)
+            if (!hasAccess(user) && user.tier === 'trial' && user.trialEndsAt) {
+                const endedMsAgo = Date.now() - new Date(user.trialEndsAt).getTime();
+                const endedDaysAgo = Math.floor(endedMsAgo / (1000 * 60 * 60 * 24));
+
+                if (endedDaysAgo === 0) {
+                    // Day 7: Just expired today
+                    console.log(`[Cron Dispatcher] 📬 Sending 'expired' nudge to ${email}`);
+                    sendTrialNudgeEmail(email, 'expired', stats).catch(err => console.error(err));
+                } else if (endedDaysAgo === 7) {
+                    // Day 14: Expired 1 week ago
+                    console.log(`[Cron Dispatcher] 📬 Sending 'miss_you' nudge to ${email}`);
+                    sendTrialNudgeEmail(email, 'miss_you', stats).catch(err => console.error(err));
+                }
+
+                // They don't have access, so skip the actual digest generation
+                results.push({ email, status: 'skipped', detail: 'trial_expired (sent nudge if due)' });
                 continue;
             }
 

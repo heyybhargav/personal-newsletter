@@ -21,8 +21,20 @@ export default function Home() {
 
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState('');
+  const [tier, setTier] = useState<string>('active');
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState<number>(0);
 
-
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.tier) {
+          setTier(data.tier);
+          setTrialDaysRemaining(data.trialDaysRemaining || 0);
+        }
+      })
+      .catch(err => console.error('Error fetching settings:', err));
+  }, []);
 
   const handleSendTest = async () => {
     setSending(true);
@@ -50,6 +62,17 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-gray-900 font-sans selection:bg-[#FF5700] selection:text-white">
+      {tier === 'trial' && (
+        <div className="bg-[#FFF8F0] border-b border-[#FFE0C0] text-center px-4 py-3 sm:py-2 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 relative z-50 shadow-sm">
+          <span className="text-[13px] font-medium text-[#B45309]">
+            📡 Free trial: <strong>{trialDaysRemaining} day{trialDaysRemaining === 1 ? '' : 's'} remaining</strong>
+          </span>
+          <Link href="/subscribe" className="text-[13px] font-bold text-[#FF5700] hover:text-[#E64600] inline-flex items-center gap-1 bg-white/50 px-3 py-1 rounded-full transition-colors border border-[#FFE0C0]/50 hover:border-[#FF5700]/30 shadow-sm hover:shadow">
+            Subscribe now <span aria-hidden="true">&rarr;</span>
+          </Link>
+        </div>
+      )}
+
       {/* Premium Hero Section */}
       <div className="pt-12 pb-16 px-6">
         <div className="max-w-5xl mx-auto">
@@ -134,8 +157,9 @@ export default function Home() {
                     whileHover={{ opacity: 0.9 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleSendTest}
-                    disabled={sending}
-                    className="w-full py-3 bg-white text-black font-medium text-sm rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    disabled={sending || (tier === 'trial' && trialDaysRemaining === 0) || tier === 'expired'}
+                    title={(tier === 'trial' && trialDaysRemaining === 0) || tier === 'expired' ? "Subscribe to use Force Dispatch" : "Generate briefing now"}
+                    className="w-full py-3 bg-white text-black font-medium text-sm rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {sending ? (
                       <>
@@ -147,7 +171,7 @@ export default function Home() {
                         <span>Generating...</span>
                       </>
                     ) : (
-                      'Send Now'
+                      ((tier === 'trial' && trialDaysRemaining === 0) || tier === 'expired') ? 'Subscribe to Send' : 'Send Now'
                     )}
                   </motion.button>
                 </div>

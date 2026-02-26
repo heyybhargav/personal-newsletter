@@ -11,7 +11,12 @@ if (process.env.SENDGRID_API_KEY) {
 // NEW: Unified Narrative Email Template
 // ============================================================================
 
-async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string): Promise<string> {
+export interface TrialContext {
+  isTrial: boolean;
+  trialDaysRemaining: number;
+}
+
+async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string, trialContext?: TrialContext): Promise<string> {
   const narrativeHTML = await formatNarrative(briefing.narrative);
 
   const linksHTML = briefing.topStories.map(item => `
@@ -98,6 +103,18 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string)
                 </td>
               </tr>
 
+              ${trialContext?.isTrial ? `
+              <!-- Trial Banner -->
+              <tr>
+                <td style="padding: 15px 30px; background: #FFF8F0; text-align: center; border-top: 1px solid #FFE0C0;">
+                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #B45309; margin: 0; font-weight: 500;">
+                    📡 Free trial: ${trialContext.trialDaysRemaining} day${trialContext.trialDaysRemaining === 1 ? '' : 's'} remaining &middot; 
+                    <a href="https://signaldaily.me/subscribe" style="color: #FF5700; font-weight: bold; text-decoration: none;">Subscribe now</a>
+                  </p>
+                </td>
+              </tr>
+              ` : ''}
+
               <!-- Footer -->
               <tr>
                 <td style="padding: 30px; background: #1a1a1a; text-align: center;">
@@ -142,7 +159,7 @@ async function formatNarrative(text: string): Promise<string> {
 // NEW: Send Unified Digest Email
 // ============================================================================
 
-export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefing): Promise<void> {
+export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefing, trialContext?: TrialContext): Promise<void> {
   const today = format(new Date(), 'EEEE, MMMM d, yyyy');
 
   const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to;
@@ -151,7 +168,7 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
     to,
     from: { email: fromEmail, name: process.env.SENDER_NAME || 'Signal Daily' },
     subject: briefing.subject || `☕ Signal: Your Daily Briefing | ${today}`,
-    html: await generateUnifiedEmailHTML(briefing, today),
+    html: await generateUnifiedEmailHTML(briefing, today, trialContext),
   };
 
   try {
@@ -276,10 +293,81 @@ export async function sendDigestEmail(to: string, sections: DigestSection[]): Pr
 }
 
 // ============================================================================
-// NEW: Welcome Email
+// NEW: Trial Nudges & Welcome Emails
 // ============================================================================
 
-export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://signaldaily.me'): Promise<void> {
+export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'expired' | 'miss_you', stats: { daysRemaining?: number, totalSources: number, briefingsSent?: number }): Promise<void> {
+  const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to;
+  let subject = '';
+  let title = '';
+  let message = '';
+
+  if (type === 'expiring_soon') {
+    subject = `Your Signal trial ends in ${stats.daysRemaining} days`;
+    title = 'Your trial is ending soon';
+    message = `You've received ${stats.briefingsSent || 0} briefings so far. Subscribe to keep your daily intelligence flowing from your ${stats.totalSources} sources without interruption.`;
+  } else if (type === 'expired') {
+    subject = 'Your Signal trial has ended';
+    title = 'Your trial has ended';
+    message = `Your trial is over, but your ${stats.totalSources} sources are saved perfectly. Subscribe for $4/mo to resume your daily briefings immediately.`;
+  } else if (type === 'miss_you') {
+    subject = 'We miss you — Signal';
+    title = 'Still want your briefings?';
+    message = `It's been a week since your trial ended. Your ${stats.totalSources} sources are still waiting for you. Come back and resume your signal for $4/mo.`;
+  }
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+      <style>
+        .cta-button { display: inline-block; background-color: #FF5700; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Helvetica Neue', sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
+      </style>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+          <td align="center" style="padding: 40px 0;">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; background: #ffffff; border: 1px solid #e0e0e0; overflow: hidden;">
+              <tr>
+                <td style="padding: 50px 40px 30px 40px; text-align: center; border-bottom: 4px solid #111;">
+                  <h1 style="font-family: 'Merriweather', serif; font-size: 32px; font-weight: 900; margin: 0; color: #111; letter-spacing: -1px;">Signal.</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 40px; text-align: center;">
+                  <h2 style="font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: #111; margin: 0 0 20px 0;">${title}</h2>
+                  <p style="font-family: 'Georgia', serif; font-size: 18px; line-height: 1.6; color: #444; margin-bottom: 40px;">${message}</p>
+                  <a href="https://signaldaily.me/subscribe" class="cta-button">Subscribe to Signal →</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  const msg = {
+    to,
+    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Signal Daily' },
+    subject,
+    html,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log(`[Email] Trial nudge (${type}) sent to ${to}`);
+  } catch (error: any) {
+    console.error(`[Email] Error sending trial nudge to ${to}:`, error);
+  }
+}
+
+export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://signaldaily.me', context?: { isTrial?: boolean, trialDays?: number }): Promise<void> {
   const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to; // Fallback
 
   const subject = "Bhargav from Signal: Welcome! Let's set up your briefing.";
@@ -321,10 +409,10 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
               <tr>
                 <td style="padding: 40px;">
                   <p style="font-family: 'Georgia', serif; font-size: 18px; line-height: 1.6; color: #111; margin-bottom: 30px;">
-                    Welcome to the quiet side of the internet.
+                    ${context?.isTrial ? `Welcome to your ${context.trialDays}-day free trial of Signal.` : 'Welcome to the quiet side of the internet.'}
                   </p>
                   <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 40px;">
-                    You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Signal:
+                    ${context?.isTrial ? `You have full access for the next ${context.trialDays} days. Here is how to get the most out of it:` : 'You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Signal:'}
                   </p>
 
                   <!-- Steps -->

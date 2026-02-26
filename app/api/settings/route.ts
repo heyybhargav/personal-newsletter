@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPreferences, savePreferences, getUser, saveUser } from '@/lib/db';
+import { getPreferences, savePreferences, getUser, saveUser, getTrialDaysRemaining } from '@/lib/db';
 
 export async function GET(request: Request) {
     try {
@@ -9,6 +9,9 @@ export async function GET(request: Request) {
         const user = await getUser(email);
         if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
+        const isTrial = user.tier === 'trial';
+        const trialDaysRemaining = isTrial ? getTrialDaysRemaining(user) : 0;
+
         return NextResponse.json({
             email: user.email,
             deliveryTime: user.preferences.deliveryTime,
@@ -16,7 +19,9 @@ export async function GET(request: Request) {
             llmProvider: user.preferences.llmProvider || 'groq',
             subscriptionStatus: user.preferences.subscriptionStatus || 'active',
             pausedUntil: user.preferences.pausedUntil,
-            sources: user.sources
+            sources: user.sources,
+            tier: user.tier || 'active', // grandfather existing users implicitly
+            trialDaysRemaining
         });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });

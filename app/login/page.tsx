@@ -111,10 +111,10 @@ export default function LoginPage() {
                                     {/* Shimmer Effect */}
                                     <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10 pointer-events-none" />
 
-                                    <span className="relative z-20 pointer-events-none">Setup your Briefing</span>
+                                    <span className="relative z-20 pointer-events-none">Start Free Trial</span>
                                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 transition-transform group-hover:translate-x-1 opacity-50 pointer-events-none" />
                                 </button>
-                                <p className="mt-4 md:mt-6 text-xs sm:text-sm font-medium tracking-wide text-gray-400 uppercase">Takes 10 seconds</p>
+                                <p className="mt-4 md:mt-6 text-xs sm:text-sm font-medium tracking-wide text-gray-400 uppercase">7 days free · No credit card required</p>
                             </div>
                         </div>
                     </motion.div>
