@@ -94,25 +94,22 @@ export default function LoginPage() {
                                 <span className="text-[10px] sm:text-xs font-bold tracking-widest text-[#FF5700] uppercase">Signal is ready</span>
                             </div>
 
-                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-serif font-medium text-[#1A1A1A] tracking-tighter leading-[1.05]">
+                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-semibold text-[#1A1A1A] tracking-tighter leading-[1.05]">
                                 Stop scrolling.<br className="hidden sm:block" />
-                                <span className="italic text-gray-400 block sm:inline"> Start reading.</span>
+                                <span className="font-serif italic font-medium text-[#888888] block sm:inline"> Start reading.</span>
                             </h2>
 
-                            <p className="text-lg sm:text-xl md:text-2xl text-gray-500 font-serif leading-relaxed px-2">
-                                Get your customized briefing delivered tomorrow morning. One clean email. Zero ads.
+                            <p className="text-lg sm:text-xl md:text-2xl text-[#4A4A4A] font-medium leading-relaxed px-2">
+                                Get your customized briefing delivered tomorrow morning.<br className="hidden sm:block" /> One clean email. Zero ads.
                             </p>
 
                             <div className="pt-6 md:pt-8 w-full">
                                 <button
                                     onClick={triggerLogin}
-                                    className="group relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-4 text-base sm:text-lg font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-2xl hover:shadow-black/20 w-full sm:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5"
+                                    className="group/btn relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-4 text-base sm:text-lg font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-2xl hover:shadow-black/20 w-full sm:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5"
                                 >
-                                    {/* Shimmer Effect */}
-                                    <div className="absolute inset-0 -translate-x-[100%] group-hover:animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-10 pointer-events-none" />
-
                                     <span className="relative z-20 pointer-events-none">Start Free Trial</span>
-                                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 transition-transform group-hover:translate-x-1 opacity-50 pointer-events-none" />
+                                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 transition-transform group-hover/btn:translate-x-1 opacity-50 pointer-events-none" />
                                 </button>
                                 <p className="mt-4 md:mt-6 text-xs sm:text-sm font-medium tracking-wide text-gray-400 uppercase">7 days free · No credit card required</p>
                             </div>

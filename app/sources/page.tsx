@@ -59,6 +59,22 @@ export default function SourcesPage() {
     const sources: Source[] = data?.sources || [];
     const loading = isLoading;
 
+    // Subscription State
+    const [tier, setTier] = useState<string>('active');
+    const [trialDaysRemaining, setTrialDaysRemaining] = useState<number>(0);
+
+    useEffect(() => {
+        fetch('/api/settings')
+            .then(res => res.json())
+            .then(data => {
+                if (data.tier) {
+                    setTier(data.tier);
+                    setTrialDaysRemaining(data.trialDaysRemaining || 0);
+                }
+            })
+            .catch(err => console.error('Error fetching settings:', err));
+    }, []);
+
     const [showAddModal, setShowAddModal] = useState(false);
 
     // Toast State

@@ -173,38 +173,43 @@ export default function SettingsPage() {
                         <form onSubmit={handleSave} className="space-y-12">
                             {/* Section 1: Subscription Tier (NEW) */}
                             <section>
-                                <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Subscription</h3>
-                                <div className="bg-white p-6 md:p-8 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                    <div>
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <h4 className="text-xl font-serif font-bold text-gray-900">
+                                <h3 className="text-lg font-serif font-bold mb-6">Subscription</h3>
+                                <div className="bg-[#1A1A1A] p-6 md:p-8 rounded-2xl border border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden group">
+                                    {/* Removed subtle gradient glow */}
+
+                                    <div className="relative z-10">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <h4 className="text-2xl font-serif font-bold text-white tracking-tight">
                                                 {tier === 'active' ? 'Signal Pro' : 'Signal Trial'}
                                             </h4>
                                             {tier === 'active' && (
-                                                <span className="bg-green-100 text-green-800 text-xs px-2.5 py-0.5 rounded-full font-medium tracking-wide">ACTIVE</span>
+                                                <span className="bg-[#FF5700]/20 border border-[#FF5700]/30 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase mt-1">ACTIVE</span>
                                             )}
                                             {tier === 'trial' && (
-                                                <span className="bg-orange-100 text-orange-800 text-xs px-2.5 py-0.5 rounded-full font-medium tracking-wide">TRIAL ONGOING</span>
+                                                <span className="bg-[#FF5700]/20 border border-[#FF5700]/30 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase mt-1">TRIAL ONGOING</span>
+                                            )}
+                                            {tier === 'expired' && (
+                                                <span className="bg-transparent border border-[#FF5700]/40 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase mt-1">EXPIRED</span>
                                             )}
                                         </div>
-                                        <p className="text-gray-500 text-sm font-serif">
+                                        <p className="text-gray-400 text-sm font-serif max-w-sm">
                                             {tier === 'active'
-                                                ? 'Unlimited daily briefings powered by Gemini.'
+                                                ? 'Unlimited daily briefings powered by elite synthetic intelligence.'
                                                 : `You have ${trialDaysRemaining} day${trialDaysRemaining === 1 ? '' : 's'} remaining in your free trial.`}
                                         </p>
                                     </div>
-                                    <div>
-                                        {tier === 'trial' ? (
+                                    <div className="relative z-10">
+                                        {tier === 'trial' || tier === 'expired' ? (
                                             <Link
                                                 href="/subscribe"
-                                                className="inline-block px-6 py-3 bg-[#FF5700] hover:bg-[#E64600] text-white font-bold rounded-lg transition-colors shadow-sm text-sm"
+                                                className="inline-block px-6 py-3 bg-[#FF5700] hover:bg-[#E64600] text-white font-bold tracking-widest uppercase text-xs rounded-xl transition-all"
                                             >
-                                                Subscribe for $4/mo
+                                                Activate Pro
                                             </Link>
                                         ) : (
                                             <a
                                                 href={process.env.NEXT_PUBLIC_POLAR_CUSTOMER_PORTAL || "#"}
-                                                className="inline-block px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-colors text-sm"
+                                                className="inline-block px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-bold tracking-widest text-[10px] uppercase rounded-xl transition-colors backdrop-blur-sm border border-white/10"
                                             >
                                                 Manage Billing
                                             </a>
@@ -215,7 +220,7 @@ export default function SettingsPage() {
 
                             {/* Section 2: Delivery Config */}
                             <section>
-                                <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Delivery Settings</h3>
+                                <h3 className="text-lg font-serif font-bold mb-6">Delivery Settings</h3>
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <div className="space-y-3">
                                         <label className="block text-[10px] font-bold tracking-widest text-[#1A1A1A] uppercase mb-4">
@@ -248,7 +253,7 @@ export default function SettingsPage() {
 
                             {/* Section 3: Intelligence */}
                             <section>
-                                <h3 className="text-lg font-serif font-bold mb-6 border-b border-gray-200 pb-2">Intelligence Engine</h3>
+                                <h3 className="text-lg font-serif font-bold mb-6">Intelligence Engine</h3>
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <div className="space-y-3">
                                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">

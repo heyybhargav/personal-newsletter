@@ -62,16 +62,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-gray-900 font-sans selection:bg-[#FF5700] selection:text-white">
-      {tier === 'trial' && (
-        <div className="bg-[#FFF8F0] border-b border-[#FFE0C0] text-center px-4 py-3 sm:py-2 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 relative z-50 shadow-sm">
-          <span className="text-[13px] font-medium text-[#B45309]">
-            📡 Free trial: <strong>{trialDaysRemaining} day{trialDaysRemaining === 1 ? '' : 's'} remaining</strong>
-          </span>
-          <Link href="/subscribe" className="text-[13px] font-bold text-[#FF5700] hover:text-[#E64600] inline-flex items-center gap-1 bg-white/50 px-3 py-1 rounded-full transition-colors border border-[#FFE0C0]/50 hover:border-[#FF5700]/30 shadow-sm hover:shadow">
-            Subscribe now <span aria-hidden="true">&rarr;</span>
-          </Link>
-        </div>
-      )}
 
       {/* Premium Hero Section */}
       <div className="pt-12 pb-16 px-6">

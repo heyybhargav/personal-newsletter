@@ -44,19 +44,8 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    // 4. Check trial/subscription access
-    const user = await getUser(session.email);
-    if (user && !hasAccess(user)) {
-        // Allow expired users to access subscribe page and webhooks
-        const isExpiredAllowed = EXPIRED_ALLOWED_PATHS.some(path => pathname.startsWith(path));
-        if (!isExpiredAllowed) {
-            if (!pathname.startsWith('/api')) {
-                return NextResponse.redirect(new URL('/subscribe', request.url));
-            } else {
-                return NextResponse.json({ error: 'Trial expired. Please subscribe to continue.' }, { status: 403 });
-            }
-        }
-    }
+    // We no longer block expired users at the middleware level, 
+    // so they can manage their sources and see nudges in the UI.
 
     // 5. Inject User Identity for Backend
     const requestHeaders = new Headers(request.headers);

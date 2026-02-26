@@ -3,6 +3,7 @@ import { Inter, Newsreader } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { getSession } from "@/lib/auth";
+import { getUser, getTrialDaysRemaining } from "@/lib/db";
 
 import { Analytics } from "@vercel/analytics/react";
 
@@ -44,12 +45,24 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getSession();
-  const initialUser = session ? { email: session.email } : null;
+
+  let initialUser = null;
+  let tier = 'active';
+  let trialDaysRemaining = 0;
+
+  if (session) {
+    const user = await getUser(session.email);
+    if (user) {
+      initialUser = { email: user.email };
+      tier = user.tier || 'active';
+      trialDaysRemaining = getTrialDaysRemaining(user);
+    }
+  }
 
   return (
     <html lang="en">
       <body className={`${inter.variable} ${newsreader.variable} font-sans antialiased`}>
-        <Navbar initialUser={initialUser} />
+        <Navbar initialUser={initialUser} tier={tier} trialDaysRemaining={trialDaysRemaining} />
         {children}
         <Analytics />
         <div className="fixed inset-0 z-50 pointer-events-none bg-noise opacity-[0.03] mix-blend-overlay"></div>
