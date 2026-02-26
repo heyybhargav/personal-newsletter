@@ -179,17 +179,17 @@ export default function SettingsPage() {
 
                                     <div className="relative z-10">
                                         <div className="flex items-center gap-3 mb-3">
-                                            <h4 className="text-2xl font-serif font-bold text-white tracking-tight">
+                                            <h4 className="text-2xl font-serif font-bold text-white tracking-tight leading-none">
                                                 {tier === 'active' ? 'Signal Pro' : 'Signal Trial'}
                                             </h4>
                                             {tier === 'active' && (
-                                                <span className="bg-[#FF5700]/20 border border-[#FF5700]/30 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase mt-1">ACTIVE</span>
+                                                <span className="bg-[#FF5700]/20 border border-[#FF5700]/30 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">ACTIVE</span>
                                             )}
                                             {tier === 'trial' && (
-                                                <span className="bg-[#FF5700]/20 border border-[#FF5700]/30 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase mt-1">TRIAL ONGOING</span>
+                                                <span className="bg-[#FF5700]/20 border border-[#FF5700]/30 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">TRIAL ONGOING</span>
                                             )}
                                             {tier === 'expired' && (
-                                                <span className="bg-transparent border border-[#FF5700]/40 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase mt-1">EXPIRED</span>
+                                                <span className="bg-transparent border border-[#FF5700]/40 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">EXPIRED</span>
                                             )}
                                         </div>
                                         <p className="text-gray-400 text-sm font-serif max-w-sm">
