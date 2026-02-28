@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllUsers, getUser, hasAccess, getTrialDaysRemaining } from '@/lib/db';
+import { getAllUsers, getUser, hasAccess, getTrialDaysRemaining, logErrorEvent } from '@/lib/db';
 import { sendTrialNudgeEmail } from '@/lib/email';
 
 export const maxDuration = 60; // Max allowed for Vercel Hobby plan
@@ -126,8 +126,14 @@ export async function GET(request: NextRequest) {
                     }
                     return text;
                 })
-                .catch(err => {
+                .catch(async err => {
                     console.error(`[Cron Dispatcher] ❌ Failed HTTP dispatch for ${email}:`, err);
+                    await logErrorEvent({
+                        email,
+                        stage: 'cron_dispatcher',
+                        message: err.message || String(err),
+                        timestamp: new Date().toISOString()
+                    });
                 });
 
             dispatchPromises.push(dispatchTask);

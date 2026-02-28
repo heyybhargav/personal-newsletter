@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse, after } from 'next/server';
-import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost, getTrialDaysRemaining } from '@/lib/db';
+import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost, getTrialDaysRemaining, logErrorEvent } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { email, force } = body;
+        const { email, force, dryRun } = body;
 
         if (!email) {
             return NextResponse.json({ error: 'Email is required' }, { status: 400 });
@@ -50,6 +50,11 @@ export async function POST(request: NextRequest) {
                 }
 
                 const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
+
+                if (dryRun) {
+                    console.log(`[Worker Background] DRY RUN completed for ${email}. Skipping email and DB updates. Output generated successfully.`);
+                    return;
+                }
 
                 // Pass trial context to email for the countdown footer
                 const isTrial = user.tier === 'trial';
@@ -83,8 +88,14 @@ export async function POST(request: NextRequest) {
                 await updateLastDigestAt(email);
 
                 console.log(`[Worker Background] Sent to ${email} (${content.length} items, ${tu?.input || 0}in/${tu?.output || 0}out tokens)`);
-            } catch (err) {
+            } catch (err: any) {
                 console.error(`[Worker Background] Failed heavily for user ${email}:`, err);
+                await logErrorEvent({
+                    email,
+                    stage: 'worker_generate',
+                    message: err.message || String(err),
+                    timestamp: new Date().toISOString()
+                });
             }
         });
 

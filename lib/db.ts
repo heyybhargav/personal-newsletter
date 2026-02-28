@@ -281,9 +281,34 @@ export async function logUsageEvent(event: UsageEvent): Promise<void> {
     const pipeline = redis.pipeline();
     pipeline.lpush(redisKey, JSON.stringify(event));
     pipeline.expire(redisKey, USAGE_TTL_SECONDS);
+    console.log(`[Usage] Logged event for ${event.email}: ${event.inputTokens}in/${event.outputTokens}out ($${event.cost.toFixed(6)}) via ${event.provider}`);
+}
+
+export interface ErrorEvent {
+    email: string;
+    stage: string;       // e.g. 'background_worker', 'cron_dispatcher'
+    message: string;
+    timestamp: string;
+}
+
+const ERROR_KEY_PREFIX = 'error:events:';
+
+export async function logErrorEvent(event: ErrorEvent): Promise<void> {
+    const dateKey = event.timestamp.split('T')[0]; // YYYY-MM-DD
+    const redisKey = `${ERROR_KEY_PREFIX}${dateKey}`;
+
+    const pipeline = redis.pipeline();
+    pipeline.lpush(redisKey, JSON.stringify(event));
+    pipeline.expire(redisKey, USAGE_TTL_SECONDS); // Persist for 90 days too
     await pipeline.exec();
 
-    console.log(`[Usage] Logged event for ${event.email}: ${event.inputTokens}in/${event.outputTokens}out ($${event.cost.toFixed(6)}) via ${event.provider}`);
+    console.error(`[DB Error Log] Saved ${event.stage} error for ${event.email || 'SYSTEM'}: ${event.message.substring(0, 150)}`);
+}
+
+export async function getErrorEvents(date: string): Promise<ErrorEvent[]> {
+    const redisKey = `${ERROR_KEY_PREFIX}${date}`;
+    const raw = await redis.lrange(redisKey, 0, -1);
+    return raw.map((item: any) => typeof item === 'string' ? JSON.parse(item) : item);
 }
 
 export async function getUsageEvents(date: string): Promise<UsageEvent[]> {
