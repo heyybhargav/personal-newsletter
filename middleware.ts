@@ -29,7 +29,13 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // 3. Verify Session
+    // 3. Verify Session (or Cron Secret for internal API calls)
+    const authHeader = request.headers.get('authorization');
+    if (isProtected && pathname.startsWith('/api') && authHeader === `Bearer ${process.env.CRON_SECRET}`) {
+        // Allow internal cron dispatchers with the valid secret to bypass session
+        return NextResponse.next();
+    }
+
     const token = request.cookies.get('user_session')?.value;
     const session = await verifySession(token || '');
 
