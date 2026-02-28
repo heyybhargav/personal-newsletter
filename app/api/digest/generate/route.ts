@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost, getTrialDaysRemaining } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
@@ -35,59 +35,68 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ status: 'skipped', detail: subStatus.reason });
         }
 
-        console.log(`[Worker] Processing ${email}`);
-        console.log(`[Worker] LLM Provider: "${user.preferences.llmProvider || 'groq (default)'}"`);
+        console.log(`[Worker] Accepted ${email} for background processing`);
 
-        const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
-        if (content.length === 0) {
-            return NextResponse.json({ status: 'skipped', detail: 'no_content' });
-        }
+        // Perform the heavy processing strictly after the response has been sent
+        after(async () => {
+            try {
+                console.log(`[Worker Background] Processing ${email}`);
+                console.log(`[Worker Background] LLM Provider: "${user.preferences.llmProvider || 'groq (default)'}"`);
 
-        const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
+                const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
+                if (content.length === 0) {
+                    console.log(`[Worker Background] Skipped ${email} (no content)`);
+                    return;
+                }
 
-        // Pass trial context to email for the countdown footer
-        const isTrial = user.tier === 'trial';
-        const trialDaysRemaining = isTrial ? getTrialDaysRemaining(user) : 0;
-        await sendUnifiedDigestEmail(user.email, briefing, isTrial ? { isTrial, trialDaysRemaining } : undefined);
+                const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
 
-        // Track granular stats
-        const tu = briefing.tokenUsage;
-        const currentStats = user.stats || { inputTokens: 0, outputTokens: 0, totalBriefingsSent: 0 };
-        user.stats = {
-            inputTokens: currentStats.inputTokens + (tu?.input || 0),
-            outputTokens: currentStats.outputTokens + (tu?.output || 0),
-            totalBriefingsSent: currentStats.totalBriefingsSent + 1
-        };
-        await saveUser(user);
+                // Pass trial context to email for the countdown footer
+                const isTrial = user.tier === 'trial';
+                const trialDaysRemaining = isTrial ? getTrialDaysRemaining(user) : 0;
+                await sendUnifiedDigestEmail(user.email, briefing, isTrial ? { isTrial, trialDaysRemaining } : undefined);
 
-        // Log usage event for day-wise analytics
-        if (tu && (tu.input > 0 || tu.output > 0)) {
-            await logUsageEvent({
-                email: user.email,
-                provider: tu.provider,
-                model: tu.model,
-                inputTokens: tu.input,
-                outputTokens: tu.output,
-                cost: calculateCost(tu.provider, tu.input, tu.output),
-                timestamp: new Date().toISOString()
-            });
-        }
+                // Track granular stats
+                const tu = briefing.tokenUsage;
+                const currentStats = user.stats || { inputTokens: 0, outputTokens: 0, totalBriefingsSent: 0 };
+                user.stats = {
+                    inputTokens: currentStats.inputTokens + (tu?.input || 0),
+                    outputTokens: currentStats.outputTokens + (tu?.output || 0),
+                    totalBriefingsSent: currentStats.totalBriefingsSent + 1
+                };
+                await saveUser(user);
 
-        await saveLatestBriefing(email, briefing);
-        await updateLastDigestAt(email);
+                // Log usage event for day-wise analytics
+                if (tu && (tu.input > 0 || tu.output > 0)) {
+                    await logUsageEvent({
+                        email: user.email,
+                        provider: tu.provider,
+                        model: tu.model,
+                        inputTokens: tu.input,
+                        outputTokens: tu.output,
+                        cost: calculateCost(tu.provider, tu.input, tu.output),
+                        timestamp: new Date().toISOString()
+                    });
+                }
 
-        console.log(`[Worker] Sent to ${email} (${content.length} items, ${tu?.input || 0}in/${tu?.output || 0}out tokens)`);
+                await saveLatestBriefing(email, briefing);
+                await updateLastDigestAt(email);
 
+                console.log(`[Worker Background] Sent to ${email} (${content.length} items, ${tu?.input || 0}in/${tu?.output || 0}out tokens)`);
+            } catch (err) {
+                console.error(`[Worker Background] Failed heavily for user ${email}:`, err);
+            }
+        });
+
+        // Instantaneously return to free up the caller (cron)
         return NextResponse.json({
             success: true,
-            status: 'sent',
+            status: 'processing',
             email,
-            detail: `${content.length} items`,
-            provider: user.preferences.llmProvider || 'groq',
-            tokens: tu ? { input: tu.input, output: tu.output, model: tu.model, provider: tu.provider, cost: calculateCost(tu.provider, tu.input, tu.output).toFixed(6) } : null
+            detail: 'Handed off to background queue'
         });
     } catch (error: any) {
-        console.error('[Worker] Failed for user:', error);
-        return NextResponse.json({ error: 'Worker failed', details: error.message }, { status: 500 });
+        console.error('[Worker] Fatal setup API error:', error);
+        return NextResponse.json({ error: 'Worker setup failed', details: error.message }, { status: 500 });
     }
 }
