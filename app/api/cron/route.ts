@@ -107,23 +107,34 @@ export async function GET(request: NextRequest) {
 
             const workerUrl = `${baseUrl}/api/digest/generate`;
 
-            // Fire and forget fetch request
-            const promise = fetch(workerUrl, {
+            // Completely construct the fetch promise before pushing it.
+            // Awaiting response.text() ensures the connection is held open long enough 
+            // for the Next.js router to securely route to the edge/serverless handler.
+            const dispatchTask = fetch(workerUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     ...(process.env.CRON_SECRET ? { 'Authorization': `Bearer ${process.env.CRON_SECRET}` } : {})
                 },
                 body: JSON.stringify({ email, force })
-            }).catch(err => {
-                console.error(`[Cron Dispatcher] ❌ Failed to dispatch ${email}:`, err);
-            });
+            })
+                .then(async res => {
+                    const text = await res.text();
+                    if (!res.ok) {
+                        console.error(`[Cron Dispatcher] ❌ Failed to dispatch ${email}, Status: ${res.status}, Body: ${text.substring(0, 100)}`);
+                        throw new Error(`Worker returned ${res.status}`);
+                    }
+                    return text;
+                })
+                .catch(err => {
+                    console.error(`[Cron Dispatcher] ❌ Failed HTTP dispatch for ${email}:`, err);
+                });
 
-            dispatchPromises.push(promise);
+            dispatchPromises.push(dispatchTask);
         }
 
-        // Wait for all fetch POST requests to be INITIATED to the worker endpoints 
-        // to ensure Vercel doesn't kill the cron before the network requests actually go out.
+        // Wait for all fetch POST requests to be securely INITIATED and routing acknowledged.
+        console.log(`[Cron] Awaiting ${dispatchPromises.length} worker dispatches...`);
         await Promise.allSettled(dispatchPromises);
 
         console.log(`[Cron Dispatcher] Done: Dispatched ${dispatchPromises.length} workers.`);
