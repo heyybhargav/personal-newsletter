@@ -84,10 +84,20 @@ export async function updateUserTier(
     const user = await getUser(email);
     if (!user) return;
 
+    const previousTier = user.tier;
     user.tier = tier;
     if (polarCustomerId) user.polarCustomerId = polarCustomerId;
 
     await saveUser(user);
+
+    // Apply Rolling TTL Logic for Archive
+    if (previousTier !== tier) {
+        if (tier === 'expired') {
+            await enforceArchiveTTL(email, 30 * 24 * 60 * 60); // 30 days
+        } else if (tier === 'active' || tier === 'trial') {
+            await enforceArchiveTTL(email, null); // Persist infinitely
+        }
+    }
 }
 
 export async function updateLastDigestAt(email: string): Promise<void> {
@@ -108,6 +118,88 @@ export async function getLatestBriefing(email: string): Promise<any | null> {
     } catch (e) {
         return null; // Handle parse errors from ancient formats gracefully
     }
+}
+
+// --- Briefing Archive Operations ---
+
+export async function saveBriefingToArchive(email: string, dateStr: string, briefing: any): Promise<void> {
+    const user = await getUser(email);
+    if (!user) return;
+
+    const archiveKey = `${USER_KEY_PREFIX}${email}:archive:${dateStr}`;
+    const indexKey = `${USER_KEY_PREFIX}${email}:archive_index`;
+
+    const pipeline = redis.pipeline();
+    pipeline.set(archiveKey, briefing);
+    pipeline.zadd(indexKey, { score: new Date(dateStr).getTime(), member: dateStr });
+    await pipeline.exec();
+
+    // If the user happens to generate something while already expired, don't let it live forever.
+    if (user.tier === 'expired') {
+        const ttl = 30 * 24 * 60 * 60;
+        await redis.expire(archiveKey, ttl);
+        await redis.expire(indexKey, ttl);
+    }
+}
+
+export async function getArchiveList(email: string): Promise<string[]> {
+    const indexKey = `${USER_KEY_PREFIX}${email}:archive_index`;
+    // Return newest dates first (reverse chronological)
+    const dates = await redis.zrange<string[]>(indexKey, 0, -1, { rev: true });
+
+    // Safety check: Filter out any dates whose corresponding archive payload has naturally expired and vanished.
+    // (Zset members don't vanish automatically when their target keys expire)
+    const availableDates: string[] = [];
+    if (dates && dates.length > 0) {
+        const pipeline = redis.pipeline();
+        dates.forEach(d => pipeline.exists(`${USER_KEY_PREFIX}${email}:archive:${d}`));
+        const existsList = await pipeline.exec<number[]>();
+
+        // If the key vanished out from under the index, clean the index up.
+        const staleMembers: string[] = [];
+        dates.forEach((d, idx) => {
+            if (existsList[idx] === 1) availableDates.push(d);
+            else staleMembers.push(d);
+        });
+
+        if (staleMembers.length > 0) {
+            await redis.zrem(indexKey, ...staleMembers);
+        }
+    }
+
+    return availableDates;
+}
+
+export async function getArchivedBriefing(email: string, dateStr: string): Promise<any | null> {
+    const archiveKey = `${USER_KEY_PREFIX}${email}:archive:${dateStr}`;
+    try {
+        return await redis.get<any>(archiveKey);
+    } catch (e) {
+        return null; // Gracefully handle if it expired
+    }
+}
+
+async function enforceArchiveTTL(email: string, secondsTtl: number | null): Promise<void> {
+    const indexKey = `${USER_KEY_PREFIX}${email}:archive_index`;
+    const dates = await redis.zrange<string[]>(indexKey, 0, -1);
+
+    if (!dates || dates.length === 0) return;
+
+    const pipeline = redis.pipeline();
+
+    // Apply TTL to the index itself
+    if (secondsTtl === null) pipeline.persist(indexKey);
+    else pipeline.expire(indexKey, secondsTtl);
+
+    // Apply TTL to every single daily briefing object
+    for (const date of dates) {
+        const archiveKey = `${USER_KEY_PREFIX}${email}:archive:${date}`;
+        if (secondsTtl === null) pipeline.persist(archiveKey);
+        else pipeline.expire(archiveKey, secondsTtl);
+    }
+
+    await pipeline.exec();
+    console.log(`[Archive] Applied TTL of ${secondsTtl}s to ${dates.length} archive entries for ${email}`);
 }
 
 // --- Source Operations (Scoped to User) ---

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse, after } from 'next/server';
-import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost, getTrialDaysRemaining, logErrorEvent } from '@/lib/db';
+import { getUser, saveUser, saveLatestBriefing, updateLastDigestAt, logUsageEvent, calculateCost, getTrialDaysRemaining, logErrorEvent, saveBriefingToArchive } from '@/lib/db';
 import { aggregateContent } from '@/lib/content-aggregator';
 import { generateUnifiedBriefing } from '@/lib/gemini';
 import { sendUnifiedDigestEmail } from '@/lib/email';
@@ -83,6 +83,10 @@ export async function POST(request: NextRequest) {
                         timestamp: new Date().toISOString()
                     });
                 }
+
+                // Add to persistent History Architecture
+                const todayLocal = new Date().toISOString().split('T')[0];
+                await saveBriefingToArchive(email, todayLocal, briefing);
 
                 await saveLatestBriefing(email, briefing);
                 await updateLastDigestAt(email);
