@@ -8,7 +8,7 @@ const steps = [
     {
         id: "01",
         title: "Add your sources.",
-        description: "YouTube channels, blogs, newsletters, news sites — add anything with an RSS feed.",
+        description: "YouTube channels, blogs, newsletters, news sites. Add anything with an RSS feed.",
         icon: Plus,
         color: "bg-blue-500",
         visual: (
@@ -36,7 +36,7 @@ const steps = [
     {
         id: "02",
         title: "Pick your time.",
-        description: "Choose when your briefing arrives. Morning coffee or evening wind-down — you decide.",
+        description: "Choose when your briefing arrives. Morning coffee or evening wind-down. You decide.",
         icon: Clock,
         color: "bg-orange-500",
         visual: (
@@ -80,13 +80,13 @@ const steps = [
 
 export default function HowItWorks() {
     return (
-        <section className="py-32 bg-[#FAF9F6] relative overflow-hidden">
+        <section className="py-24 md:py-32 bg-[#FDFBF7] relative overflow-hidden">
             <div className="max-w-6xl mx-auto px-6">
                 <div className="mb-24 md:text-center max-w-2xl mx-auto">
-                    <h2 className="text-4xl md:text-5xl font-serif font-medium text-[#1A1A1A] mb-6">
+                    <h2 className="text-4xl md:text-5xl font-semibold text-[#1A1A1A] tracking-tighter mb-6">
                         How it works.
                     </h2>
-                    <p className="text-lg text-gray-600 leading-relaxed">
+                    <p className="text-lg text-[#4A4A4A] leading-relaxed">
                         Three steps. That's it.
                     </p>
                 </div>
@@ -107,27 +107,27 @@ export default function HowItWorks() {
                             >
                                 {/* Line Masks to prevent overflow beyond dots */}
                                 {i === 0 && (
-                                    <div className="absolute left-[27px] md:left-1/2 w-4 bg-[#FAF9F6] top-0 h-[28px] md:h-1/2 transform -translate-x-1/2" />
+                                    <div className="absolute left-[27px] md:left-1/2 w-4 bg-[#FDFBF7] top-0 h-[28px] md:h-1/2 transform -translate-x-1/2" />
                                 )}
                                 {i === steps.length - 1 && (
-                                    <div className="absolute left-[27px] md:left-1/2 w-4 bg-[#FAF9F6] top-[28px] md:top-1/2 bottom-0 transform -translate-x-1/2" />
+                                    <div className="absolute left-[27px] md:left-1/2 w-4 bg-[#FDFBF7] top-0 md:top-1/2 bottom-0 transform -translate-x-1/2" />
                                 )}
 
                                 {/* Center Node */}
-                                <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 w-14 h-14 rounded-full bg-white border-4 border-[#FAF9F6] shadow-sm flex items-center justify-center transform md:-translate-x-1/2 md:-translate-y-1/2 z-10 hidden md:flex">
+                                <div className="absolute left-0 md:left-1/2 top-0 md:top-1/2 w-14 h-14 rounded-full bg-white border-4 border-[#FDFBF7] shadow-sm flex items-center justify-center transform md:-translate-x-1/2 md:-translate-y-1/2 z-10 hidden md:flex">
                                     <div className="w-3 h-3 bg-[#FF5700] rounded-full" />
                                 </div>
                                 {/* Mobile Node (Top Left) */}
-                                <div className="absolute left-0 top-0 w-14 h-14 rounded-full bg-white border-4 border-[#FAF9F6] shadow-sm flex items-center justify-center z-10 md:hidden">
+                                <div className="absolute left-0 top-0 w-14 h-14 rounded-full bg-white border-4 border-[#FDFBF7] shadow-sm flex items-center justify-center z-10 md:hidden">
                                     <div className="w-3 h-3 bg-[#FF5700] rounded-full" />
                                 </div>
 
                                 {/* Content Side */}
                                 <div className="pl-20 md:pl-0 flex-1 text-left md:text-right">
                                     <div className={`md:max-w-md ${i % 2 !== 0 ? 'md:ml-auto md:text-right' : 'md:mr-auto md:text-left'}`}>
-                                        <span className="text-sm font-mono font-bold text-[#FF5700] mb-2 block tracking-widest">{step.id}</span>
+                                        <span className="text-sm font-bold text-[#FF5700] mb-2 block tracking-widest">{step.id}</span>
                                         <h3 className="text-3xl font-serif font-medium text-[#1A1A1A] mb-4">{step.title}</h3>
-                                        <p className="text-gray-600 leading-relaxed text-lg">{step.description}</p>
+                                        <p className="text-[#4A4A4A] leading-relaxed text-lg">{step.description}</p>
                                     </div>
                                 </div>
 

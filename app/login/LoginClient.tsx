@@ -9,6 +9,7 @@ import AntiList from '@/components/landing/AntiList';
 import Manifesto from '@/components/landing/Manifesto';
 import Features from '@/components/landing/Features';
 import HowItWorks from '@/components/landing/HowItWorks';
+import InteractiveDemo from '@/components/landing/InteractiveDemo';
 import Footer from '@/components/Footer';
 
 export default function LoginClient() {
@@ -80,6 +81,7 @@ export default function LoginClient() {
 
             <Hero />
             <AntiList />
+            <InteractiveDemo />
             <HowItWorks />
             <Manifesto />
             <Features />

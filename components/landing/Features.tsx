@@ -5,7 +5,7 @@ import { Filter, Globe, Lock, Rss, Youtube } from 'lucide-react';
 
 export default function Features() {
     return (
-        <section className="py-32 px-6 bg-[#FDFBF7]">
+        <section className="py-24 md:py-32 px-6 bg-[#FDFBF7]">
             <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -24,7 +24,7 @@ export default function Features() {
                             <h3 className="text-3xl font-serif font-medium text-[#1A1A1A]">
                                 Stay informed.
                             </h3>
-                            <p className="text-lg text-[#666666] leading-relaxed max-w-md">
+                            <p className="text-lg text-[#4A4A4A] leading-relaxed max-w-md">
                                 Add the sources you trust. We monitor them daily and surface only what's worth your time.
                             </p>
                         </div>
@@ -50,7 +50,7 @@ export default function Features() {
                             <h3 className="text-2xl font-serif font-medium text-[#1A1A1A] mb-2">
                                 Any source.
                             </h3>
-                            <p className="text-base text-[#666666]">
+                            <p className="text-base text-[#4A4A4A]">
                                 RSS feeds, YouTube channels, newsletters. All in one place.
                             </p>
                         </div>
@@ -76,7 +76,7 @@ export default function Features() {
                             <h3 className="text-2xl font-serif font-medium text-[#1A1A1A] mb-2">
                                 No tracking.
                             </h3>
-                            <p className="text-base text-[#666666]">
+                            <p className="text-base text-[#4A4A4A]">
                                 No pixels. No analytics. No data sold. Just your briefing.
                             </p>
                         </div>

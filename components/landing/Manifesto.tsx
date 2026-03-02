@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function Manifesto() {
     return (
-        <section className="py-32 px-6 bg-white border-y border-gray-100">
+        <section className="py-24 md:py-32 px-6 bg-[#FDFBF7] border-y border-gray-100">
             <div className="max-w-3xl mx-auto text-center">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
