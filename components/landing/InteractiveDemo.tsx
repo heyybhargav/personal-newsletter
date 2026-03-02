@@ -177,7 +177,7 @@ export default function InteractiveDemo() {
     return (
         <section className="py-24 md:py-32 px-6 relative overflow-hidden bg-gradient-to-b from-[#FDFBF7] via-white to-[#FDFBF7]">
             {/* Subtle texture behind section */}
-            <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #1A1A1A 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+            <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #1A1A1A 1px, transparent 0)', backgroundSize: '24px 24px' }} />
             {/* Section Header */}
             <div className="max-w-3xl mx-auto text-center mb-12 md:mb-16">
                 <motion.div
