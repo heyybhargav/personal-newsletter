@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { fetchDemoUrls } from '@/lib/demo-fetcher';
 import { generateUnifiedBriefing } from '@/lib/gemini';
+import { calculateCost, logDemoUsageEvent } from '@/lib/db';
 
 const redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '',
@@ -72,6 +73,26 @@ export async function POST(req: NextRequest) {
 
         // 4. Synthesize with Gemini
         const briefing = await generateUnifiedBriefing(contentItems, 'gemini');
+
+        // 5. Log Usage Event specifically for the demo
+        if (briefing.tokenUsage) {
+            const cost = calculateCost(
+                briefing.tokenUsage.provider,
+                briefing.tokenUsage.input,
+                briefing.tokenUsage.output
+            );
+
+            logDemoUsageEvent({
+                ip,
+                urls,
+                provider: briefing.tokenUsage.provider,
+                model: briefing.tokenUsage.model,
+                inputTokens: briefing.tokenUsage.input,
+                outputTokens: briefing.tokenUsage.output,
+                cost,
+                timestamp: briefing.generatedAt
+            }).catch(err => console.error('[Demo API] Failed to log usage:', err));
+        }
 
         return NextResponse.json({
             narrative: briefing.narrative,

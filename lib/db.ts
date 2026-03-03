@@ -258,7 +258,7 @@ export async function getPreferences() {
         email: user.email,
         deliveryTime: user.preferences.deliveryTime,
         timezone: user.preferences.timezone,
-        llmProvider: user.preferences.llmProvider || 'groq',
+        llmProvider: user.preferences.llmProvider || 'gemini-pro',
         sources: user.sources
     };
 }
@@ -374,6 +374,29 @@ export async function logUsageEvent(event: UsageEvent): Promise<void> {
     pipeline.lpush(redisKey, JSON.stringify(event));
     pipeline.expire(redisKey, USAGE_TTL_SECONDS);
     console.log(`[Usage] Logged event for ${event.email}: ${event.inputTokens}in/${event.outputTokens}out ($${event.cost.toFixed(6)}) via ${event.provider}`);
+}
+
+export interface DemoUsageEvent {
+    ip: string;
+    urls: string[];
+    provider: string;
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    cost: number;
+    timestamp: string;
+}
+
+const DEMO_USAGE_KEY_PREFIX = 'demo:events:';
+
+export async function logDemoUsageEvent(event: DemoUsageEvent): Promise<void> {
+    const dateKey = event.timestamp.split('T')[0]; // YYYY-MM-DD
+    const redisKey = `${DEMO_USAGE_KEY_PREFIX}${dateKey}`;
+
+    const pipeline = redis.pipeline();
+    pipeline.lpush(redisKey, JSON.stringify(event));
+    pipeline.expire(redisKey, USAGE_TTL_SECONDS);
+    console.log(`[Demo Usage] Logged event for IP ${event.ip}: ${event.inputTokens}in/${event.outputTokens}out ($${event.cost.toFixed(6)})`);
 }
 
 export interface ErrorEvent {

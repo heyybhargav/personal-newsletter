@@ -14,7 +14,7 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
     const [email, setEmail] = useState(initialSettings.email || '');
     const [deliveryTime, setDeliveryTime] = useState(initialSettings.deliveryTime || '08:00');
     const [timezone, setTimezone] = useState(initialSettings.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone);
-    const [llmProvider, setLlmProvider] = useState<string>(initialSettings.llmProvider || 'groq');
+    const [llmProvider, setLlmProvider] = useState<string>(initialSettings.llmProvider || 'gemini-pro');
     const [subscriptionStatus, setSubscriptionStatus] = useState<'active' | 'paused'>(initialSettings.subscriptionStatus || 'active');
     const [tier, setTier] = useState<string>(initialSettings.tier || 'active');
     const [trialDaysRemaining, setTrialDaysRemaining] = useState<number>(initialSettings.trialDaysRemaining || 0);

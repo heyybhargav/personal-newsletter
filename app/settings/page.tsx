@@ -24,7 +24,7 @@ export default async function SettingsPage() {
         email: user.email,
         deliveryTime: user.preferences.deliveryTime,
         timezone: user.preferences.timezone,
-        llmProvider: user.preferences.llmProvider || 'groq',
+        llmProvider: user.preferences.llmProvider || 'gemini-pro',
         subscriptionStatus: user.preferences.subscriptionStatus || 'active',
         pausedUntil: user.preferences.pausedUntil || null,
         sources: user.sources,

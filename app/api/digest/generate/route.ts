@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         after(async () => {
             try {
                 console.log(`[Worker Background] Processing ${email}`);
-                console.log(`[Worker Background] LLM Provider: "${user.preferences.llmProvider || 'groq (default)'}"`);
+                console.log(`[Worker Background] LLM Provider: "${user.preferences.llmProvider || 'gemini-pro (default)'}"`);
 
                 const content = await aggregateContent(user.sources, { lookbackDays: force ? 3 : 1 });
                 if (content.length === 0) {
