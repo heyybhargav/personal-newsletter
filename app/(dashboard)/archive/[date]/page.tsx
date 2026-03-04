@@ -123,34 +123,78 @@ export default function ArchivedBriefingView() {
                             )}
                         </header>
 
-                        <div className="space-y-12">
-                            {briefing.sections?.map((section: DigestSection, idx: number) => (
-                                <motion.div
-                                    key={idx}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className="max-w-none"
-                                >
-                                    <h4 className="text-xl sm:text-2xl font-serif font-bold text-[#1A1A1A] mb-6">{section.title}</h4>
+                        {/* Handle NEW Narrative Format */}
+                        {briefing.narrative && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="max-w-none"
+                            >
+                                {briefing.subject && (
+                                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1A1A1A] mb-8 leading-tight">
+                                        {briefing.subject}
+                                    </h2>
+                                )}
 
-                                    <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content bg-white p-6 sm:p-8 rounded-2xl border border-gray-100 shadow-sm">
-                                        <EmailStyleMarkdown content={section.summary || ''} />
-                                    </div>
+                                <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content bg-white p-6 sm:p-8 sm:px-10 rounded-2xl border border-gray-100 shadow-sm">
+                                    <EmailStyleMarkdown content={briefing.narrative} />
+                                </div>
 
-                                    {section.items && section.items.length > 0 && (
-                                        <div className="mt-4 flex flex-wrap gap-2 text-xs font-mono ml-4">
-                                            <span className="py-1 text-gray-400 uppercase tracking-widest font-bold mr-2">Sources:</span>
-                                            {section.items.map((item, i) => (
-                                                <a key={i} href={item.link} target="_blank" className="px-2 py-1 bg-gray-100 text-gray-500 rounded hover:bg-[#FF5700] hover:text-white transition-colors truncate max-w-[200px]">
-                                                    {new URL(item.link).hostname.replace('www.', '')}
-                                                </a>
+                                {briefing.topStories && briefing.topStories.length > 0 && (
+                                    <div className="mt-12 bg-white p-6 sm:p-8 rounded-2xl border border-gray-100 shadow-sm">
+                                        <h3 className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-6 flex items-center gap-2">
+                                            📚 Deep Dive Links
+                                        </h3>
+                                        <ul className="space-y-4">
+                                            {briefing.topStories.map((item: any, idx: number) => (
+                                                <li key={idx} className="pb-4 border-b border-gray-50 last:border-0 last:pb-0">
+                                                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="block group">
+                                                        <span className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-[#FF5700] transition-colors leading-snug block mb-1">
+                                                            {item.title}
+                                                        </span>
+                                                        <span className="text-xs sm:text-sm text-gray-400 font-mono">
+                                                            {item.source}
+                                                        </span>
+                                                    </a>
+                                                </li>
                                             ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
+
+                        {/* Handle OLD Sections Format (Backwards compatibility) */}
+                        {!briefing.narrative && briefing.sections && (
+                            <div className="space-y-12">
+                                {briefing.sections.map((section: DigestSection, idx: number) => (
+                                    <motion.div
+                                        key={idx}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        className="max-w-none"
+                                    >
+                                        <h4 className="text-xl sm:text-2xl font-serif font-bold text-[#1A1A1A] mb-6">{section.title}</h4>
+
+                                        <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content bg-white p-6 sm:p-8 rounded-2xl border border-gray-100 shadow-sm">
+                                            <EmailStyleMarkdown content={section.summary || ''} />
                                         </div>
-                                    )}
-                                </motion.div>
-                            ))}
-                        </div>
+
+                                        {section.items && section.items.length > 0 && (
+                                            <div className="mt-4 flex flex-wrap gap-2 text-xs font-mono ml-4">
+                                                <span className="py-1 text-gray-400 uppercase tracking-widest font-bold mr-2">Sources:</span>
+                                                {section.items.map((item, i) => (
+                                                    <a key={i} href={item.link} target="_blank" className="px-2 py-1 bg-gray-100 text-gray-500 rounded hover:bg-[#FF5700] hover:text-white transition-colors truncate max-w-[200px]">
+                                                        {new URL(item.link).hostname.replace('www.', '')}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                ))}
+                            </div>
+                        )}
                     </motion.div>
                 )}
             </div>
