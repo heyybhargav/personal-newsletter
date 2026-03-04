@@ -76,7 +76,10 @@ export async function POST(request: Request) {
         console.log('[Digest API] Found', content.length, 'items. Generating unified briefing...');
 
         // Step 2: Generate UNIFIED briefing
-        const briefing = await generateUnifiedBriefing(content);
+        // Resolve user for name personalization
+        const currentUser = await getUser(email);
+        const firstName = currentUser?.name?.split(' ')[0];
+        const briefing = await generateUnifiedBriefing(content, undefined, firstName);
 
         console.log(`[Digest API] Briefing generated. Preheader: "${briefing.preheader?.substring(0, 50)}...". Sending to ${email}`);
 
@@ -134,7 +137,10 @@ export async function GET() {
         const content = await aggregateContent(sources, { lookbackDays: 3 });
 
         console.log('[Digest API] Found', content.length, 'items. Generating unified briefing...');
-        const briefing = await generateUnifiedBriefing(content);
+        // Resolve user for name personalization
+        const previewUser = session?.email ? await getUser(session.email) : null;
+        const previewFirstName = previewUser?.name?.split(' ')[0];
+        const briefing = await generateUnifiedBriefing(content, undefined, previewFirstName);
 
         // Return in a format the frontend can render
         return NextResponse.json({

@@ -27,12 +27,13 @@ export async function getUser(email: string): Promise<UserProfile | null> {
     }
 }
 
-export async function createUser(email: string, timezone: string = 'Asia/Kolkata'): Promise<UserProfile> {
+export async function createUser(email: string, timezone: string = 'Asia/Kolkata', name?: string): Promise<UserProfile> {
     const existing = await getUser(email);
     if (existing) return existing;
 
     const newUser: UserProfile = {
         email,
+        name,
         preferences: {
             deliveryTime: '08:00',
             timezone,

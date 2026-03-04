@@ -49,7 +49,8 @@ export async function POST(request: NextRequest) {
                     return;
                 }
 
-                const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider);
+                const firstName = user.name?.split(' ')[0];
+                const briefing = await generateUnifiedBriefing(content, user.preferences.llmProvider, firstName);
 
                 if (dryRun) {
                     console.log(`[Worker Background] DRY RUN completed for ${email}. Skipping email and DB updates. Output generated successfully.`);

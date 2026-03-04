@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { OAuth2Client } from 'google-auth-library';
 import { signSession } from '@/lib/auth';
-import { createUser, getUser } from '@/lib/db';
+import { createUser, getUser, saveUser } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { sendWelcomeEmail } from '@/lib/email';
 
@@ -27,14 +27,15 @@ export async function POST(request: Request) {
         }
 
         const email = payload.email;
+        const name = payload.name || undefined;
 
         // 2. Find or Create User in DB
         let user = await getUser(email);
         if (!user) {
-            console.log(`[Auth] New user detected: ${email}`);
+            console.log(`[Auth] New user detected: ${email} (${name || 'no name'})`);
             // Auto-detect timezone from request if possible, or default
             // Ideally frontend sends it, but for now default to UTC/IST or handle later
-            await createUser(email, 'Asia/Kolkata'); // Default, user can change later
+            user = await createUser(email, 'Asia/Kolkata', name);
 
             // Send Welcome Email
             try {
@@ -44,6 +45,11 @@ export async function POST(request: Request) {
                 console.error('[Auth] Failed to send welcome email:', emailError);
                 // Continue with login even if email fails
             }
+        } else if (!user.name && name) {
+            // Backfill name for existing users who signed up before this change
+            user.name = name;
+            await saveUser(user);
+            console.log(`[Auth] Backfilled name for ${email}: ${name}`);
         }
 
         // 3. Create Session

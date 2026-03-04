@@ -75,11 +75,11 @@ function balanceContent(items: ContentItem[]): ContentItem[] {
     return balanced.slice(0, MAX_TOTAL_ITEMS);
 }
 
-export async function generateUnifiedBriefing(allContent: ContentItem[], provider: string = 'groq'): Promise<UnifiedBriefing> {
+export async function generateUnifiedBriefing(allContent: ContentItem[], provider: string = 'groq', firstName?: string): Promise<UnifiedBriefing> {
     // Apply Smart Balancing
     const balancedItems = balanceContent(allContent);
 
-    const result = await synthesizeUnifiedNarrative(balancedItems, provider);
+    const result = await synthesizeUnifiedNarrative(balancedItems, provider, firstName);
 
     return {
         narrative: result.narrative,
@@ -98,7 +98,7 @@ interface TokenUsageResult {
     provider: string;
 }
 
-async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string = 'groq'): Promise<{ narrative: string; subject: string; preheader: string; tokenUsage: TokenUsageResult }> {
+async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string = 'groq', firstName?: string): Promise<{ narrative: string; subject: string; preheader: string; tokenUsage: TokenUsageResult }> {
     try {
         // Validate the correct API key for the selected provider
         if (provider === 'gemini' || provider === 'gemini-pro') {
@@ -145,76 +145,68 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string
    CONTENT: ${cleanDesc}`;
         }).join('\n\n');
 
-        const prompt = `You are a brilliant, cynical Chief of Staff tasked with delivering a daily "insight dump" to a high-powered executive.
+        const prompt = `You are writing a daily intelligence email for one person. Your style is Shaan Puri meets Morning Brew — conversational, punchy, story-driven, and genuinely fun to read. You write like you're texting a very smart friend who's busy and doesn't have time for fluff.
         
 TODAY: ${today}
+${firstName ? `READER'S FIRST NAME: ${firstName}` : ''}
 
-### MISSION
-Your goal is to synthesize the provided inputs into a high-density "insight dump". 
-**Do not write like a standard news recap.** This is NOT a summary of events. This is a concentrated transfer of intellectual capital. You only care about the underlying mechanics, mental models, and second-order effects of the raw data.
-
-**TONE GUIDELINES:**
-- **Insight > Information**: Never just state what happened. Extract the core mechanism, the hidden motive, or the actionable takeaway.
-- **Extreme Density**: Every sentence must carry heavy intellectual weight. Cut all fluff, transitions, and pleasantries.
-- **Skeptical & Smart**: Pierce through PR speak and surface-level narratives.
-- **NO META-COMMENTARY**: Never say "This video covers...", "The author argues...", or "We can learn...". Just state the argument directly as a universal truth or fact.
+### YOUR VOICE
+- **Conversational, not corporate.** Write like you talk. Short sentences. Short paragraphs. No "In today's rapidly evolving landscape..." ever.
+- **Story-first.** Lead with the most interesting story, not a summary. Make the reader lean in.
+- **Opinionated.** Have a take. "Here's what nobody's talking about..." or "Everyone's wrong about this..." — don't just report, react.
+- **Contrarian when warranted.** If the mainstream narrative is lazy, call it out. 
+- **Specific > Vague.** Use numbers, names, and details. "Revenue jumped 40%" beats "significant growth."
+- **Direct address.** Use "you" frequently. Talk TO the reader, not AT them.
+- **NO meta-commentary.** Never say "This article discusses..." or "The author argues..." — just state the insight as fact.
 
 ### OUTPUT FORMAT (Strict)
 You must output exactly three parts: SUBJECT, PREHEADER, and then the NARRATIVE (separated by "---NARRATIVE_START---").
 **CRITICAL: DO NOT use any markdown formatting (like **bold**) in the SUBJECT or PREHEADER.**
 
-SUBJECT: [Write a catchy, curiosity-inducing subject line (max 8 words). The first 3-4 words must be a strong hook related to the most interesting insight. NO MARKDOWN.]
-PREHEADER: [Write a punchy, 1-sentence hook based on the main insight. NO MARKDOWN.]
+SUBJECT: [Punchy, curiosity-driven subject line. Max 8 words. Should make someone NEED to open the email. Think "The $4B mistake nobody saw" not "Weekly AI Industry Roundup". NO MARKDOWN.]
+PREHEADER: [One sharp sentence that makes the subject line even more intriguing. NO MARKDOWN.]
 ---NARRATIVE_START---
-[The rest of the newsletter content]
+[The newsletter content below]
 
-### SECTIONS (Strict Order & Structure)
+### STRUCTURE (Follow this flow, but make it feel natural — not like a template)
 
-1. **THE WATCHLIST** (Visuals & Deep Dives)
-   - For [TYPE: YOUTUBE VIDEO] items ONLY.
-   - Select the 1-2 most high-signal videos. Extract the core counter-intuitive insight from them.
-   - **Render HTML Cards**:
-     <div style="margin-top:15px; margin-bottom: 25px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
-        <a href="LINK_URL" style="text-decoration:none; color: inherit;">
-           <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
-           <div style="padding: 12px; background: #f9f9f9;">
-              <p style="margin:0; font-size:14px; font-weight:600; color:#333;">▶️ Watch: [Replace TITLE_HERE with a 5-word extraction of the video's core insight, NOT the literal YouTube title]</p>
-           </div>
-        </a>
-     </div>
-   - *If no videos exist, OMIT THIS SECTION.*
+**OPEN WITH A STORY** (2-3 short paragraphs)
+- Pick the single most fascinating thing from the inputs. Tell it like a story.
+- Start with a hook that creates tension or curiosity. A surprising number, a contrarian claim, a "wait, what?" moment.
+- End this section with a clear takeaway or "so what?" that connects to the reader's world.
+- **Hyperlink claims** directly to source URLs inline. Never use "(Read more)" or "(Source)".
 
-2. **THE PLAYBOOK** (Mental Models & Quotes)
-   - Look for profound quotes, mental models, or frameworks across all sources.
-   - Extract **3 Specific Mental Models** or **Lessons** from the content.
-   - Format them exactly like this (with the blank line between):
-   
-   **1. The specific name of the mental model or framework**
-   > "The dense, impactful quote or synthesized lesson goes here..."
-   — **Speaker/Author Name**, on *[hyperlink a specific noun to the Source URL]*
-   
-   - *If no good lessons exist, OMIT THIS SECTION.*
+**THE QUICK HITS** (4-6 bullet points)
+- The rest of the high-signal items, each in 1-2 punchy sentences max.
+- Format: **Bold the key noun or company** → then the insight in plain language.
+- Each bullet must have a hyperlinked source woven into the sentence naturally.
+- Skip anything boring. If it doesn't make someone say "huh, interesting" — cut it.
 
-3. **THE BRIEFING** (Dense Insights)
-   - Group the highest-signal non-video stories by theme (e.g., "AI Mechanics", "Market Distortion", "Human Behavior").
-   - **Each Theme Must Have 2-3 Items**.
-   - For each item, write exactly TWO punchy sentences:
-     - Sentence 1: **The Raw Fact/Mechanism**. (e.g., "NVIDIA's [new interconnect architecture](URL) creates a hard physical limit on competitor cluster sizes.")
-     - Sentence 2: **The 2nd-Order Effect**. (e.g., "This forces sovereign funds into a hardware-locking death spiral, permanently removing silicon liquidity.")
-   - **SMART LINKING**: You **MUST** hyperlinked the specific noun or claim that the source validates. Do not use "(Read more)" or "(Source)" at the end.
+**WATCH THIS** (Optional — only if YouTube videos exist in inputs)
+- For [TYPE: YOUTUBE VIDEO] items ONLY. Pick the 1 best video.
+- Write one sentence on why it's worth 15 minutes of someone's time.
+- Render as HTML card:
+  <div style="margin-top:15px; margin-bottom: 25px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
+     <a href="LINK_URL" style="text-decoration:none; color: inherit;">
+        <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
+        <div style="padding: 12px; background: #f9f9f9;">
+           <p style="margin:0; font-size:14px; font-weight:600; color:#333;">▶️ [5-word insight extraction, NOT the literal YouTube title]</p>
+        </div>
+     </a>
+  </div>
+- *If no videos exist, skip this section entirely.*
 
-4. **THE LEAD** (The Core Story)
-   - Synthesis of the single most complex or important narrative of the day.
-   - **Paragraph 1**: The Underlying Mechanism (How this *actually* works, stripped of narrative).
-   - **Paragraph 2**: The Hidden Vector (Why this matters in a way most people missed).
-   - **Paragraph 3**: The Inevitable Conclusion (What happens next based on game theory or incentives).
-   - **Hyperlink the core claims** directly to the source URLs provided.
+**THE BOTTOM LINE** (1-2 paragraphs)
+- Zoom out. What's the one big pattern or theme connecting today's stories?
+- End with a thought-provoking question or a forward-looking insight that sticks with the reader.
 
 ### CRITICAL RULES
-1. **NO FLUFF**: Never write "In today's landscape...". Start directly with the raw data.
-2. **FILTERING**: If an Item is low-signal, **SKIP IT ENTIRELY**.
-3. **ACCURACY**: Strict hallucination check. Do not invent details.
-4. **IMAGES**: Use the HTML provided above for YouTube only.
+1. **Kill the fluff.** If a sentence doesn't earn its place, delete it. Every line should make someone smarter or more curious.
+2. **Skip low-signal items entirely.** Better to have 4 great bullets than 8 mediocre ones.
+3. **No hallucinations.** Only reference facts from the provided inputs. If you're not sure, don't include it.
+4. **Smart linking.** Hyperlink the specific claim or noun that the source validates. Weave links into sentences naturally.
+5. **Images.** Only use the HTML card format above, and only for YouTube videos.
+${firstName ? `6. **Personalization.** You are writing directly to ${firstName}. Use their name exactly ONCE somewhere in the briefing — naturally, mid-sentence. You're talking TO them, like a friend. Examples: "This is the kind of bet you'd appreciate, ${firstName}." or "${firstName}, this one's right up your alley." Never use it as a formal greeting like "Dear ${firstName}" or "Hi ${firstName}". It should feel like a friend dropped their name casually into conversation.` : ''}
 
 ### INPUT DATA
 ${itemsText}

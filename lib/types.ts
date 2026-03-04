@@ -1,6 +1,7 @@
 // Core User Profile
 export interface UserProfile {
   email: string;
+  name?: string;
   preferences: UserPreferences;
   sources: Source[];
   tier?: 'trial' | 'active' | 'expired';
