@@ -175,32 +175,30 @@ export default function InteractiveDemo() {
     };
 
     return (
-        <section className="py-24 md:py-32 px-6 relative overflow-hidden bg-gradient-to-b from-[#FDFBF7] via-white to-[#FDFBF7]">
-            {/* Subtle texture behind section */}
-            <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #1A1A1A 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+        <section id="demo-section" className="py-28 md:py-36 px-6 relative overflow-hidden bg-[#FDFBF7]">
             {/* Section Header */}
-            <div className="max-w-3xl mx-auto text-center mb-12 md:mb-16">
+            <div className="max-w-5xl mx-auto text-center mb-14 md:mb-20">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
+                    className="space-y-5"
                 >
-                    <div className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gray-100 shadow-sm mb-6">
-                        <Sparkles className="w-3.5 h-3.5 text-[#FF5700]" />
-                        <span className="text-[10px] sm:text-xs font-bold tracking-widest text-[#FF5700] uppercase">Try it now</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[#1A1A1A] tracking-tighter leading-[1.1] mb-4">
+                    <span className="inline-block text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#FF5700] uppercase">
+                        Live Demo
+                    </span>
+                    <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1A1A1A] tracking-[-0.03em] leading-none">
                         See the magic.{' '}
                         <span className="font-serif italic font-medium text-[#888888]">No sign-up.</span>
                     </h2>
-                    <p className="text-base sm:text-lg text-[#4A4A4A] font-medium max-w-2xl mx-auto">
-                        Pick a pack below, or paste source links. We'll synthesize a briefing in seconds.
+                    <p className="text-base md:text-lg text-[#777777] font-medium max-w-md mx-auto">
+                        Pick a topic pack below, or paste your own source links.
                     </p>
                 </motion.div>
             </div>
 
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-5xl mx-auto">
                 <AnimatePresence mode="wait">
                     {/* ========================= IDLE STATE ========================= */}
                     {(state === 'idle' || state === 'error') && (
@@ -212,7 +210,7 @@ export default function InteractiveDemo() {
                             transition={{ duration: 0.5 }}
                         >
                             {/* Starter Packs */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
                                 {STARTER_PACKS.map((pack, i) => (
                                     <motion.button
                                         key={pack.label}
@@ -222,16 +220,16 @@ export default function InteractiveDemo() {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.4, delay: i * 0.1 }}
-                                        className="group relative bg-white rounded-xl p-5 border border-gray-100 shadow-[0_2px_8px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.1)] transition-all duration-300 text-left cursor-pointer hover:-translate-y-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 overflow-hidden"
+                                        className="group relative bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_2px_12px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 text-left cursor-pointer hover:-translate-y-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 overflow-hidden"
                                     >
                                         {/* Clean left accent bar */}
-                                        <div className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-full ${pack.dotColor}`} />
-                                        <div className="pl-3">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="font-semibold text-sm text-[#1A1A1A]">{pack.label}</span>
+                                        <div className={`absolute left-0 top-4 bottom-4 w-[3px] rounded-full ${pack.dotColor}`} />
+                                        <div className="pl-4">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="font-semibold text-sm text-[#1A1A1A] tracking-tight">{pack.label}</span>
                                                 <ArrowRight className="w-3.5 h-3.5 text-gray-200 group-hover:text-[#FF5700] transition-all duration-300 group-hover:translate-x-0.5" />
                                             </div>
-                                            <div className="text-[11px] text-gray-400 font-medium leading-relaxed">{pack.description}</div>
+                                            <div className="text-xs text-[#888888] font-medium leading-relaxed">{pack.description}</div>
                                         </div>
                                     </motion.button>
                                 ))}
@@ -239,13 +237,13 @@ export default function InteractiveDemo() {
 
                             {/* Divider */}
                             <div className="flex items-center gap-4 mb-10">
-                                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-                                <span className="text-[10px] font-bold tracking-[0.2em] text-gray-300 uppercase">or paste your own</span>
-                                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+                                <div className="flex-1 h-px bg-gray-100" />
+                                <span className="text-[10px] font-bold tracking-[0.2em] text-[#BBBBBB] uppercase">or paste your own</span>
+                                <div className="flex-1 h-px bg-gray-100" />
                             </div>
 
                             {/* Manual URL Input */}
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 space-y-3">
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] p-6 md:p-8 space-y-3">
                                 {urls.map((url, index) => (
                                     <div key={index} className="flex items-center gap-2">
                                         <input
@@ -253,7 +251,7 @@ export default function InteractiveDemo() {
                                             value={url}
                                             onChange={(e) => updateUrl(index, e.target.value)}
                                             placeholder={index === 0 ? 'Paste a Substack, YouTube channel, or blog link...' : 'Add another source URL...'}
-                                            className="flex-1 px-4 py-3 rounded-xl bg-[#FDFBF7] border border-gray-100 text-sm font-[family-name:var(--font-newsreader)] text-[#1A1A1A] placeholder:text-gray-300 focus:outline-none focus:border-gray-300 transition-colors"
+                                            className="flex-1 px-4 py-3.5 rounded-xl bg-[#FDFBF7] border border-gray-100 text-sm font-[family-name:var(--font-newsreader)] text-[#1A1A1A] placeholder:text-[#CCCCCC] focus:outline-none focus:border-gray-300 transition-colors"
                                         />
                                         {urls.length > 1 && (
                                             <button
@@ -266,11 +264,11 @@ export default function InteractiveDemo() {
                                     </div>
                                 ))}
 
-                                <div className="flex items-center justify-between pt-2">
+                                <div className="flex items-center justify-between pt-3">
                                     {urls.length < 3 && (
                                         <button
                                             onClick={addUrlField}
-                                            className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-[#1A1A1A] transition-colors cursor-pointer"
+                                            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AAAAAA] hover:text-[#1A1A1A] transition-colors cursor-pointer"
                                         >
                                             <Plus className="w-3.5 h-3.5" />
                                             Add URL ({urls.length}/3)
@@ -279,9 +277,9 @@ export default function InteractiveDemo() {
                                     <button
                                         onClick={() => synthesize(urls)}
                                         disabled={!hasInput || (state === 'error' && remainingUses === 0)}
-                                        className="group/btn relative inline-flex items-center gap-2 px-6 py-3.5 text-sm font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-2xl hover:shadow-black/20 ml-auto cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed overflow-hidden transform hover:-translate-y-0.5"
+                                        className="group/btn relative inline-flex items-center gap-2 px-6 py-3.5 text-sm font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 ml-auto cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
                                     >
-                                        <span className="relative z-10">Synthesize Briefing</span>
+                                        <span className="relative z-10">Generate Briefing</span>
                                         <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 opacity-60 relative z-10" />
                                     </button>
                                 </div>
@@ -370,7 +368,7 @@ export default function InteractiveDemo() {
                                 </div>
 
                                 {/* Narrative */}
-                                <div className="p-6 md:p-8 prose prose-sm md:prose-base prose-neutral max-w-none font-[family-name:var(--font-newsreader)] prose-headings:font-sans prose-headings:tracking-tight prose-h2:text-lg prose-h2:font-bold prose-h3:text-base prose-a:text-[#FF5700] prose-a:no-underline prose-a:hover:underline prose-blockquote:border-l-[#FF5700] prose-blockquote:italic prose-strong:font-semibold">
+                                <div className="px-6 py-4 md:px-8 md:py-6 prose prose-sm md:prose-base prose-neutral max-w-none font-[family-name:var(--font-newsreader)] prose-headings:font-sans prose-headings:tracking-tight prose-h2:text-lg prose-h2:font-bold prose-h3:text-base prose-a:text-[#FF5700] prose-a:no-underline prose-a:hover:underline prose-blockquote:border-l-[#FF5700] prose-blockquote:italic prose-strong:font-semibold">
                                     <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                                         {narrative}
                                     </ReactMarkdown>
@@ -378,16 +376,16 @@ export default function InteractiveDemo() {
 
                                 {/* Fade-to-CTA */}
                                 <div className="relative">
-                                    <div className="absolute bottom-full left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                                    <div className="p-8 md:p-10 bg-white text-center border-t border-gray-100">
-                                        <p className="text-sm text-gray-500 font-medium mb-4">
-                                            This is just a taste. Get your full, personalized briefing delivered every morning.
+                                    <div className="absolute bottom-full left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                                    <div className="pt-6 pb-8 md:pt-8 md:pb-10 bg-white text-center border-t border-gray-100">
+                                        <p className="text-sm text-gray-500 font-medium mb-5">
+                                            This is just a taste. Get your full, personalized briefing delivered every day.
                                         </p>
                                         <button
                                             onClick={triggerLogin}
                                             className="group/cta inline-flex items-center gap-2 px-8 py-3.5 text-sm font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-2xl hover:shadow-black/20 cursor-pointer transform hover:-translate-y-0.5"
                                         >
-                                            <span>Start 7-Day Free Trial</span>
+                                            <span>Get Your Daily Briefing</span>
                                             <ArrowRight className="w-4 h-4 transition-transform group-hover/cta:translate-x-0.5 opacity-60" />
                                         </button>
                                     </div>

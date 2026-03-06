@@ -5,7 +5,6 @@ import Script from 'next/script';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Hero from '@/components/landing/Hero';
-import AntiList from '@/components/landing/AntiList';
 import Manifesto from '@/components/landing/Manifesto';
 import Features from '@/components/landing/Features';
 import HowItWorks from '@/components/landing/HowItWorks';
@@ -80,46 +79,46 @@ export default function LoginClient() {
             </nav>
 
             <Hero />
-            <AntiList />
             <InteractiveDemo />
             <HowItWorks />
-            <Manifesto />
             <Features />
+            <Manifesto />
 
-            {/* The Banger Final CTA (Editorial & Elegant) */}
-            <section className="py-32 md:py-40 px-6 bg-[#FDFBF7] relative overflow-hidden">
-                <div className="max-w-5xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative bg-white rounded-3xl md:rounded-[3rem] p-8 sm:p-12 md:p-24 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 overflow-hidden group"
-                    >
-                        <div className="relative z-10 max-w-3xl mx-auto space-y-8 md:space-y-10">
-                            <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-full bg-gray-50 border border-gray-100 mx-auto">
-                                <div className="w-2 h-2 rounded-full bg-[#FF5700] animate-pulse"></div>
-                                <span className="text-[10px] sm:text-xs font-bold tracking-widest text-[#FF5700] uppercase">Signal is ready</span>
+            {/* The Banger Final CTA & Footer Wrapper (Exactly 100vh minus Header) */}
+            <div className="flex flex-col h-[calc(100vh-76px)] md:h-[calc(100vh-92px)] bg-[#1A1A1A]">
+                <section className="flex-1 flex flex-col items-center justify-center px-6 text-center relative overflow-hidden text-white border-b border-[#2A2A2A]">
+                    <div className="max-w-3xl mx-auto relative z-10 w-full py-16 md:py-24">
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className="space-y-8 md:space-y-10"
+                        >
+                            <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-full border border-gray-800 bg-white/5 mx-auto">
+                                <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-[#FF5700] uppercase">
+                                    Get Started
+                                </span>
                             </div>
 
-                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-semibold text-[#1A1A1A] tracking-tighter leading-[1.05]">
-                                Stop scrolling.<br className="hidden sm:block" />
-                                <span className="font-serif italic font-medium text-[#888888] block sm:inline"> Start reading.</span>
+                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-semibold text-white tracking-tighter leading-[1.05]">
+                                Your briefing is ready<br className="hidden sm:block" />
+                                <span className="font-serif italic font-medium text-[#FF5700] block sm:inline"> tomorrow.</span>
                             </h2>
 
-                            <p className="text-lg sm:text-xl md:text-2xl text-[#4A4A4A] font-medium leading-relaxed px-2">
-                                Get your customized briefing delivered tomorrow morning.<br className="hidden sm:block" /> One clean email. Zero ads.
+                            <p className="text-lg sm:text-xl md:text-2xl text-gray-400 font-medium leading-relaxed px-2">
+                                Sign up in 10 seconds. Your first briefing arrives tomorrow.
                             </p>
 
                             {error && (
                                 <p className="text-red-500 font-medium text-sm">{error}</p>
                             )}
 
-                            <div className="pt-6 md:pt-8 w-full">
+                            <div className="pt-6 md:pt-8 w-full flex flex-col items-center">
                                 <button
                                     onClick={triggerLogin}
                                     disabled={isLoggingIn}
-                                    className="group/btn relative inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-4 text-base sm:text-lg font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-2xl hover:shadow-black/20 w-full sm:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5 disabled:opacity-80 disabled:cursor-not-allowed"
+                                    className="group/btn relative inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-medium text-[#1A1A1A] bg-white hover:bg-gray-100 rounded-full transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5 disabled:opacity-80 disabled:cursor-not-allowed"
                                 >
                                     {isLoggingIn ? (
                                         <>
@@ -128,20 +127,20 @@ export default function LoginClient() {
                                         </>
                                     ) : (
                                         <>
-                                            <span className="relative z-20 pointer-events-none">Start Free Trial</span>
-                                            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 transition-transform group-hover/btn:translate-x-1 opacity-50 pointer-events-none" />
+                                            <span className="relative z-20 pointer-events-none">Start for Free</span>
+                                            <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover/btn:translate-x-1 opacity-50 pointer-events-none" />
                                         </>
                                     )}
                                 </button>
-                                <p className="mt-4 md:mt-6 text-xs sm:text-sm font-medium tracking-wide text-gray-400 uppercase">7 days free · No credit card required</p>
+                                <p className="mt-4 md:mt-6 text-xs sm:text-sm font-medium tracking-wide text-gray-500 uppercase">No credit card required</p>
                             </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
+                        </motion.div>
+                    </div>
+                </section>
 
-            {/* Footer */}
-            <Footer />
+                {/* Footer */}
+                <Footer />
+            </div>
         </main>
     );
 }

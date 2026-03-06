@@ -80,8 +80,8 @@ const steps = [
 
 export default function HowItWorks() {
     return (
-        <section className="py-24 md:py-32 bg-[#FDFBF7] relative overflow-hidden">
-            <div className="max-w-6xl mx-auto px-6">
+        <section className="pb-24 pt-12 md:pb-32 md:pt-16 bg-[#FDFBF7] relative overflow-hidden">
+            <div className="max-w-5xl mx-auto px-6">
                 <div className="mb-24 md:text-center max-w-2xl mx-auto">
                     <h2 className="text-4xl md:text-5xl font-semibold text-[#1A1A1A] tracking-tighter mb-6">
                         How it works.
@@ -123,8 +123,8 @@ export default function HowItWorks() {
                                 </div>
 
                                 {/* Content Side */}
-                                <div className="pl-20 md:pl-0 flex-1 text-left md:text-right">
-                                    <div className={`md:max-w-md ${i % 2 !== 0 ? 'md:ml-auto md:text-right' : 'md:mr-auto md:text-left'}`}>
+                                <div className={`pl-20 md:pl-0 flex-1 flex ${i % 2 !== 0 ? 'md:justify-start' : 'md:justify-end'}`}>
+                                    <div className={`md:max-w-[400px] w-full text-left md:text-left ${i % 2 !== 0 ? 'md:ml-12 lg:ml-16' : 'md:mr-12 lg:mr-16'}`}>
                                         <span className="text-sm font-bold text-[#FF5700] mb-2 block tracking-widest">{step.id}</span>
                                         <h3 className="text-3xl font-serif font-medium text-[#1A1A1A] mb-4">{step.title}</h3>
                                         <p className="text-[#4A4A4A] leading-relaxed text-lg">{step.description}</p>
@@ -132,8 +132,8 @@ export default function HowItWorks() {
                                 </div>
 
                                 {/* Visual Side */}
-                                <div className="pl-20 md:pl-0 flex-1 w-full">
-                                    <div className={`w-full aspect-[4/3] bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden md:max-w-md flex items-center justify-center mx-auto ${i % 2 !== 0 ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                                <div className={`pl-20 md:pl-0 flex-1 w-full flex ${i % 2 !== 0 ? 'md:justify-end' : 'md:justify-start'}`}>
+                                    <div className={`w-full aspect-[4/3] bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden md:max-w-[420px] flex items-center justify-center ${i % 2 !== 0 ? 'md:mr-12 lg:mr-16' : 'md:ml-12 lg:ml-16'}`}>
                                         {step.visual}
                                     </div>
                                 </div>
