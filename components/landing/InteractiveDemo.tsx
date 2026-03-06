@@ -251,7 +251,7 @@ export default function InteractiveDemo() {
                                             value={url}
                                             onChange={(e) => updateUrl(index, e.target.value)}
                                             placeholder={index === 0 ? 'Paste a Substack, YouTube channel, or blog link...' : 'Add another source URL...'}
-                                            className="flex-1 px-4 py-3.5 rounded-xl bg-[#FDFBF7] border border-gray-100 text-sm font-[family-name:var(--font-newsreader)] text-[#1A1A1A] placeholder:text-[#CCCCCC] focus:outline-none focus:border-gray-300 transition-colors"
+                                            className="flex-1 px-4 py-3.5 rounded-xl bg-[#FDFBF7] border border-gray-100 text-base md:text-sm font-[family-name:var(--font-newsreader)] text-[#1A1A1A] placeholder:text-[#CCCCCC] focus:outline-none focus:border-gray-300 transition-colors"
                                         />
                                         {urls.length > 1 && (
                                             <button

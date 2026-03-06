@@ -110,16 +110,36 @@ export default function ArchivedBriefingView() {
                         transition={{ duration: 0.5 }}
                     >
                         <header className="mb-12 border-b border-gray-200 pb-8">
-                            <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase mb-4 block">
-                                Edition
-                            </span>
-                            <h1 className="font-serif font-bold text-4xl sm:text-5xl tracking-tight text-[#1A1A1A] mb-4">
-                                {formatDate(dateParam)}
-                            </h1>
-                            {briefing?.briefing?.generatedAt && (
-                                <p className="text-sm font-mono text-gray-400">
-                                    Generated: {new Date(briefing.briefing.generatedAt).toLocaleString()}
-                                </p>
+                            {briefing.subject ? (
+                                <>
+                                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#1A1A1A] mb-4 leading-tight">
+                                        {briefing.subject}
+                                    </h1>
+                                    <div className="flex items-center gap-3">
+                                        <h2 className="text-sm font-mono text-gray-400 uppercase tracking-widest">
+                                            {formatDate(dateParam)}
+                                        </h2>
+                                        {briefing?.briefing?.generatedAt && (
+                                            <>
+                                                <span className="text-gray-300">•</span>
+                                                <p className="text-xs font-mono text-gray-400">
+                                                    {new Date(briefing.briefing.generatedAt).toLocaleString()}
+                                                </p>
+                                            </>
+                                        )}
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <h1 className="font-serif font-bold text-3xl sm:text-4xl tracking-tight text-[#1A1A1A] mb-4">
+                                        {formatDate(dateParam)}
+                                    </h1>
+                                    {briefing?.briefing?.generatedAt && (
+                                        <p className="text-xs font-mono text-gray-400">
+                                            {new Date(briefing.briefing.generatedAt).toLocaleString()}
+                                        </p>
+                                    )}
+                                </>
                             )}
                         </header>
 
@@ -130,12 +150,6 @@ export default function ArchivedBriefingView() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="max-w-none"
                             >
-                                {briefing.subject && (
-                                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#1A1A1A] mb-8 leading-tight">
-                                        {briefing.subject}
-                                    </h2>
-                                )}
-
                                 <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content bg-white p-6 sm:p-8 sm:px-10 rounded-2xl border border-gray-100 shadow-sm">
                                     <EmailStyleMarkdown content={briefing.narrative} />
                                 </div>

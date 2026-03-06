@@ -174,12 +174,12 @@ PREHEADER: [One sharp sentence that makes the subject line even more intriguing.
 - Pick the single most fascinating thing from the inputs. Tell it like a story.
 - Start with a hook that creates tension or curiosity. A surprising number, a contrarian claim, a "wait, what?" moment.
 - End this section with a clear takeaway or "so what?" that connects to the reader's world.
-- **Hyperlink claims** directly to source URLs inline. Never use "(Read more)" or "(Source)".
+- **Hyperlink claims** directly to source URLs inline using Markdown (e.g. [claim text](LINK)). Never use "(Read more)" or "(Source)" or raw URLs.
 
 **THE QUICK HITS** (4-6 bullet points)
 - The rest of the high-signal items, each in 1-2 punchy sentences max.
 - Format: **Bold the key noun or company** → then the insight in plain language.
-- Each bullet must have a hyperlinked source woven into the sentence naturally.
+- Each bullet must have a hyperlinked source woven into the sentence naturally using Markdown (e.g. [claim text](LINK)).
 - Skip anything boring. If it doesn't make someone say "huh, interesting" — cut it.
 
 **WATCH THIS** (Optional — only if YouTube videos exist in inputs)
@@ -204,9 +204,10 @@ PREHEADER: [One sharp sentence that makes the subject line even more intriguing.
 1. **Kill the fluff.** If a sentence doesn't earn its place, delete it. Every line should make someone smarter or more curious.
 2. **Skip low-signal items entirely.** Better to have 4 great bullets than 8 mediocre ones.
 3. **No hallucinations.** Only reference facts from the provided inputs. If you're not sure, don't include it.
-4. **Smart linking.** Hyperlink the specific claim or noun that the source validates. Weave links into sentences naturally.
+4. **Smart linking.** Hyperlink the specific claim or noun that the source validates using Markdown [text](URL). Weave links into sentences naturally. Do not output raw URLs as text.
 5. **Images.** Only use the HTML card format above, and only for YouTube videos.
-${firstName ? `6. **Personalization.** You are writing directly to ${firstName}. Use their name exactly ONCE somewhere in the briefing — naturally, mid-sentence. You're talking TO them, like a friend. Examples: "This is the kind of bet you'd appreciate, ${firstName}." or "${firstName}, this one's right up your alley." Never use it as a formal greeting like "Dear ${firstName}" or "Hi ${firstName}". It should feel like a friend dropped their name casually into conversation.` : ''}
+6. **NO EM DASHES.** You are strictly prohibited from using em dashes (—) or en dashes (–) in the narrative. Use commas, parenthesis, or start a new sentence.
+${firstName ? `7. **Personalization.** If you choose to use the reader's name (${firstName}), it must be subtle and natural` : ''}
 
 ### INPUT DATA
 ${itemsText}

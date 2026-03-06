@@ -37,14 +37,18 @@ export default function Hero() {
                     </motion.h2>
                 </div>
 
-                <motion.p
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-base md:text-lg text-[#777777] font-medium tracking-wide"
+                    className="text-base md:text-lg text-[#777777] font-medium tracking-wide flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3 max-w-[320px] sm:max-w-none mx-auto leading-relaxed"
                 >
-                    Add your sources&nbsp;&nbsp;·&nbsp;&nbsp;We read everything&nbsp;&nbsp;·&nbsp;&nbsp;You read one email
-                </motion.p>
+                    <span className="whitespace-nowrap">Add your sources</span>
+                    <span className="text-gray-300">·</span>
+                    <span className="whitespace-nowrap">We read everything</span>
+                    <span className="text-gray-300 hidden sm:inline">·</span>
+                    <span className="whitespace-nowrap w-full sm:w-auto mt-1 sm:mt-0 text-center">You read one email</span>
+                </motion.div>
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

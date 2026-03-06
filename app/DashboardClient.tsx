@@ -202,10 +202,17 @@ export default function DashboardClient({
                     <div className="mb-12 py-2 px-4 sm:px-0">
                       <div className="flex justify-between items-start mb-6 pr-4">
                         <div>
-                          <h3 className="font-serif font-bold text-2xl">Latest Briefing</h3>
+                          {displayContext?.subject && (
+                            <h3 className="font-serif font-bold text-2xl mb-2">{displayContext?.subject}</h3>
+                          )}
+                          {displayContext?.preheader && (
+                            <p className="text-gray-500 font-serif text-[15px] mb-4 leading-relaxed line-clamp-2">
+                              {displayContext?.preheader}
+                            </p>
+                          )}
                           {displayContext?.generatedAt && (
-                            <p className="text-xs font-mono text-gray-500 mt-1 uppercase tracking-wider">
-                              Generated: {new Date(displayContext.generatedAt).toLocaleString()}
+                            <p className="text-xs font-mono text-gray-400 uppercase tracking-wider">
+                              {new Date(displayContext.generatedAt).toLocaleString()}
                             </p>
                           )}
                         </div>

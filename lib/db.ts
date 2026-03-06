@@ -171,6 +171,30 @@ export async function getArchiveList(email: string): Promise<string[]> {
     return availableDates;
 }
 
+export interface ArchiveMetadata {
+    dateStr: string;
+    subject: string;
+    preheader: string;
+}
+
+export async function getArchiveListWithMetadata(email: string): Promise<ArchiveMetadata[]> {
+    const dates = await getArchiveList(email);
+    if (!dates.length) return [];
+
+    const pipeline = redis.pipeline();
+    dates.forEach(d => pipeline.get(`${USER_KEY_PREFIX}${email}:archive:${d}`));
+    const briefings = await pipeline.exec<any[]>();
+
+    return dates.map((dateStr, idx) => {
+        const briefing = briefings[idx];
+        return {
+            dateStr,
+            subject: briefing?.subject || 'Signal Daily Briefing',
+            preheader: briefing?.preheader || 'Your daily executive intelligence summary.',
+        };
+    });
+}
+
 export async function getArchivedBriefing(email: string, dateStr: string): Promise<any | null> {
     const archiveKey = `${USER_KEY_PREFIX}${email}:archive:${dateStr}`;
     try {

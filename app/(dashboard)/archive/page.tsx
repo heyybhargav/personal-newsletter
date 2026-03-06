@@ -1,5 +1,5 @@
 import { getSession } from '@/lib/auth';
-import { getArchiveList } from '@/lib/db';
+import { getArchiveListWithMetadata } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import ArchiveClient from './ArchiveClient';
 
@@ -9,7 +9,7 @@ export default async function ArchivePage() {
         redirect('/login');
     }
 
-    const dates = await getArchiveList(session.email);
+    const archives = await getArchiveListWithMetadata(session.email);
 
-    return <ArchiveClient initialDates={dates} />;
+    return <ArchiveClient initialArchives={archives} />;
 }

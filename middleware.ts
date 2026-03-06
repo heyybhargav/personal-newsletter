@@ -4,7 +4,7 @@ import { verifySession } from '@/lib/auth';
 import { getUser, hasAccess } from '@/lib/db';
 
 // Paths that require authentication
-const PROTECTED_PATHS = ['/', '/settings', '/sources', '/api/sources', '/api/settings', '/api/latest-briefing', '/api/digest'];
+const PROTECTED_PATHS = ['/', '/settings', '/sources', '/archive', '/api/sources', '/api/settings', '/api/latest-briefing', '/api/digest', '/api/archive'];
 
 // Public paths that should not be protected
 const PUBLIC_PATHS = ['/login', '/api/auth', '/api/cron', '/api/webhook', '/api/debug'];

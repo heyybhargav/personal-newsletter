@@ -5,12 +5,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { AlertBanner } from "@/components/AlertBanner";
 
+import { ArchiveMetadata } from "@/lib/db";
+
 interface ArchiveClientProps {
-    initialDates: string[];
+    initialArchives: ArchiveMetadata[];
 }
 
-export default function ArchiveClient({ initialDates }: ArchiveClientProps) {
-    const [dates, setDates] = useState<string[]>(initialDates);
+export default function ArchiveClient({ initialArchives }: ArchiveClientProps) {
+    const [archives, setArchives] = useState<ArchiveMetadata[]>(initialArchives);
 
     // Format YYYY-MM-DD into a pretty string (e.g. Wednesday, Feb 28, 2026)
     const formatDate = (dateStr: string) => {
@@ -55,7 +57,7 @@ export default function ArchiveClient({ initialDates }: ArchiveClientProps) {
 
             {/* Main Content */}
             <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-8">
-                {dates.length === 0 && (
+                {archives.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -100,26 +102,37 @@ export default function ArchiveClient({ initialDates }: ArchiveClientProps) {
                     </motion.div>
                 )}
 
-                {dates.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {dates.map((dateStr) => (
+                {archives.length > 0 && (
+                    <div className="flex flex-col">
+                        {archives.map((archive) => (
                             <Link
-                                key={dateStr}
-                                href={`/archive/${dateStr}`}
-                                className="group relative p-6 bg-white border border-gray-100 rounded-xl hover:border-[#FF5700] hover:shadow-lg transition-all text-left flex flex-col h-full overflow-hidden"
+                                key={archive.dateStr}
+                                href={`/archive/${archive.dateStr}`}
+                                className="group block py-4 sm:py-6 border-b border-gray-100 last:border-0 hover:bg-white/50 transition-colors duration-500 rounded-lg -mx-4 px-4 sm:mx-0 sm:px-4 md:px-6"
                             >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF5700]/5 to-transparent rounded-bl-full translate-x-12 -translate-y-12 group-hover:translate-x-0 group-hover:-translate-y-0 transition-transform duration-500"></div>
+                                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 sm:gap-6">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
+                                            <span className="text-[10px] sm:text-xs text-gray-400 font-mono">
+                                                {formatDate(archive.dateStr)}
+                                            </span>
+                                        </div>
 
-                                <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase mb-3 block relative z-10">
-                                    Edition
-                                </span>
-                                <h2 className="font-serif text-2xl font-bold text-gray-900 group-hover:text-[#FF5700] transition-colors leading-tight mb-8 relative z-10">
-                                    {formatDate(dateStr)}
-                                </h2>
+                                        <h3 className="text-lg sm:text-xl font-serif font-medium text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors leading-tight mb-1">
+                                            {archive.subject}
+                                        </h3>
+                                        <div className="flex items-center gap-2 mt-1 sm:mt-2 text-xs sm:text-sm text-gray-400 font-sans">
+                                            <span className="truncate opacity-80">
+                                                {archive.preheader}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                <div className="mt-auto flex items-center gap-2 text-gray-400 group-hover:text-[#1A1A1A] text-sm font-medium transition-colors relative z-10">
-                                    <span>Read Briefing</span>
-                                    <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                                    <div className="flex items-center gap-3 sm:gap-4 flex-none sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 mt-2 sm:mt-0 pt-1">
+                                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-[#FF5700] transition-colors py-2 flex items-center gap-1">
+                                            Read <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                                        </span>
+                                    </div>
                                 </div>
                             </Link>
                         ))}
