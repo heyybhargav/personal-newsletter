@@ -230,14 +230,14 @@ export default function DashboardClient({
                             <h4 className="text-lg font-serif font-bold mb-3">{section.title}</h4>
 
                             {/* Render the AI Narrative */}
-                            <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content max-w-none px-4 sm:px-0">
+                            <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content max-w-none px-4 sm:px-0 break-words w-full">
                               <EmailStyleMarkdown content={section.summary || ''} />
                             </div>
 
                             {/* Deep Dive Links */}
-                            <div className="mt-4 flex flex-wrap gap-2 text-xs font-mono">
+                            <div className="mt-4 flex flex-col sm:flex-row flex-wrap gap-2 text-xs font-mono px-4 sm:px-0">
                               {section.items.map((item, i) => (
-                                <a key={i} href={item.link} target="_blank" className="px-2 py-1 bg-gray-100 text-gray-500 rounded hover:bg-[#FF5700] hover:text-white transition-colors truncate max-w-[200px]">
+                                <a key={i} href={item.link} target="_blank" className="px-2 py-1 bg-gray-100 text-gray-500 rounded hover:bg-[#FF5700] hover:text-white transition-colors break-words w-max max-w-full">
                                   {new URL(item.link).hostname.replace('www.', '')}
                                 </a>
                               ))}
