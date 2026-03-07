@@ -7,7 +7,7 @@ import { getUser, hasAccess } from '@/lib/db';
 const PROTECTED_PATHS = ['/', '/settings', '/sources', '/archive', '/api/sources', '/api/settings', '/api/latest-briefing', '/api/digest', '/api/archive'];
 
 // Public paths that should not be protected
-const PUBLIC_PATHS = ['/login', '/api/auth', '/api/cron', '/api/webhook', '/api/debug'];
+const PUBLIC_PATHS = ['/login', '/blog', '/api/auth', '/api/cron', '/api/webhook', '/api/debug'];
 
 // Paths that expired users can still access (they need these to subscribe)
 const EXPIRED_ALLOWED_PATHS = ['/subscribe', '/api/webhook', '/api/auth'];

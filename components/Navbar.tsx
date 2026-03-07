@@ -44,8 +44,9 @@ export default function Navbar({
         { name: 'Settings', path: '/settings' },
     ];
 
-    // Hide Navbar on login page
-    if (pathname === '/login') return null;
+    // Hide Navbar on public pages that have their own nav
+    const PUBLIC_NAV_PAGES = ['/login', '/blog'];
+    if (PUBLIC_NAV_PAGES.some(p => pathname === p || pathname.startsWith(p + '/'))) return null;
 
     return (
         <div className="sticky top-0 z-40 shadow-sm">

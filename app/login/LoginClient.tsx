@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
+import Link from 'next/link';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Hero from '@/components/landing/Hero';
@@ -69,13 +70,18 @@ export default function LoginClient() {
             {/* Navbar (Minimal) */}
             <nav className="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-50 bg-[#FDFBF7]/80 backdrop-blur-sm">
                 <span className="font-bold text-xl tracking-tight text-[#1A1A1A]">Signal.</span>
-                <button
-                    onClick={triggerLogin}
-                    disabled={isLoggingIn}
-                    className="text-sm font-medium text-gray-600 hover:text-black transition-colors cursor-pointer disabled:opacity-50"
-                >
-                    {isLoggingIn ? 'Authenticating...' : 'Log in'}
-                </button>
+                <div className="flex items-center gap-6">
+                    <Link href="/blog" className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
+                        Blog
+                    </Link>
+                    <button
+                        onClick={triggerLogin}
+                        disabled={isLoggingIn}
+                        className="text-sm font-medium text-gray-600 hover:text-black transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                        {isLoggingIn ? 'Authenticating...' : 'Log in'}
+                    </button>
+                </div>
             </nav>
 
             <Hero />
