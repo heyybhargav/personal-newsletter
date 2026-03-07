@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import PublicNav from '@/components/PublicNav';
 
 const faqs = [
     {
@@ -44,20 +45,7 @@ const faqs = [
 export default function FaqClient() {
     return (
         <main className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans overflow-x-hidden">
-            {/* Navbar */}
-            <nav className="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-50 bg-[#FDFBF7]/80 backdrop-blur-sm">
-                <Link href="/" className="font-bold text-xl tracking-tight text-[#1A1A1A]">
-                    Signal.
-                </Link>
-                <div className="flex items-center gap-6">
-                    <Link href="/blog" className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
-                        Blog
-                    </Link>
-                    <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">
-                        Log in
-                    </Link>
-                </div>
-            </nav>
+            <PublicNav />
 
             <section className="pt-36 pb-24 px-6">
                 <div className="max-w-2xl mx-auto">

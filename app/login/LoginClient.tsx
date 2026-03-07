@@ -11,6 +11,7 @@ import Features from '@/components/landing/Features';
 import HowItWorks from '@/components/landing/HowItWorks';
 import InteractiveDemo from '@/components/landing/InteractiveDemo';
 import Footer from '@/components/Footer';
+import PublicNav from '@/components/PublicNav';
 
 export default function LoginClient() {
     const [error, setError] = useState('');
@@ -67,25 +68,7 @@ export default function LoginClient() {
                 <div className="g_id_signin" data-type="standard"></div>
             </div>
 
-            {/* Navbar (Minimal) */}
-            <nav className="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-50 bg-[#FDFBF7]/80 backdrop-blur-sm">
-                <span className="font-bold text-xl tracking-tight text-[#1A1A1A]">Signal.</span>
-                <div className="flex items-center gap-6">
-                    <Link href="/blog" className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
-                        Blog
-                    </Link>
-                    <Link href="/faq" className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
-                        FAQ
-                    </Link>
-                    <button
-                        onClick={triggerLogin}
-                        disabled={isLoggingIn}
-                        className="text-sm font-medium text-gray-600 hover:text-black transition-colors cursor-pointer disabled:opacity-50"
-                    >
-                        {isLoggingIn ? 'Authenticating...' : 'Log in'}
-                    </button>
-                </div>
-            </nav>
+            <PublicNav onLogin={triggerLogin} isLoggingIn={isLoggingIn} />
 
             <Hero />
             <InteractiveDemo />

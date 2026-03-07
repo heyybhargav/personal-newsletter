@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { BlogPost } from '@/lib/blog';
+import PublicNav from '@/components/PublicNav';
 
 interface BlogPostClientProps {
     post: BlogPost;
@@ -12,15 +13,7 @@ interface BlogPostClientProps {
 export default function BlogPostClient({ post }: BlogPostClientProps) {
     return (
         <main className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans overflow-x-hidden">
-            {/* Navbar */}
-            <nav className="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-50 bg-[#FDFBF7]/80 backdrop-blur-sm">
-                <Link href="/login" className="font-bold text-xl tracking-tight text-[#1A1A1A]">
-                    Signal.
-                </Link>
-                <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">
-                    Log in
-                </Link>
-            </nav>
+            <PublicNav />
 
             {/* Hero / Headline Block */}
             <section className="pt-36 pb-0 px-6">
