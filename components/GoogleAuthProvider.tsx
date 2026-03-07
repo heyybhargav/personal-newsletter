@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import Script from 'next/script';
-import { usePathname, useRouter } from 'next/navigation';
 
 /**
  * Loaded once at the root layout level.
@@ -16,8 +15,6 @@ import { usePathname, useRouter } from 'next/navigation';
  * and harmless (it's off-screen).
  */
 export default function GoogleAuthProvider() {
-    const router = useRouter();
-    const pathname = usePathname();
 
     useEffect(() => {
         (window as any).handleGoogleCredentialResponse = async (response: any) => {

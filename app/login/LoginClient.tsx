@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Hero from '@/components/landing/Hero';
 import Manifesto from '@/components/landing/Manifesto';
@@ -13,11 +11,7 @@ import Footer from '@/components/Footer';
 import PublicNav from '@/components/PublicNav';
 
 export default function LoginClient() {
-    const [error, setError] = useState('');
-    const [isLoggingIn, setIsLoggingIn] = useState(false);
-
     const triggerLogin = () => {
-        if (isLoggingIn) return;
         const googleButton = document.querySelector('[role="button"]') as HTMLElement;
         if (googleButton) googleButton.click();
     };
@@ -25,7 +19,7 @@ export default function LoginClient() {
     return (
         <main className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans selection:bg-gray-200 overflow-x-hidden">
 
-            <PublicNav onLogin={triggerLogin} isLoggingIn={isLoggingIn} />
+            <PublicNav onLogin={triggerLogin} />
 
             <Hero />
             <InteractiveDemo />
@@ -59,27 +53,13 @@ export default function LoginClient() {
                                 Sign up in 10 seconds. Your first briefing arrives tomorrow.
                             </p>
 
-                            {error && (
-                                <p className="text-red-500 font-medium text-sm">{error}</p>
-                            )}
-
                             <div className="pt-6 md:pt-8 w-full flex flex-col items-center">
                                 <button
                                     onClick={triggerLogin}
-                                    disabled={isLoggingIn}
-                                    className="group/btn relative inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-medium text-[#1A1A1A] bg-white hover:bg-gray-100 rounded-full transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5 disabled:opacity-80 disabled:cursor-not-allowed"
+                                    className="group/btn relative inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-medium text-[#1A1A1A] bg-white hover:bg-gray-100 rounded-full transition-all duration-300 shadow-xl shadow-white/10 w-full sm:w-auto overflow-hidden cursor-pointer z-30 transform hover:-translate-y-0.5"
                                 >
-                                    {isLoggingIn ? (
-                                        <>
-                                            <Loader2 className="w-5 h-5 animate-spin opacity-50" />
-                                            <span>Authenticating...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="relative z-20 pointer-events-none">Start for Free</span>
-                                            <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover/btn:translate-x-1 opacity-50 pointer-events-none" />
-                                        </>
-                                    )}
+                                    <span className="relative z-20 pointer-events-none">Start for Free</span>
+                                    <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover/btn:translate-x-1 opacity-50 pointer-events-none" />
                                 </button>
                                 <p className="mt-4 md:mt-6 text-xs sm:text-sm font-medium tracking-wide text-gray-500 uppercase">No credit card required</p>
                             </div>
