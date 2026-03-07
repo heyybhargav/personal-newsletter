@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Newsreader } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import GoogleAuthProvider from "@/components/GoogleAuthProvider";
 import { getSession } from "@/lib/auth";
 import { getUser, getTrialDaysRemaining } from "@/lib/db";
 
@@ -62,6 +63,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${newsreader.variable} font-sans antialiased`}>
+        <GoogleAuthProvider />
         <Navbar initialUser={initialUser} tier={tier} trialDaysRemaining={trialDaysRemaining} />
         {children}
         <Analytics />

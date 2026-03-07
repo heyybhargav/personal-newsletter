@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Script from 'next/script';
+import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -17,34 +16,6 @@ export default function LoginClient() {
     const [error, setError] = useState('');
     const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-    const handleGoogleCallback = async (response: any) => {
-        setIsLoggingIn(true);
-        setError('');
-        try {
-            const res = await fetch('/api/auth/google', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ credential: response.credential }),
-            });
-
-            if (res.ok) {
-                // Hard redirect is much more reliable for cookie persistence in Next.js Middleware/RSC
-                window.location.href = '/';
-            } else {
-                const data = await res.json();
-                setError(data.error || 'Login failed. Please try again.');
-                setIsLoggingIn(false);
-            }
-        } catch (err) {
-            setError('Connection error. Please try again.');
-            setIsLoggingIn(false);
-        }
-    };
-
-    useEffect(() => {
-        (window as any).handleGoogleCredentialResponse = handleGoogleCallback;
-    }, []);
-
     const triggerLogin = () => {
         if (isLoggingIn) return;
         const googleButton = document.querySelector('[role="button"]') as HTMLElement;
@@ -53,20 +24,6 @@ export default function LoginClient() {
 
     return (
         <main className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans selection:bg-gray-200 overflow-x-hidden">
-            <Script src="https://accounts.google.com/gsi/client" strategy="lazyOnload" />
-
-            {/* Hidden Google Button for Functionality */}
-            <div className="hidden">
-                <div
-                    id="g_id_onload"
-                    data-client_id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
-                    data-context="signin"
-                    data-ux_mode="popup"
-                    data-callback="handleGoogleCredentialResponse"
-                    data-auto_prompt="false"
-                ></div>
-                <div className="g_id_signin" data-type="standard"></div>
-            </div>
 
             <PublicNav onLogin={triggerLogin} isLoggingIn={isLoggingIn} />
 
@@ -77,7 +34,7 @@ export default function LoginClient() {
             <Manifesto />
 
             {/* The Banger Final CTA & Footer Wrapper (Exactly 100vh minus Header) */}
-            <div className="flex flex-col h-[calc(100vh-76px)] md:h-[calc(100vh-92px)] bg-[#1A1A1A]">
+            <div id="cta" className="flex flex-col h-[calc(100vh-76px)] md:h-[calc(100vh-92px)] bg-[#1A1A1A]">
                 <section className="flex-1 flex flex-col items-center justify-center px-6 text-center relative overflow-hidden text-white border-b border-[#2A2A2A]">
                     <div className="max-w-3xl mx-auto relative z-10 w-full py-16 md:py-24">
                         <motion.div

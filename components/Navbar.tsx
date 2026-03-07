@@ -45,7 +45,7 @@ export default function Navbar({
     ];
 
     // Hide Navbar on public pages that have their own nav
-    const PUBLIC_NAV_PAGES = ['/login', '/blog', '/faq'];
+    const PUBLIC_NAV_PAGES = ['/login', '/blog', '/faq', '/signin'];
     if (PUBLIC_NAV_PAGES.some(p => pathname === p || pathname.startsWith(p + '/'))) return null;
 
     return (

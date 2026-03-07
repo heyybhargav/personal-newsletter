@@ -1,28 +1,16 @@
+'use client';
+
 import Link from 'next/link';
 import { BLOG_POSTS } from '@/lib/blog';
 import Footer from '@/components/Footer';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: 'Blog — Signal',
-    description: 'Thoughts on reading, attention, and staying informed without losing your mind.',
-};
+import PublicNav from '@/components/PublicNav';
 
 export default function BlogPage() {
     return (
         <main className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans overflow-x-hidden">
-            {/* Navbar */}
-            <nav className="fixed top-0 w-full p-6 md:p-8 flex justify-between items-center z-50 bg-[#FDFBF7]/80 backdrop-blur-sm">
-                <Link href="/login" className="font-bold text-xl tracking-tight text-[#1A1A1A]">
-                    Signal.
-                </Link>
-                <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">
-                    Log in
-                </Link>
-            </nav>
+            <PublicNav />
 
-            {/* Header */}
-            <section className="pt-40 pb-16 px-6">
+            <section className="pt-24 pb-16 px-6">
                 <div className="max-w-2xl mx-auto">
                     <span className="text-[10px] font-bold tracking-[0.25em] text-[#FF5700] uppercase">
                         Signal Blog

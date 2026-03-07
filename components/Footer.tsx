@@ -14,6 +14,7 @@ export default function Footer() {
                 <div className="flex gap-6 my-2">
                     <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-mono">Blog</Link>
                     <Link href="/faq" className="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-mono">FAQ</Link>
+                    <a href="mailto:editor@signaldaily.me" className="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-mono">Contact</a>
                 </div>
                 <p className="text-xs text-gray-600 font-mono tracking-widest uppercase mt-2">
                     Signal &copy; {new Date().getFullYear()}
