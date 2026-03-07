@@ -99,14 +99,24 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                                 </h2>
                             )}
                             <div className="space-y-5">
-                                {section.paragraphs.map((para, paraIdx) => (
+                                {section.paragraphs?.map((para, paraIdx) => (
                                     <p
                                         key={paraIdx}
                                         className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]"
-                                    >
-                                        {para}
-                                    </p>
+                                        dangerouslySetInnerHTML={{ __html: para }}
+                                    />
                                 ))}
+                                {section.listItems && section.listItems.length > 0 && (
+                                    <ul className="list-disc pl-6 space-y-4">
+                                        {section.listItems.map((item, itemIdx) => (
+                                            <li
+                                                key={itemIdx}
+                                                className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]"
+                                                dangerouslySetInnerHTML={{ __html: item }}
+                                            />
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         </motion.div>
                     ))}

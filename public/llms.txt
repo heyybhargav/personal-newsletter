@@ -1,0 +1,42 @@
+# Signal - Daily AI Intelligence Briefing
+
+> Signal is a personalised AI-curated briefing service that synthesises your chosen sources into one clean email, delivered whenever you want it.
+
+## What is Signal?
+
+Signal reads the blogs, newsletters, YouTube channels, and websites you follow and generates a single, well-written briefing from them every day. It replaces the daily habit of scrolling through multiple feeds, subscribing to generic newsletters, or copy-pasting links into ChatGPT — and delivers the synthesis directly to your inbox.
+
+## Who is Signal for?
+
+Signal is for knowledge workers, founders, investors, and curious people who want to stay informed on their specific areas of interest without spending time managing information sources.
+
+## Key Concepts
+
+- **Personalised briefing**: Content synthesised from the specific sources each user chooses — blogs, Substacks, YouTube channels, news sites, Reddit threads
+- **AI summarisation**: Uses large language models to extract signal from each source and write a coherent narrative
+- **Inbox delivery**: Delivered as a clean email, with no app required
+- **Scheduled delivery**: Users choose what time they want their briefing
+- **Source control**: Users can add, remove, and toggle sources at any time
+
+## Blog Posts
+
+- [The Smartest Thing You Can Do With 5 Minutes Every Day](https://signaldaily.me/blog/why-signal) — On staying informed, building reading habits, and why Signal exists
+
+## Frequently Asked Questions
+
+**What makes Signal different from Morning Brew or TLDR?**
+Those newsletters are written for everyone. Signal synthesises content from your specific sources, so every item in your briefing is relevant to you.
+
+**Why not just use ChatGPT?**
+ChatGPT can summarise articles if you paste them in. Signal does this automatically, every day, from your sources, without you needing to do anything.
+
+**What sources does Signal support?**
+Any URL: blogs, Substacks, YouTube channels, news sites, Reddit, GitHub, and more.
+
+**How often is the briefing sent?**
+Once per day, at a time you choose.
+
+## Contact
+
+Website: https://signaldaily.me
+Twitter: https://twitter.com/heyybhargav

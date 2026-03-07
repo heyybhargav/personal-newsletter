@@ -11,7 +11,11 @@ export default function Footer() {
                     </a>
                 </p>
 
-                <p className="text-xs text-gray-600 font-mono tracking-widest uppercase">
+                <div className="flex gap-6 my-2">
+                    <Link href="/blog" className="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-mono">Blog</Link>
+                    <Link href="/faq" className="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest font-mono">FAQ</Link>
+                </div>
+                <p className="text-xs text-gray-600 font-mono tracking-widest uppercase mt-2">
                     Signal &copy; {new Date().getFullYear()}
                 </p>
             </div>

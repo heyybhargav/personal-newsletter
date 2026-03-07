@@ -74,6 +74,9 @@ export default function LoginClient() {
                     <Link href="/blog" className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
                         Blog
                     </Link>
+                    <Link href="/faq" className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
+                        FAQ
+                    </Link>
                     <button
                         onClick={triggerLogin}
                         disabled={isLoggingIn}
