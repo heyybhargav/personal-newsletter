@@ -1,33 +1,39 @@
 import { notFound } from 'next/navigation';
-import { getBlogPost, BLOG_POSTS } from '@/lib/blog';
+import { getBlogPost, getBlogPosts } from '@/lib/blogDb';
 import BlogPostClient from './BlogPostClient';
 import type { Metadata } from 'next';
 
 export async function generateStaticParams() {
-    return BLOG_POSTS.map((post) => ({ slug: post.slug }));
+    // Generate static params for the last 50 posts to ensure they are fast
+    const posts = await getBlogPosts(0, 50);
+    return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
-    const post = getBlogPost(slug);
+    const post = await getBlogPost(slug);
     if (!post) return { title: 'Not Found' };
     return {
         title: `${post.title} — Signal`,
-        description: post.subtitle,
+        description: post.metaDescription || post.subtitle,
+        keywords: post.targetKeywords,
         openGraph: {
             title: post.title,
-            description: post.subtitle,
+            description: post.metaDescription || post.subtitle,
             type: 'article',
+            publishedTime: post.publishedAt || new Date(post.date).toISOString(),
+            // NOTE: OG Image will be added in Phase 5
         },
     };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const post = getBlogPost(slug);
+    const post = await getBlogPost(slug);
     if (!post) notFound();
 
-    const jsonLd = {
+    // Use AI-generated schema if available, otherwise fallback to Article
+    const jsonLd = post.schemaData || {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: post!.title,

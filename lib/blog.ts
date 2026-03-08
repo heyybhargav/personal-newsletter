@@ -5,6 +5,17 @@ export interface BlogPost {
     date: string;
     readTime: string;
     content: BlogSection[];
+
+    // SEO & AEO Fields
+    metaDescription?: string;
+    category?: string;
+    targetKeywords?: string[];
+    clusterId?: string;
+    schemaData?: any; // JSON-LD object for Article or FAQPage
+
+    // Timestamps
+    publishedAt?: string; // ISO string
+    updatedAt?: string; // ISO string
 }
 
 export interface BlogSection {

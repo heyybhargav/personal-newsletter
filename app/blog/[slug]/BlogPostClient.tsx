@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { BlogPost } from '@/lib/blog';
 import PublicNav from '@/components/PublicNav';
+import ReactMarkdown from 'react-markdown';
 
 interface BlogPostClientProps {
     post: BlogPost;
@@ -93,11 +94,16 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                             )}
                             <div className="space-y-5">
                                 {section.paragraphs?.map((para, paraIdx) => (
-                                    <p
+                                    <ReactMarkdown
                                         key={paraIdx}
-                                        className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]"
-                                        dangerouslySetInnerHTML={{ __html: para }}
-                                    />
+                                        components={{
+                                            p: ({ node, ...props }) => <p className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]" {...props} />,
+                                            a: ({ node, ...props }) => <a className="text-[#FF5700] hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                                            strong: ({ node, ...props }) => <strong className="font-semibold text-[#1A1A1A]" {...props} />
+                                        }}
+                                    >
+                                        {para}
+                                    </ReactMarkdown>
                                 ))}
                                 {section.listItems && section.listItems.length > 0 && (
                                     <ul className="list-disc pl-6 space-y-4">
@@ -105,8 +111,17 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                                             <li
                                                 key={itemIdx}
                                                 className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]"
-                                                dangerouslySetInnerHTML={{ __html: item }}
-                                            />
+                                            >
+                                                <ReactMarkdown
+                                                    components={{
+                                                        p: ({ node, ...props }) => <span {...props} />,
+                                                        a: ({ node, ...props }) => <a className="text-[#FF5700] hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                                                        strong: ({ node, ...props }) => <strong className="font-semibold text-[#1A1A1A]" {...props} />
+                                                    }}
+                                                >
+                                                    {item}
+                                                </ReactMarkdown>
+                                            </li>
                                         ))}
                                     </ul>
                                 )}

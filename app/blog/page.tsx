@@ -1,11 +1,15 @@
-'use client';
+
 
 import Link from 'next/link';
-import { BLOG_POSTS } from '@/lib/blog';
+import { getBlogPosts } from '@/lib/blogDb';
 import Footer from '@/components/Footer';
 import PublicNav from '@/components/PublicNav';
 
-export default function BlogPage() {
+export const revalidate = 3600; // ISR revalidate every hour as a fallback
+
+export default async function BlogPage() {
+    const posts = await getBlogPosts(0, 20); // Fetch latest 20 posts
+
     return (
         <main className="min-h-screen bg-[#FDFBF7] text-[#1A1A1A] font-sans overflow-x-hidden">
             <PublicNav />
@@ -31,22 +35,32 @@ export default function BlogPage() {
             {/* Posts list */}
             <section className="px-6 pt-6 pb-32">
                 <div className="max-w-2xl mx-auto space-y-0">
-                    {BLOG_POSTS.map((post, i) => (
-                        <Link key={post.slug} href={`/blog/${post.slug}`} className="group block py-10 border-b border-gray-100 hover:border-gray-200 transition-colors">
-                            <div className="flex items-center gap-3 mb-3">
-                                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">{post.date}</span>
-                                <span className="text-gray-200">·</span>
-                                <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">{post.readTime}</span>
-                            </div>
-                            <h2 className="text-xl md:text-2xl font-serif font-medium text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors leading-snug mb-2">
-                                {post.title}
-                            </h2>
-                            <p className="text-sm text-gray-500 leading-relaxed">{post.subtitle}</p>
-                            <div className="mt-4 inline-flex items-center gap-2 text-xs font-medium text-gray-400 group-hover:text-[#FF5700] transition-colors">
-                                Read →
-                            </div>
-                        </Link>
-                    ))}
+                    {posts.length === 0 ? (
+                        <p className="text-gray-500 py-10">No posts published yet.</p>
+                    ) : (
+                        posts.map((post) => (
+                            <Link key={post.slug} href={`/blog/${post.slug}`} className="group block py-10 border-b border-gray-100 hover:border-gray-200 transition-colors">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">{post.date}</span>
+                                    {post.category && (
+                                        <>
+                                            <span className="text-gray-200">·</span>
+                                            <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">{post.category}</span>
+                                        </>
+                                    )}
+                                    <span className="text-gray-200">·</span>
+                                    <span className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">{post.readTime || '4 min read'}</span>
+                                </div>
+                                <h2 className="text-xl md:text-2xl font-serif font-medium text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors leading-snug mb-2">
+                                    {post.title}
+                                </h2>
+                                <p className="text-sm text-gray-500 leading-relaxed">{post.subtitle}</p>
+                                <div className="mt-4 inline-flex items-center gap-2 text-xs font-medium text-gray-400 group-hover:text-[#FF5700] transition-colors">
+                                    Read →
+                                </div>
+                            </Link>
+                        ))
+                    )}
                 </div>
             </section>
 
