@@ -31,8 +31,8 @@ export default function SubscribePage() {
                         daysSinceDigest: Math.max(0, daysSince)
                     });
 
-                    // If they somehow landed here but have access, push them to dashboard
-                    if (data.tier === 'active' || (data.tier === 'trial' && data.trialDaysRemaining > 0)) {
+                    // Only redirect fully-active (paid) users away from the subscribe page
+                    if (data.tier === 'active') {
                         router.push('/');
                     }
                 }

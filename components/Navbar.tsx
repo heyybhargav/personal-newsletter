@@ -156,11 +156,12 @@ export default function Navbar({
             {pathname !== '/subscribe' && (
                 <div className="relative z-10">
                     {tier === 'trial' && (
-                        <div className="bg-[#FFF8F0] border-b border-[#FFE0C0] text-center px-4 py-3 sm:py-2 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 shadow-sm">
-                            <span className="text-[13px] font-medium text-[#B45309]">
-                                📡 Free trial: <strong>{trialDaysRemaining} day{trialDaysRemaining === 1 ? '' : 's'} remaining</strong>
+                        <div className="relative bg-[#1A1A1A] border-b border-[#FF5700]/20 text-center px-4 py-3 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 shadow-[0_4px_20px_-10px_rgba(255,87,0,0.3)] overflow-hidden group">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FF5700]/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+                            <span className="text-[13px] font-medium text-gray-300 relative z-10">
+                                <strong className="text-white">Free trial:</strong> {trialDaysRemaining} day{trialDaysRemaining === 1 ? '' : 's'} remaining.
                             </span>
-                            <Link href="/subscribe" className="text-[13px] font-bold text-[#FF5700] hover:text-[#E64600] inline-flex items-center gap-1 bg-white/50 px-3 py-1 rounded-full transition-colors border border-[#FFE0C0]/50 hover:border-[#FF5700]/30 shadow-sm hover:shadow">
+                            <Link href="/subscribe" className="text-[12px] font-bold tracking-widest uppercase text-white hover:text-white inline-flex items-center gap-2 bg-[#FF5700] hover:bg-[#E64600] px-4 py-1.5 rounded-full transition-all relative z-10">
                                 Subscribe now <span aria-hidden="true">&rarr;</span>
                             </Link>
                         </div>
