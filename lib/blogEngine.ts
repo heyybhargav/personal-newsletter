@@ -100,13 +100,26 @@ OUTPUT FORMAT (Respond ONLY with valid JSON):
 }
 `;
 
+    console.time('[Blog Engine] Editor Phase LLM Time');
     const response = await ai.models.generateContent({
         model: MODEL,
         contents: prompt,
         config: { responseMimeType: 'application/json' }
     });
+    console.timeEnd('[Blog Engine] Editor Phase LLM Time');
 
-    return JSON.parse(response.text || '{}');
+    if (response.usageMetadata) {
+        console.log(`[Blog Engine] Editor Tokens: In=${response.usageMetadata.promptTokenCount}, Out=${response.usageMetadata.candidatesTokenCount}`);
+    }
+
+    try {
+        const json = JSON.parse(response.text || '{}');
+        console.log(`[Blog Engine] Editor Plan Parsed Successfully:`, Object.keys(json));
+        return json;
+    } catch (e) {
+        console.error('[Blog Engine] CRITICAL: Editor failed to output valid JSON!', response.text);
+        throw e;
+    }
 }
 
 export async function runWriterPhase(plan: any, kb: any) {
@@ -143,12 +156,21 @@ Write the full blog post text.
 - Do not output JSON. Output pure Markdown text.
 `;
 
+    console.time('[Blog Engine] Writer Phase LLM Time');
     const response = await ai.models.generateContent({
         model: MODEL,
         contents: prompt
     });
+    console.timeEnd('[Blog Engine] Writer Phase LLM Time');
 
-    return response.text || '';
+    if (response.usageMetadata) {
+        console.log(`[Blog Engine] Writer Tokens: In=${response.usageMetadata.promptTokenCount}, Out=${response.usageMetadata.candidatesTokenCount}`);
+    }
+
+    const text = response.text || '';
+    console.log(`[Blog Engine] Writer generated ${text.length} raw characters.`);
+
+    return text;
 }
 
 export async function runReviewerPhase(rawText: string, plan: any, kb: any) {
@@ -194,11 +216,24 @@ OUTPUT FORMAT:
 }
 `;
 
+    console.time('[Blog Engine] Reviewer Phase LLM Time');
     const response = await ai.models.generateContent({
         model: MODEL,
         contents: prompt,
         config: { responseMimeType: 'application/json' }
     });
+    console.timeEnd('[Blog Engine] Reviewer Phase LLM Time');
 
-    return JSON.parse(response.text || '{}');
+    if (response.usageMetadata) {
+        console.log(`[Blog Engine] Reviewer Tokens: In=${response.usageMetadata.promptTokenCount}, Out=${response.usageMetadata.candidatesTokenCount}`);
+    }
+
+    try {
+        const json = JSON.parse(response.text || '{}');
+        console.log(`[Blog Engine] Reviewer JSON Parsed Successfully. Subheadings:`, json.content?.length || 0);
+        return json;
+    } catch (e) {
+        console.error('[Blog Engine] CRITICAL: Reviewer failed to output valid JSON!', response.text);
+        throw e;
+    }
 }

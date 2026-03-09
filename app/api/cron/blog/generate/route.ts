@@ -42,6 +42,9 @@ export async function POST(request: Request) {
         const step = body.step || 'editor';
         const context = body.context || {};
 
+        console.log(`\n========= [Blog Worker] STEP EXECUTING: ${step.toUpperCase()} =========`);
+        console.log(`[Blog Worker] Has Context: ${Object.keys(context).join(', ') || 'None'}`);
+
         // Recover the webhook URL to pass execution forward.
         const host = request.headers.get('host');
         const protocol = request.headers.get('x-forwarded-proto') || (process.env.NODE_ENV === 'development' ? 'http' : 'https');
@@ -93,9 +96,11 @@ export async function POST(request: Request) {
                 throw new Error(`Quality Gate Failed: ${validation.errors.join(', ')}`);
             }
 
+            console.log(`[Blog Worker] Reviewer completed! Post valid. Saving to Redis for slug: ${finalPost.slug}...`);
             await saveBlogPost(finalPost);
 
             if (finalPost.slug) {
+                console.log(`[Blog Worker] Triggering On-Demand ISR for /blog and /blog/${finalPost.slug}`);
                 revalidatePath('/blog');
                 revalidatePath(`/blog/${finalPost.slug}`);
             }

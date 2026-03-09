@@ -102,7 +102,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                                             strong: ({ node, ...props }) => <strong className="font-semibold text-[#1A1A1A]" {...props} />
                                         }}
                                     >
-                                        {para}
+                                        {para.replace(/<\/?(strong|b)>/gi, '**').replace(/<\/?(em|i)>/gi, '*')}
                                     </ReactMarkdown>
                                 ))}
                                 {section.listItems && section.listItems.length > 0 && (
@@ -119,7 +119,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                                                         strong: ({ node, ...props }) => <strong className="font-semibold text-[#1A1A1A]" {...props} />
                                                     }}
                                                 >
-                                                    {item}
+                                                    {item.replace(/<\/?(strong|b)>/gi, '**').replace(/<\/?(em|i)>/gi, '*')}
                                                 </ReactMarkdown>
                                             </li>
                                         ))}
