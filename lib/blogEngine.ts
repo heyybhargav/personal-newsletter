@@ -70,7 +70,7 @@ export async function generateAndPublishBlog() {
 // Prompt Chain Implementations
 // ============================================================================
 
-async function runEditorPhase(kb: any) {
+export async function runEditorPhase(kb: any) {
     const prompt = `
 You are the Managing Editor for Signal Daily. Your job is to decide what blog post we publish next.
 
@@ -109,7 +109,7 @@ OUTPUT FORMAT (Respond ONLY with valid JSON):
     return JSON.parse(response.text || '{}');
 }
 
-async function runWriterPhase(plan: any, kb: any) {
+export async function runWriterPhase(plan: any, kb: any) {
     const prompt = `
 You are the Lead Writer for Signal Daily. 
 You are writing a blog post based strictly on the Editor's plan. 
@@ -151,7 +151,7 @@ Write the full blog post text.
     return response.text || '';
 }
 
-async function runReviewerPhase(rawText: string, plan: any, kb: any) {
+export async function runReviewerPhase(rawText: string, plan: any, kb: any) {
     const prompt = `
 You are the Technical SEO Editor for Signal Daily.
 Take the following raw blog post text and format it into our strict JSON schema.
