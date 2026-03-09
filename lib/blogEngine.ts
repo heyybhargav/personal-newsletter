@@ -4,7 +4,7 @@ import { validateGeneratedPost } from './blogValidation';
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-const MODEL = 'gemini-2.5-pro'; // Using Pro for complex reasoning and large context
+const MODEL = 'gemini-3-pro-preview'; // Using Pro for complex reasoning and large context
 
 /**
  * Main entry point for the Blog Generator Worker.
@@ -122,6 +122,12 @@ Keywords: ${plan.targetKeywords.join(', ')}
 Outline:
 ${plan.outline.map((o: string, i: number) => `${i + 1}. ${o}`).join('\n')}
 ---
+
+PRODUCT FACT SHEET (CRITICAL):
+---
+${JSON.stringify(kb.factSheet)}
+---
+You must NEVER invent or hallucinate features that Signal does not have. You must strictly adhere to the boundaries of the Product Fact Sheet.
 
 BRAND VOICE & RULES:
 ---

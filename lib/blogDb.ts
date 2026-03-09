@@ -23,7 +23,8 @@ export const KB_KEYS = {
     PERFORMANCE_LOG: 'blog:kb:performance_log',
     CONTENT_CLUSTERS: 'blog:kb:content_clusters',
     BRAND_VOICE: 'blog:kb:brand_voice_guidelines',
-    INSTRUCTION_PROPOSALS: 'blog:kb:instruction_proposals'
+    INSTRUCTION_PROPOSALS: 'blog:kb:instruction_proposals',
+    PRODUCT_FACT_SHEET: 'blog:kb:product_fact_sheet'
 };
 
 // --- Blog Post Operations ---
@@ -148,14 +149,16 @@ export async function getFullKnowledgeBaseContext() {
         blogIdeas,
         llmInstructions,
         contentClusters,
-        brandVoice
+        brandVoice,
+        factSheet
     ] = await Promise.all([
         getKnowledgeBaseDoc(KB_KEYS.TOPICS_PUBLISHED),
         getKnowledgeBaseDoc(KB_KEYS.SEO_DIRECTIVES),
         getKnowledgeBaseDoc(KB_KEYS.BLOG_IDEAS),
         getKnowledgeBaseDoc(KB_KEYS.LLM_INSTRUCTIONS),
         getKnowledgeBaseDoc(KB_KEYS.CONTENT_CLUSTERS),
-        getKnowledgeBaseDoc(KB_KEYS.BRAND_VOICE)
+        getKnowledgeBaseDoc(KB_KEYS.BRAND_VOICE),
+        getKnowledgeBaseDoc(KB_KEYS.PRODUCT_FACT_SHEET)
     ]);
 
     return {
@@ -164,6 +167,7 @@ export async function getFullKnowledgeBaseContext() {
         blogIdeas: blogIdeas || {},
         llmInstructions: llmInstructions || {},
         contentClusters: contentClusters || {},
-        brandVoice: brandVoice || {}
+        brandVoice: brandVoice || {},
+        factSheet: factSheet || {}
     };
 }
