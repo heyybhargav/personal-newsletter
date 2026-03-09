@@ -185,15 +185,20 @@ export default function InteractiveDemo() {
                     transition={{ duration: 0.6 }}
                     className="space-y-5"
                 >
-                    <span className="inline-block text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#FF5700] uppercase">
-                        Live Demo
-                    </span>
-                    <h2 className="text-4xl sm:text-5xl md:text-6xl font-semibold text-[#1A1A1A] tracking-[-0.03em] leading-none">
-                        See the magic.{' '}
-                        <span className="font-serif italic font-medium text-[#888888]">No sign-up.</span>
+                    <div className="flex items-center justify-center gap-3 mb-6">
+                        <span className="inline-block text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#FF5700] uppercase">
+                            Live Demo
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                        <span className="inline-block text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-gray-400 uppercase">
+                            No Sign-Up
+                        </span>
+                    </div>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#1A1A1A] tracking-[-0.02em] leading-tight mb-5">
+                        Create your custom AI briefing.
                     </h2>
-                    <p className="text-base md:text-lg text-[#777777] font-medium max-w-md mx-auto">
-                        Pick a topic pack below, or paste your own source links.
+                    <p className="text-base md:text-lg text-[#777777] font-medium max-w-lg mx-auto leading-relaxed">
+                        Select an industry intelligence pack below, or paste your own favorite newsletters, podcasts, and blogs.
                     </p>
                 </motion.div>
             </div>
@@ -220,43 +225,41 @@ export default function InteractiveDemo() {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.4, delay: i * 0.1 }}
-                                        className="group relative bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_2px_12px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 text-left cursor-pointer hover:-translate-y-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 overflow-hidden"
+                                        className="group relative bg-white rounded-xl p-5 border border-gray-200 hover:border-[#FF5700]/40 hover:bg-[#FF5700]/5 hover:ring-2 hover:ring-[#FF5700]/15 shadow-sm hover:shadow-md transition-all duration-300 text-left cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed overflow-hidden"
                                     >
-                                        {/* Clean left accent bar */}
-                                        <div className={`absolute left-0 top-4 bottom-4 w-[3px] rounded-full ${pack.dotColor}`} />
-                                        <div className="pl-4">
-                                            <div className="flex items-center justify-between mb-3">
-                                                <span className="font-semibold text-sm text-[#1A1A1A] tracking-tight">{pack.label}</span>
-                                                <ArrowRight className="w-3.5 h-3.5 text-gray-200 group-hover:text-[#FF5700] transition-all duration-300 group-hover:translate-x-0.5" />
+                                        <div>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="font-semibold text-[15px] text-[#1A1A1A] group-hover:text-[#FF5700] transition-colors">{pack.label}</span>
+                                                <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-[#FF5700] transition-all duration-300 group-hover:translate-x-0.5" />
                                             </div>
-                                            <div className="text-xs text-[#888888] font-medium leading-relaxed">{pack.description}</div>
+                                            <div className="text-[13px] text-gray-600 font-medium leading-relaxed">{pack.description}</div>
                                         </div>
                                     </motion.button>
                                 ))}
                             </div>
 
                             {/* Divider */}
-                            <div className="flex items-center gap-4 mb-10">
-                                <div className="flex-1 h-px bg-gray-100" />
-                                <span className="text-[10px] font-bold tracking-[0.2em] text-[#BBBBBB] uppercase">or paste your own</span>
-                                <div className="flex-1 h-px bg-gray-100" />
+                            <div className="flex items-center justify-center gap-4 mb-10 max-w-sm mx-auto">
+                                <div className="flex-1 h-px bg-gray-300" />
+                                <span className="text-[11px] font-bold tracking-[0.2em] text-gray-400 uppercase">Or Paste Your Own</span>
+                                <div className="flex-1 h-px bg-gray-300" />
                             </div>
 
                             {/* Manual URL Input */}
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)] p-6 md:p-8 space-y-3">
+                            <div className="bg-white rounded-2xl border border-gray-200 shadow-[0_4px_20px_rgb(0,0,0,0.06)] p-5 md:p-6 space-y-3 relative z-10 w-full max-w-2xl mx-auto">
                                 {urls.map((url, index) => (
                                     <div key={index} className="flex items-center gap-2">
                                         <input
                                             type="url"
                                             value={url}
                                             onChange={(e) => updateUrl(index, e.target.value)}
-                                            placeholder={index === 0 ? 'Paste a Substack, YouTube channel, or blog link...' : 'Add another source URL...'}
-                                            className="flex-1 px-4 py-3.5 rounded-xl bg-[#FDFBF7] border border-gray-100 text-base md:text-sm font-[family-name:var(--font-newsreader)] text-[#1A1A1A] placeholder:text-[#CCCCCC] focus:outline-none focus:border-gray-300 transition-colors"
+                                            placeholder={index === 0 ? 'Paste a Substack newsletter, YouTube video, or blog URL...' : 'Add another source URL...'}
+                                            className="flex-1 px-4 py-3.5 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium text-[#1A1A1A] placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FF5700]/20 focus:bg-white focus:border-[#FF5700]/50 transition-all font-[family-name:var(--font-inter)]"
                                         />
                                         {urls.length > 1 && (
                                             <button
                                                 onClick={() => removeUrlField(index)}
-                                                className="p-2 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors cursor-pointer"
+                                                className="p-2.5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                                             >
                                                 <X className="w-4 h-4" />
                                             </button>
@@ -268,19 +271,19 @@ export default function InteractiveDemo() {
                                     {urls.length < 3 && (
                                         <button
                                             onClick={addUrlField}
-                                            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AAAAAA] hover:text-[#1A1A1A] transition-colors cursor-pointer"
+                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#1A1A1A] transition-colors cursor-pointer"
                                         >
-                                            <Plus className="w-3.5 h-3.5" />
+                                            <Plus className="w-4 h-4" />
                                             Add URL ({urls.length}/3)
                                         </button>
                                     )}
                                     <button
                                         onClick={() => synthesize(urls)}
                                         disabled={!hasInput || (state === 'error' && remainingUses === 0)}
-                                        className="group/btn relative inline-flex items-center gap-2 px-6 py-3.5 text-sm font-medium text-white bg-[#1A1A1A] hover:bg-[#2A2A2A] rounded-full transition-all duration-300 ml-auto cursor-pointer disabled:opacity-20 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
+                                        className="group/btn relative inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-[#1A1A1A] hover:bg-[#FF5700] rounded-full transition-all duration-300 ml-auto cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:shadow-none disabled:transform-none transform hover:-translate-y-0.5 shadow-md hover:shadow-lg disabled:cursor-not-allowed"
                                     >
                                         <span className="relative z-10">Generate Briefing</span>
-                                        <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 opacity-60 relative z-10" />
+                                        <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 opacity-80 relative z-10" />
                                     </button>
                                 </div>
                             </div>

@@ -3,6 +3,7 @@
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Hero from '@/components/landing/Hero';
+import WhatIsSignal from '@/components/landing/WhatIsSignal';
 import Manifesto from '@/components/landing/Manifesto';
 import Features from '@/components/landing/Features';
 import HowItWorks from '@/components/landing/HowItWorks';
@@ -22,6 +23,7 @@ export default function LoginClient() {
             <PublicNav onLogin={triggerLogin} />
 
             <Hero />
+            <WhatIsSignal />
             <InteractiveDemo />
             <HowItWorks />
             <Features />
