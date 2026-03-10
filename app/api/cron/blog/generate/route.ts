@@ -4,11 +4,10 @@ import { Receiver, Client } from '@upstash/qstash';
 import { getFullKnowledgeBaseContext, isSlugTaken, saveBlogPost } from '@/lib/blogDb';
 import { runEditorPhase, runWriterPhase, runReviewerPhase } from '@/lib/blogEngine';
 import { validateGeneratedPost } from '@/lib/blogValidation';
+import { logUsageEvent, logErrorEvent, calculateCost } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
-// 🔴 VERCEL CONFIG OVERRIDE: 
-// Gemini 3.1 Pro is extremely slow to load the KB context during the EDITOR phase (>60s).
-// We request the absolute maximum Vercel execution time (up to 300s/5mins depending on tier).
+// Gemini 3.1 Pro is slow to load KB context.
 export const maxDuration = 300;
 
 const receiver = new Receiver({
@@ -45,17 +44,14 @@ export async function POST(request: Request) {
 
         const step = body.step || 'editor';
         const context = body.context || {};
+        const attempt = body.attempt || 1;
+        const lastErrors = body.lastErrors || [];
 
-        console.log(`\n========= [Blog Worker] STEP EXECUTING: ${step.toUpperCase()} =========`);
-        console.log(`[Blog Worker] Has Context: ${Object.keys(context).join(', ') || 'None'}`);
+        console.log(`\n========= [Blog Worker] STEP EXECUTING: ${step.toUpperCase()} (Attempt: ${attempt}) =========`);
 
-        // Recover the webhook URL to pass execution forward.
-        // 🔴 SECURITY FIX: Hardcode production URL to avoid Vercel edge header parsing issues
         const workerUrl = process.env.NODE_ENV === 'development'
             ? `http://${request.headers.get('host')}/api/cron/blog/generate`
             : `https://www.signaldaily.me/api/cron/blog/generate`;
-
-        console.log(`[Blog Worker] Step: ${step} starting...`);
 
         if (step === 'editor') {
             after(async () => {
@@ -70,12 +66,18 @@ export async function POST(request: Request) {
 
                     await qstash.publishJSON({
                         url: workerUrl,
-                        body: { step: 'writer', context: { editorPlan } },
+                        body: { step: 'writer', context: { editorPlan }, attempt: 1 },
                         retries: 3,
                     });
                     console.log(`[Blog Worker Background] Editor completed. Queued Writer for ${editorPlan.slug}`);
-                } catch (err) {
+                } catch (err: any) {
                     console.error('[Blog Worker Background] Editor failed:', err);
+                    await logErrorEvent({
+                        email: 'SYSTEM',
+                        stage: 'blog_editor',
+                        message: err.message || String(err),
+                        timestamp: new Date().toISOString()
+                    });
                 }
             });
             return NextResponse.json({ success: true, action: 'queued_editor_bg' });
@@ -85,16 +87,22 @@ export async function POST(request: Request) {
             after(async () => {
                 try {
                     const kb = await getFullKnowledgeBaseContext();
-                    const rawContent = await runWriterPhase(context.editorPlan, kb);
+                    const rawContent = await runWriterPhase(context.editorPlan, kb, lastErrors);
 
                     await qstash.publishJSON({
                         url: workerUrl,
-                        body: { step: 'reviewer', context: { editorPlan: context.editorPlan, rawContent } },
+                        body: { step: 'reviewer', context: { editorPlan: context.editorPlan, rawContent }, attempt },
                         retries: 3,
                     });
                     console.log(`[Blog Worker Background] Writer completed. Queued Reviewer for ${context.editorPlan.slug}`);
-                } catch (err) {
+                } catch (err: any) {
                     console.error('[Blog Worker Background] Writer failed:', err);
+                    await logErrorEvent({
+                        email: 'SYSTEM',
+                        stage: 'blog_writer',
+                        message: err.message || String(err),
+                        timestamp: new Date().toISOString()
+                    });
                 }
             });
             return NextResponse.json({ success: true, action: 'queued_writer_bg' });
@@ -112,29 +120,71 @@ export async function POST(request: Request) {
                     };
 
                     const validation = validateGeneratedPost(finalPost);
+
                     if (!validation.isValid) {
-                        console.error(`[Blog Worker Background] Quality Gate Failed: ${validation.errors.join(', ')}`);
+                        console.error(`[Blog Worker Background] Quality Gate Failed (Attempt ${attempt}): ${validation.errors.join(', ')}`);
+
+                        // Log the failure
+                        await logErrorEvent({
+                            email: 'SYSTEM',
+                            stage: `blog_validation_v${attempt}`,
+                            message: `Quality Gate Fail: ${validation.errors.join(' | ')}`,
+                            timestamp: new Date().toISOString()
+                        });
+
+                        if (attempt < 3) {
+                            console.log(`[Blog Worker Background] Retrying Writer phase with error feedback...`);
+                            await qstash.publishJSON({
+                                url: workerUrl,
+                                body: {
+                                    step: 'writer',
+                                    context: { editorPlan: context.editorPlan },
+                                    attempt: attempt + 1,
+                                    lastErrors: validation.errors
+                                },
+                                retries: 3,
+                            });
+                        } else {
+                            console.error(`[Blog Worker Background] Max retries reached for ${context.editorPlan.slug}. Aborting.`);
+                        }
                         return;
                     }
 
-                    console.log(`[Blog Worker Background] Reviewer completed! Post valid. Saving to Redis for slug: ${finalPost.slug}...`);
+                    console.log(`[Blog Worker Background] Reviewer completed! Post valid. Saving...`);
                     await saveBlogPost(finalPost);
 
-                    if (finalPost.slug) {
-                        console.log(`[Blog Worker Background] Triggering On-Demand ISR for /blog and /blog/${finalPost.slug}`);
-                        revalidatePath('/blog');
-                        revalidatePath(`/blog/${finalPost.slug}`);
+                    // --- Final Telemetry & On-Demand ISR ---
+                    const tu = finalPostJSON.tokenUsage;
+                    if (tu) {
+                        await logUsageEvent({
+                            email: 'SYSTEM',
+                            provider: tu.provider,
+                            model: tu.model,
+                            inputTokens: tu.input,
+                            outputTokens: tu.output,
+                            cost: calculateCost(tu.provider, tu.input, tu.output),
+                            timestamp: new Date().toISOString()
+                        });
                     }
 
+                    revalidatePath('/blog');
+                    if (finalPost.slug) revalidatePath(`/blog/${finalPost.slug}`);
+
                     console.log(`[Blog Worker Background] Reviewer completed! Published: ${finalPost.slug}`);
-                } catch (err) {
+                } catch (err: any) {
                     console.error('[Blog Worker Background] Reviewer failed:', err);
+                    await logErrorEvent({
+                        email: 'SYSTEM',
+                        stage: 'blog_reviewer',
+                        message: err.message || String(err),
+                        timestamp: new Date().toISOString()
+                    });
                 }
             });
             return NextResponse.json({ success: true, action: 'queued_reviewer_bg' });
         }
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('[Blog Worker] Fatal Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }

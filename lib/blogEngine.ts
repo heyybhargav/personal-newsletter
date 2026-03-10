@@ -128,10 +128,25 @@ OUTPUT FORMAT (Respond ONLY with valid JSON):
     }
 }
 
-export async function runWriterPhase(plan: any, kb: any) {
+export async function runWriterPhase(plan: any, kb: any, lastErrors?: string[]) {
+    let selfCorrectionPrompt = '';
+    if (lastErrors && lastErrors.length > 0) {
+        selfCorrectionPrompt = `
+REDEMPTION / SELF-CORRECTION (CRITICAL):
+Your previous draft was REJECTED because it failed the Quality Gate with the following errors:
+${lastErrors.map(e => `- ${e}`).join('\n')}
+
+INSTRUCTION: You MUST rewrite the post specifically to address and fix these errors while maintaining the brand voice.
+`;
+    }
+
     const prompt = `
-You are the Lead Writer for Signal Daily. 
-You are writing a blog post based strictly on the Editor's plan. 
+You are the Lead Narrative Writer for Signal Daily.
+${selfCorrectionPrompt}
+OUTLINE FOR THE POST:
+---
+Post Title: ${plan.title}
+Post Subtitle: ${plan.subtitle} 
 
 EDITOR'S PLAN:
 ---
@@ -162,7 +177,6 @@ Write the full blog post text.
 - Do not output JSON. Output pure Markdown text.
 `;
 
-    console.time('[Blog Engine] Writer Phase LLM Time');
     console.time('[Blog Engine] Writer Phase LLM Time');
     const responseStream = await ai.models.generateContentStream({
         model: MODEL,
@@ -224,7 +238,6 @@ OUTPUT FORMAT:
 }
 `;
 
-    console.time('[Blog Engine] Reviewer Phase LLM Time');
     console.time('[Blog Engine] Reviewer Phase LLM Time');
     const responseStream = await ai.models.generateContentStream({
         model: MODEL,

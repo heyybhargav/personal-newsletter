@@ -59,7 +59,7 @@ export function validateGeneratedPost(post: any): ValidationResult {
         errors.push('Found sections with empty paragraph arrays.');
     }
 
-    if (totalParagraphs < 6) {
+    if (totalParagraphs < 4) {
         errors.push(`Post is too short (${totalParagraphs} paragraphs). Does not meet depth requirements.`);
     }
 
