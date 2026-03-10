@@ -206,25 +206,28 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 ### STRUCTURE
 **THE LEAD ANALYSIS** (Extended Narrative)
 - Pick the most profound technical discovery. Build a deep-dive analysis (3-5 paragraphs).
+- **MANDATORY FORMATTING**: Use **bolding** for all technical entities, data points, and key concepts.
+- **MANDATORY LINKS**: You MUST include at least **two** inline hyperlinked source [claims](LINK) naturally within the lead narrative.
 - Explain the context, the secret, and the future fallout.
-- Hyperlink technical claims directly to source URLs inline [claim](LINK).
-- **MUTUAL EXCLUSIVITY**: The source used for the Lead Analysis MUST NOT be repeated in the Signal section.
+- **MUTUAL EXCLUSIVITY**: The source used for the Lead Analysis MUST NOT be repeated in the Signal section. Repeat items are considered a failure.
 
 **THE SIGNAL** (Standalone Technical Blocks)
 - For every other high-signal item, provide a **dense paragraph (3-5 sentences)**.
 - Format: **Bold the key technical entity** → then the multi-sentence explanation.
 - **CRITICAL**: Every block MUST contain an inline hyperlinked source [text](LINK) woven naturally into the analysis.
-- **NO REPETITION**: If an item was featured in the Lead Analysis, skip it here.
+- **ZERO REDUNDANCY**: If an item was featured in the Lead Analysis, you are strictly forbidden from mentioning it here. Every block here must cover *different* items from the input data.
 - Every block must contain specific data points, names, or non-obvious secrets.
 
 **WATCH THIS** (Optional — YouTube only)
 - Pick the single best video from the input.
-- Render as this EXACT HTML card:
-  <div style="margin-top:15px; margin-bottom: 25px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
-     <a href="LINK_URL" style="text-decoration:none; color: inherit;">
+- Render as this EXACT premium HTML card:
+  <div style="margin-top:20px; margin-bottom: 30px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
+     <a href="LINK_URL" style="text-decoration:none; color: inherit; display: block;">
         <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
-        <div style="padding: 12px; background: #f9f9f9;">
-           <p style="margin:0; font-size:14px; font-weight:600; color:#333;">▶️ [5-word insight extraction]</p>
+        <div style="padding: 16px; background: #ffffff;">
+           <div style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; font-weight: 700; color: #666; margin-bottom: 8px;">Technical Insight</div>
+           <p style="margin:0; font-size:16px; font-weight:600; color:#111; line-height: 1.4;">[5-word professional technical synthesis]</p>
+           <div style="margin-top: 12px; display: inline-block; padding: 6px 12px; background: #000000; color: #ffffff; border-radius: 4px; font-size: 12px; font-weight: 600;">Watch Analysis</div>
         </div>
      </a>
   </div>
@@ -236,7 +239,10 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 ### CRITICAL CONSTRAINTS
 - **NO EM DASHES.** 
 - **NO HALLUCIDATIONS.**
+- **STRICT SECTION EXCLUSIVITY**: Do not repeat Lead content in Signal blocks.
 - **DEPTH IS THE CONSTRAINT.** Do not cut for time.
+- **NO MARKDOWN IN SUBJECT/PREHEADER.**
+- **NO EMOJIS IN BODY TEXT (Lead & Signal).** Only permitted in the Watch This card icon area if specified.
 
 ### INPUT DATA
 ${itemsText}
