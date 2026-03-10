@@ -100,7 +100,8 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
             }
             // 2. Standard media:thumbnail
             else if (rssItem['media:thumbnail']) {
-                thumbnail = rssItem['media:thumbnail'].$?.url || rssItem['media:thumbnail'].url || '';
+                const mediaThumb = rssItem['media:thumbnail'];
+                thumbnail = mediaThumb?.$?.url || mediaThumb?.url || (typeof mediaThumb === 'string' ? mediaThumb : '');
             }
             // 3. Enclosure if image
             else if (item.enclosure && item.enclosure.url && item.enclosure.type?.startsWith('image')) {

@@ -156,7 +156,8 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string
    SOURCE: ${item.source}
    PUBLISHED_DATE: ${formattedDate} (${daysAgo} days ago)
     DAYS_AGO: ${daysAgo}
-    LINK: ${item.link}${imageContext}
+    LINK: ${item.link}
+    THUMBNAIL_URL: ${item.thumbnail || ''}
     RAW_TECHNICAL_DATA: ${technicalData || 'No data provided'}`;
         }).join('\n\n');
 
@@ -207,15 +208,27 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 - Pick the most profound technical discovery. Build a deep-dive analysis (3-5 paragraphs).
 - Explain the context, the secret, and the future fallout.
 - Hyperlink technical claims directly to source URLs inline [claim](LINK).
+- **MUTUAL EXCLUSIVITY**: The source used for the Lead Analysis MUST NOT be repeated in the Signal section.
 
 **THE SIGNAL** (Standalone Technical Blocks)
 - For every other high-signal item, provide a **dense paragraph (3-5 sentences)**.
 - Format: **Bold the key technical entity** → then the multi-sentence explanation.
 - **CRITICAL**: Every block MUST contain an inline hyperlinked source [text](LINK) woven naturally into the analysis.
+- **NO REPETITION**: If an item was featured in the Lead Analysis, skip it here.
 - Every block must contain specific data points, names, or non-obvious secrets.
 
 **WATCH THIS** (Optional — YouTube only)
-- Render as HTML highlighted card ONLY for the best video. Caption MUST be a 5-word technical synthesis.
+- Pick the single best video from the input.
+- Render as this EXACT HTML card:
+  <div style="margin-top:15px; margin-bottom: 25px; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
+     <a href="LINK_URL" style="text-decoration:none; color: inherit;">
+        <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
+        <div style="padding: 12px; background: #f9f9f9;">
+           <p style="margin:0; font-size:14px; font-weight:600; color:#333;">▶️ [5-word insight extraction]</p>
+        </div>
+     </a>
+  </div>
+- *If no videos exist, skip this section entirely.*
 
 **NO FILLER**
 - End with the final technical insight. No motivational conclusions or fluff.
