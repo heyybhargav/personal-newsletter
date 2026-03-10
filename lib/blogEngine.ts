@@ -4,9 +4,7 @@ import { validateGeneratedPost } from './blogValidation';
 
 // Initialize Google GenAI Client
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-const MODEL_EDITOR = 'gemini-3-pro-preview'; // Reasoning tier for strategic outlining
-const MODEL_WRITER = 'gemini-3-flash-preview'; // Fast tier for drafting 
-const MODEL_REVIEWER = 'gemini-3-flash-preview'; // Fast tier for JSON formatting
+const MODEL = 'gemini-3.1-pro-preview'; // Using Pro for complex reasoning and large context
 
 /**
  * Main entry point for the Blog Generator Worker.
