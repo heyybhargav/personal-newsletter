@@ -59,11 +59,18 @@ export function validateGeneratedPost(post: any): ValidationResult {
         errors.push('Found sections with empty paragraph arrays.');
     }
 
-    if (totalParagraphs < 4) {
-        errors.push(`Post is too short (${totalParagraphs} paragraphs). Does not meet depth requirements.`);
+    if (totalParagraphs < 6) {
+        errors.push(`Post is too short (${totalParagraphs} paragraphs). Minimum 6 required for SEO depth.`);
     }
 
-    // 4. Banned keyword check (Safety net for Writer phase failure)
+    // 4. Complexity & Variety checks
+    const paraLengths = post.content.flatMap((s: any) => s.paragraphs?.map((p: string) => p.length) || []);
+    const uniqueLengths = new Set(paraLengths.map((l: number) => Math.floor(l / 50))).size; // Group by 50-char buckets
+    if (uniqueLengths < 3 && totalParagraphs > 4) {
+        errors.push('Post lacks structural variety (nearly all paragraphs are identical in length). Feels like AI echo.');
+    }
+
+    // 5. Banned keyword check (Safety net for Writer phase failure)
     const rawText = JSON.stringify(post.content).toLowerCase();
     const bannedWords = ['delve', 'tapestry', 'testament to'];
     for (const word of bannedWords) {

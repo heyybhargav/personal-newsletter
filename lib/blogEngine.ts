@@ -128,20 +128,44 @@ OUTPUT FORMAT (Respond ONLY with valid JSON):
     }
 }
 
+const ARCHETYPES = [
+    {
+        name: "The Skeptical Engineer",
+        voice: "Cynical about hype, focused on implementation details, values efficiency over aesthetics, uses dry wit."
+    },
+    {
+        name: "The Visionary Analyst",
+        voice: "Focused on long-term industry shifts, uses metaphors, professional and authoritative, looks for 'the signal' in the noise."
+    },
+    {
+        name: "The Practical Architect",
+        voice: "Highly structured, emphasizes scalability and trade-offs, uses checklists or 'rules of thumb', very no-nonsense."
+    },
+    {
+        name: "The Digital Minimalist",
+        voice: "Elegant but sparse prose, hates bloat, focuses on the essential value proposition, calm and objective."
+    }
+];
+
 export async function runWriterPhase(plan: any, kb: any, lastErrors?: string[]) {
+    const archetype = ARCHETYPES[Math.floor(Math.random() * ARCHETYPES.length)];
+
     let selfCorrectionPrompt = '';
     if (lastErrors && lastErrors.length > 0) {
         selfCorrectionPrompt = `
-REDEMPTION / SELF-CORRECTION (CRITICAL):
-Your previous draft was REJECTED because it failed the Quality Gate with the following errors:
+REDEMPTION / SELF-CORRECTION (URGENT):
+Your previous draft was REJECTED by the Quality Gate for:
 ${lastErrors.map(e => `- ${e}`).join('\n')}
 
-INSTRUCTION: You MUST rewrite the post specifically to address and fix these errors while maintaining the brand voice.
+INSTRUCTION: You MUST rewrite the post to fix these. 
+CRITICAL: Do NOT simplify or shorten the post to fix these errors. Instead, EXPAND the post with more technical depth, real-world analogies, and granular detail. "Better" means more substance, not just less friction.
 `;
     }
 
     const prompt = `
-You are the Lead Narrative Writer for Signal Daily.
+You are writing as ${archetype.name}. 
+VOICE GUIDELINES: ${archetype.voice}
+
 ${selfCorrectionPrompt}
 OUTLINE FOR THE POST:
 ---
@@ -161,7 +185,7 @@ PRODUCT FACT SHEET (CRITICAL):
 ---
 ${JSON.stringify(kb.factSheet)}
 ---
-You must NEVER invent or hallucinate features that Signal does not have. You must strictly adhere to the boundaries of the Product Fact Sheet.
+Strictly adhere to the boundaries of the Product Fact Sheet.
 
 BRAND VOICE & RULES:
 ---
@@ -171,16 +195,18 @@ ${JSON.stringify(kb.brandVoice)}
 INSTRUCTIONS:
 Write the full blog post text. 
 - Follow the outline exactly.
-- Use explicit headings for each section (e.g., "## The problem with X").
-- Be punchy, cynical about noise, and highly professional. DO NOT exceed 4 sentences per paragraph.
+- Use explicit headings for each section.
+- Be punchy and professional. DO NOT exceed 4 sentences per paragraph.
 - NEVER use the words: delve, tapestry, landscape, testament, realm.
-- Do not output JSON. Output pure Markdown text.
+- Output pure Markdown text.
 `;
 
+    console.log(`[Blog Engine] Writer executing as '${archetype.name}' with temp 0.9`);
     console.time('[Blog Engine] Writer Phase LLM Time');
     const responseStream = await ai.models.generateContentStream({
         model: MODEL,
-        contents: prompt
+        contents: prompt,
+        config: { temperature: 0.9 }
     });
 
     let fullText = '';
