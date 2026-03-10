@@ -349,7 +349,7 @@ const MODEL_REGISTRY_KEY = 'config:models';
 const DEFAULT_MODELS: ModelConfig[] = [
     { id: 'groq', name: 'Llama 3.3 70B (Groq)', provider: 'groq', modelId: 'llama-3.3-70b-versatile', enabled: true, costInput: 0.59, costOutput: 0.79 },
     { id: 'gemini', name: 'Gemini 3 Flash Preview', provider: 'gemini', modelId: 'gemini-3-flash-preview', enabled: true, costInput: 0.50, costOutput: 3.00 },
-    { id: 'gemini-pro', name: 'Gemini 3 Pro Preview', provider: 'gemini', modelId: 'gemini-3-pro-preview', enabled: true, costInput: 2.00, costOutput: 12.00 },
+    { id: 'gemini-pro', name: 'Gemini 3.1 Pro Preview', provider: 'gemini', modelId: 'gemini-3.1-pro-preview', enabled: true, costInput: 2.00, costOutput: 12.00 },
 ];
 
 export async function getModelRegistry(): Promise<ModelConfig[]> {

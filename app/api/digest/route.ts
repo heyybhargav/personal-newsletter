@@ -79,7 +79,8 @@ export async function POST(request: Request) {
         // Resolve user for name personalization
         const currentUser = await getUser(email);
         const firstName = currentUser?.name?.split(' ')[0];
-        const briefing = await generateUnifiedBriefing(content, undefined, firstName);
+        const providerPref = currentUser?.preferences?.llmProvider || 'gemini-pro';
+        const briefing = await generateUnifiedBriefing(content, providerPref, firstName);
 
         console.log(`[Digest API] Briefing generated. Preheader: "${briefing.preheader?.substring(0, 50)}...". Sending to ${email}`);
 
@@ -140,7 +141,8 @@ export async function GET() {
         // Resolve user for name personalization
         const previewUser = session?.email ? await getUser(session.email) : null;
         const previewFirstName = previewUser?.name?.split(' ')[0];
-        const briefing = await generateUnifiedBriefing(content, undefined, previewFirstName);
+        const providerPref = previewUser?.preferences?.llmProvider || 'gemini-pro';
+        const briefing = await generateUnifiedBriefing(content, providerPref, previewFirstName);
 
         // Return in a format the frontend can render
         return NextResponse.json({

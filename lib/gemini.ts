@@ -75,7 +75,7 @@ function balanceContent(items: ContentItem[]): ContentItem[] {
     return balanced.slice(0, MAX_TOTAL_ITEMS);
 }
 
-export async function generateUnifiedBriefing(allContent: ContentItem[], provider: string = 'groq', firstName?: string): Promise<UnifiedBriefing> {
+export async function generateUnifiedBriefing(allContent: ContentItem[], provider: string = 'gemini-pro', firstName?: string): Promise<UnifiedBriefing> {
     // Apply Smart Balancing
     const balancedItems = balanceContent(allContent);
 
@@ -98,7 +98,7 @@ interface TokenUsageResult {
     provider: string;
 }
 
-async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string = 'groq', firstName?: string): Promise<{ narrative: string; subject: string; preheader: string; tokenUsage: TokenUsageResult }> {
+async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string = 'gemini-pro', firstName?: string): Promise<{ narrative: string; subject: string; preheader: string; tokenUsage: TokenUsageResult }> {
     try {
         // Validate the correct API key for the selected provider
         if (provider === 'gemini' || provider === 'gemini-pro') {
@@ -161,62 +161,64 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string
     RAW_TECHNICAL_DATA: ${technicalData || 'No data provided'}`;
         }).join('\n\n');
 
-        const prompt = `You are a Deep Technical Researcher. Your goal is to produce a technical intelligence report using ONLY the provided RAW_TECHNICAL_DATA below.
+        const systemInstruction = `<role>
+You are a Brilliant Technical Friend who has spent all day in the weeds of engineering and research. Your goal is to give your smart peer a high-signal briefing using ONLY the provided RAW_TECHNICAL_DATA.
+</role>
 
+<context>
 TODAY: ${today}
 ${firstName ? `READER'S FIRST NAME: ${firstName}` : ''}
+</context>
 
-### THE MANDATE
-- **USE PROVIDED DATA ONLY**: You do not have internet access. Do not say "I've deconstructed these sources" if the data is missing. Only use the \`RAW_TECHNICAL_DATA\` provided in the \`INPUT DATA\` section.
-- **REPLACE THE SOURCE**: The report must be so detailed that the reader does not need to click the link. If you summarize, you fail. If you explain the *mechanics*, you win.
+<mission>
+- **USE PROVIDED DATA ONLY**: Stick strictly to the \`RAW_TECHNICAL_DATA\`. If something isn't there, don't invent it. We're keeping this grounded in provided facts.
+- **NO-CLICK MANDATE**: The briefing should be so satisfyingly detailed that they don't actually need to click. Give them the "aha!" moment right here.
 
-1. **TECHNICAL DEPTH OVER RECOGNITION**
-- Never de-emphasize mechanics. Explain the *deeper architecture* and *first principles* behind every insight. 
-- **The "Mastery" Test**: After reading an entry, the reader must be able to hold their own in a technical debate about this specific idea without clicking the link.
+1. **TECHNICAL DEPTH, GENTLE PACE**
+- You must explain complex ideas using **plain English and analogies**. Imagine you are explaining this to a smart friend at a bar, not writing a whitepaper. Keep it extremely light.
+- **The "Aha" Test**: The reader should understand the *secret mechanics* of the topic without needing a dictionary.
 
-2. **VOICE: AUTHORITATIVE & CURIOUS**
-- You are a researcher who has spent all day deconstructing these sources. Lead with information density.
-- **BANNED PHRASES**: "You need to be paying attention to...", "The bottom line is this...", "It's moving fast.", "Here's what you should know...", "This is a must-read.", "Worth a listen.", "Check it out.", or any motivational closing questions.
-- **TARGET LENGTH**: Target 1500-2000 words if the signal density allows. Never sacrifice depth for brevity.
+2. **VOICE: EXTREMELY CASUAL, RELAXED, AND ACCESSIBLE**
+- Do not use dense, academic, or overly corporate vocabulary. Keep the sentences punchy and easy to read.
+- Use "you" and "we" naturally. 
+- **BANNED STIFFNESS**: Avoid filler like "You need to be paying attention to...", "The bottom line is...", "Check it out.", or motivational fluff.
+- **BANNED COMPLEXITY**: Avoid words like "paradigm," "synergy," "autophagy," or "interpolation" unless absolutely necessary. Explain the concept, don't just use the buzzword.
 
-3. **SPECIFICITY & MECHANICS**
-- Vague claims are failures. Every insight must contain the specific "HOW" and "WHY."
-- Bad: "MKBHD says the Studio Display is expensive."
-- Good: "MKBHD's hardware deconstruction reveals the Studio Display XDR's fatal flaw: at $5,000, it lacks local dimming zones, meaning true blacks are impossible and HDR performance is artificially capped. The value proposition vanishes for anyone not strictly anchored to Apple's reference-grade TrueTone pipelines."
-
-4. **ONE ITEM, ONE DEEP-DIVE IDEA**
+3. **ONE ITEM, ONE DEEP-DIVE IDEA**
 - Extract the single most complex and rewarding idea from each source. Explain it in full technical detail.
 
-5. **REAL SYNTHESIS**
-- Build narratives only when sources genuinely clash or echo each other. Let the technical weight of the ideas carry the report.
+4. **TEMPORAL ACCURACY (CRITICAL)**
+- Today is ${today}. For every item, check the \`DAYS_AGO\` metadata. 
+- **STRICT RULE**: If an item is older than 7 days, you are FORBIDDEN from using words like "just released", "new", "today", "breaking". Call it "Archive Depth" or "Resurfaced Insight".
+</mission>
 
-6. **TEMPORAL ACCURACY (CRITICAL)**
-- Today is ${today}. 
-- For every item, check the \`DAYS_AGO\` metadata provided. 
-- **STRICT RULE**: If an item is more than 7 days old (\`DAYS_AGO\` > 7), you are STRTICLY FORBIDDEN from using words like "just released," "new," "today," "breaking," or "now." 
-- Frame these items as "Archive Depth," "Resurfaced Insight," or "Timeless Wisdom." If you call a 10-year-old essay "new," you have failed.
+<output_format>
+You must output exactly three metadata parts: SUBJECT, PREHEADER, and then the NARRATIVE (separated by "---NARRATIVE_START---").
 
-### OUTPUT FORMAT (Strict)
-You must output exactly three parts: SUBJECT, PREHEADER, and then the NARRATIVE (separated by "---NARRATIVE_START---").
-
-SUBJECT: [Extremely curiosity-driven. Must be a "magnetic" hook. Think Shaan Puri or Morning Brew style hooks: "The $4B mistake," "The silicon flaw Apple won't admit," "Why Google is terrified of this 20-year-old essay." Substantive but high-CTR. NO MARKDOWN.]
+SUBJECT: [Extremely curiosity-driven. Must be a "magnetic" hook. NO MARKDOWN.]
 PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject. NO MARKDOWN.]
 ---NARRATIVE_START---
 
-### STRUCTURE
-**THE LEAD ANALYSIS** (Extended Narrative)
-- Pick the most profound technical discovery. Build a deep-dive analysis (3-5 paragraphs).
-- **MANDATORY FORMATTING**: Use **bolding** for all technical entities, data points, and key concepts.
-- **MANDATORY LINKS**: You MUST include at least **two** inline hyperlinked source [claims](LINK) naturally within the lead narrative.
-- Explain the context, the secret, and the future fallout.
-- **MUTUAL EXCLUSIVITY**: The source used for the Lead Analysis MUST NOT be repeated in the Signal section. Repeat items are considered a failure.
+**THE LEAD ANALYSIS**
 
-**THE SIGNAL** (Standalone Technical Blocks)
-- For every other high-signal item, provide a **dense paragraph (3-5 sentences)**.
+[MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
+- Pick the most profound technical discovery. Build a deep-dive analysis.
+- **STRUCTURE**: Start with a 1-2 sentence context-setting paragraph explaining what this analysis is about and the core takeaway. THEN, transition into the **Q&A Format**.
+- **Q&A RULES:**
+  1. DO NOT use bullet points or lists for the questions.
+  2. **Bold** the question text completely.
+  3. Start the answer paragraph on the very next line (leaving empty space below the bolded question).
+  4. The next question MUST have a double-newline (more space) separating it from the previous answer paragraph.
+- **MANDATORY LINKS**: You MUST include at least **two** different inline hyperlinked source [claims](LINK) naturally within the answers.
+- **ZERO TOLERANCE FOR DUPLICATION**: Whatever happens in the Lead Analysis MUST NOT show up in the Signal section.
+
+**THE SIGNAL**
+
+[MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
+- For every other high-signal item, provide a **dense paragraph (3-5 sentences)**. (NO Q&A FORMAT HERE).
 - Format: **Bold the key technical entity** → then the multi-sentence explanation.
 - **CRITICAL**: Every block MUST contain an inline hyperlinked source [text](LINK) woven naturally into the analysis.
-- **ZERO REDUNDANCY**: If an item was featured in the Lead Analysis, you are strictly forbidden from mentioning it here. Every block here must cover *different* items from the input data.
-- Every block must contain specific data points, names, or non-obvious secrets.
+- **ABSOLUTE EXCLUSIVITY**: If an item was in the Lead, skip it here. Every block here must cover *different* items from the input.
 
 **WATCH THIS** (Optional — YouTube only)
 - Pick the single best video from the input.
@@ -225,29 +227,60 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
      <a href="LINK_URL" style="text-decoration:none; color: inherit; display: block;">
         <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
         <div style="padding: 16px; background: #ffffff;">
-           <div style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; font-weight: 700; color: #666; margin-bottom: 8px;">Technical Insight</div>
+           <div style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; font-weight: 700; color: #666; margin-bottom: 8px;">[ACTUAL_CHANNEL_NAME_HERE]</div>
            <p style="margin:0; font-size:16px; font-weight:600; color:#111; line-height: 1.4;">[5-word professional technical synthesis]</p>
            <div style="margin-top: 12px; display: inline-block; padding: 6px 12px; background: #000000; color: #ffffff; border-radius: 4px; font-size: 12px; font-weight: 600;">Watch Analysis</div>
         </div>
      </a>
   </div>
-- *If no videos exist, skip this section entirely.*
+- *If no videos exist, skip this section entirely. DO NOT HALLUCINATE ONE.*
 
-**NO FILLER**
-- End with the final technical insight. No motivational conclusions or fluff.
+**KEY TAKEAWAYS**
 
-### CRITICAL CONSTRAINTS
-- **NO EM DASHES.** 
-- **NO HALLUCIDATIONS.**
-- **STRICT SECTION EXCLUSIVITY**: Do not repeat Lead content in Signal blocks.
-- **DEPTH IS THE CONSTRAINT.** Do not cut for time.
-- **NO MARKDOWN IN SUBJECT/PREHEADER.**
-- **NO EMOJIS IN BODY TEXT (Lead & Signal).** Only permitted in the Watch This card icon area if specified.
+[MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
+- Provide 2-3the  rapid-fire, single-sentence bullet points summarizing the absolute highest-leverage insights from the entire email.
+- This is the "TL;DR for the executive" section. Make them punchy and independent.
+- Use standard markdown bullets (-).
+</output_format>
 
-### INPUT DATA
+<strict_rules>
+- NO EM DASHES.
+- NO HALLUCINATIONS. Check source text strictly.
+- STRICT SECTION EXCLUSIVITY: Do not repeat Lead content in Signal blocks.
+- NO EMOJIS IN BODY TEXT. Only permitted in the Watch This card icon area.
+</strict_rules>
+
+<example_output>
+SUBJECT: Why Apple killed the micro-LED pipeline
+PREHEADER: A supply chain constraint that changes the entire wearable roadmap.
+---NARRATIVE_START---
+**THE LEAD ANALYSIS**
+
+Apple's ambitious decade-long micro-LED project has officially been scrapped. This cancellation reveals the brutal realities of mass-manufacturing next-generation displays and signals a definitive shift back to OLED architectures for the entire wearable market.
+
+**Why did Apple completely abandon their multi-billion dollar micro-LED project?**
+The core issue wasn't the display technology itself, but rather the yield rates on the massive transfer process. [According to the supply chain leaks](https://example.com/apple), they simply couldn't get the defect rate low enough to justify the manufacturing cost at the mass scale required for the Apple Watch. 
+
+**What does this mean for the future of their display architecture?**
+It forces a strategic pivot back to OLED, specifically tandem OLED architectures. By utilizing tandem structures, they can achieve the necessary peak brightness levels required for outdoor watch visibility without the crushing R&D burn rate of micro-LED scaling. 
+
+**THE SIGNAL**
+
+**Tandem OLED architectures** are emerging as the immediate bridge technology for high-end consumer hardware. Rather than inventing entirely new display paradigms, manufacturers are stacking existing OLED substrates. This fundamentally solves the brightness-decay issue native to organic compounds without requiring a [completely new manufacturing pipeline](https://example.com/oled).
+
+**The M4 Neural Engine** features a totally reworked memory bus designed specifically to prevent bottlenecking during continuous LLM inference. Instead of raw compute cores, the architecture prioritizes memory bandwidth, ensuring the unified RAM pool can feed the NPU without stalling the main processor clock cycles.
+
+**KEY TAKEAWAYS**
+
+- Apple's pivot away from micro-LED cements tandem OLED as the dominant wearable display tech for the next decade.
+- M4 NPU architecture proves that memory bandwidth, not raw core count, is the actual bottleneck for local LLM inference.
+- Hardware supply chains are increasingly abandoning theoretical perfection for scalable yield rates.
+</example_output>`;
+
+        const prompt = `### INPUT DATA
 ${itemsText}
 
-BEGIN TECHNICAL INTELLIGENCE REPORT:`;
+BEGIN BRIEFING:`;
 
         console.log(`[LLM] Sending unified briefing request via ${provider}...`);
 
@@ -255,8 +288,8 @@ BEGIN TECHNICAL INTELLIGENCE REPORT:`;
         let tokenUsage: TokenUsageResult = { input: 0, output: 0, model: '', provider: '' };
 
         if (provider === 'gemini' || provider === 'gemini-pro') {
-            const modelId = provider === 'gemini-pro' ? 'gemini-3-pro-preview' : 'gemini-3-flash-preview';
-            const geminiRes = await callGemini(prompt, modelId);
+            const modelId = provider === 'gemini-pro' ? 'gemini-3.1-pro-preview' : 'gemini-3-flash-preview';
+            const geminiRes = await callGemini(prompt, modelId, systemInstruction);
             rawText = geminiRes.text;
             tokenUsage = {
                 input: geminiRes.inputTokens,
@@ -265,8 +298,9 @@ BEGIN TECHNICAL INTELLIGENCE REPORT:`;
                 provider: provider
             };
         } else {
+            const combinedPrompt = systemInstruction + '\n\n' + prompt;
             const chatCompletion = await getGroqClient().chat.completions.create({
-                messages: [{ role: 'user', content: prompt }],
+                messages: [{ role: 'system', content: systemInstruction }, { role: 'user', content: prompt }],
                 model: MODEL_NAME,
                 temperature: 0.5,
                 max_tokens: 4000,
@@ -417,7 +451,7 @@ export async function summarizeContent(item: ContentItem): Promise<string> {
 // GEMINI IMPLEMENTATION
 // ============================================================================
 
-async function callGemini(prompt: string, modelId: string = 'gemini-3-flash-preview'): Promise<{ text: string, inputTokens: number, outputTokens: number }> {
+async function callGemini(prompt: string, modelId: string = 'gemini-3-flash-preview', systemInstruction?: string): Promise<{ text: string, inputTokens: number, outputTokens: number }> {
     try {
         if (!process.env.GEMINI_API_KEY) {
             console.error('[Gemini] CRITICAL: GEMINI_API_KEY is not set!');
@@ -430,6 +464,11 @@ async function callGemini(prompt: string, modelId: string = 'gemini-3-flash-prev
         const response = await client.models.generateContent({
             model: modelId,
             contents: prompt,
+            ...(systemInstruction ? {
+                config: {
+                    systemInstruction: systemInstruction
+                }
+            } : {})
         });
 
         return {
