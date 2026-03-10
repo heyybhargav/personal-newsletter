@@ -213,7 +213,7 @@ PREHEADER: [One sharp sentence that makes the subject line even more intriguing.
 1. **Kill the fluff.** If a sentence doesn't earn its place, delete it. Every line should make someone smarter or more curious.
 2. **Skip low-signal items entirely.** Better to have 4 great bullets than 10 mediocre ones.
 3. **No hallucinations.** Only reference facts from the provided inputs. If you're not sure, don't include it.
-4. **TEMPORAL ACCURACY.** Always check the \`PUBLISHED_DATE\`. Never describe items from more than 7 days ago as "just released," "today," "new," or "breaking." If an old item is fascinating, frame it as "resurfaced context," "timeless wisdom," or "found in the archives."
+4. **TEMPORAL ACCURACY.** Today is ${today}. Always check the \`PUBLISHED_DATE\` of each item. Never describe items from more than 7 days ago as "just released," "today," "new," or "breaking." If an old item is fascinating, frame it as "resurfaced context," "timeless wisdom," or "found in the archives."
 5. **Smart linking.** Hyperlink the specific claim or noun that the source validates using Markdown [text](URL). Weave links into sentences naturally. Do not output raw URLs as text.
 6. **Images.** Only use the HTML card format above, and only for YouTube videos.
 7. **NO EM DASHES.** You are strictly prohibited from using em dashes (—) or en dashes (–) in the narrative. Use commas, parenthesis, or start a new sentence.
