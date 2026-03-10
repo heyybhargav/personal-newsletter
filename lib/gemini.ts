@@ -49,7 +49,7 @@ export interface UnifiedBriefing {
 
 function balanceContent(items: ContentItem[]): ContentItem[] {
     const MAX_ITEMS_PER_SOURCE = 3;
-    const MAX_TOTAL_ITEMS = 35; // Cap context window
+    const MAX_TOTAL_ITEMS = 50; // Cap context window (increased for richer briefings)
 
     // 1. Group by Source Name
     const bySource: Record<string, ContentItem[]> = {};
@@ -138,9 +138,17 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string
             // Clean description (truncate huge podcast notes to fit context window)
             let cleanDesc = item.description ? item.description.slice(0, 1500).replace(/\n/g, ' ') : 'No description';
 
+            // Format pubDate nicely for AI context
+            const formattedDate = new Date(item.pubDate).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
             return `ITEM #${i + 1} ${typeHint}
    TITLE: "${item.title}"
    SOURCE: ${item.source}
+   PUBLISHED_DATE: ${formattedDate}
    LINK: ${item.link}${imageContext}
    CONTENT: ${cleanDesc}`;
         }).join('\n\n');
@@ -176,8 +184,9 @@ PREHEADER: [One sharp sentence that makes the subject line even more intriguing.
 - End this section with a clear takeaway or "so what?" that connects to the reader's world.
 - **Hyperlink claims** directly to source URLs inline using Markdown (e.g. [claim text](LINK)). Never use "(Read more)" or "(Source)" or raw URLs.
 
-**THE QUICK HITS** (4-6 bullet points)
+**THE QUICK HITS** (4-10 bullet points)
 - The rest of the high-signal items, each in 1-2 punchy sentences max.
+- **Dynamic Scaling**: If there are many high-signal stories, use more bullets (up to 10). If it's a slow news day, use fewer (at least 4).
 - Format: **Bold the key noun or company** → then the insight in plain language.
 - Each bullet must have a hyperlinked source woven into the sentence naturally using Markdown (e.g. [claim text](LINK)).
 - Skip anything boring. If it doesn't make someone say "huh, interesting" — cut it.
@@ -202,12 +211,13 @@ PREHEADER: [One sharp sentence that makes the subject line even more intriguing.
 
 ### CRITICAL RULES
 1. **Kill the fluff.** If a sentence doesn't earn its place, delete it. Every line should make someone smarter or more curious.
-2. **Skip low-signal items entirely.** Better to have 4 great bullets than 8 mediocre ones.
+2. **Skip low-signal items entirely.** Better to have 4 great bullets than 10 mediocre ones.
 3. **No hallucinations.** Only reference facts from the provided inputs. If you're not sure, don't include it.
-4. **Smart linking.** Hyperlink the specific claim or noun that the source validates using Markdown [text](URL). Weave links into sentences naturally. Do not output raw URLs as text.
-5. **Images.** Only use the HTML card format above, and only for YouTube videos.
-6. **NO EM DASHES.** You are strictly prohibited from using em dashes (—) or en dashes (–) in the narrative. Use commas, parenthesis, or start a new sentence.
-${firstName ? `7. **Personalization.** If you choose to use the reader's name (${firstName}), it must be subtle and natural` : ''}
+4. **TEMPORAL ACCURACY.** Always check the `PUBLISHED_DATE`. Never describe items from more than 7 days ago as "just released," "today," "new," or "breaking." If an old item is fascinating, frame it as "resurfaced context," "timeless wisdom," or "found in the archives."
+5. **Smart linking.** Hyperlink the specific claim or noun that the source validates using Markdown [text](URL). Weave links into sentences naturally. Do not output raw URLs as text.
+6. **Images.** Only use the HTML card format above, and only for YouTube videos.
+7. **NO EM DASHES.** You are strictly prohibited from using em dashes (—) or en dashes (–) in the narrative. Use commas, parenthesis, or start a new sentence.
+${firstName ? `8. **Personalization.** If you choose to use the reader's name (${firstName}), it must be subtle and natural` : ''}
 
 ### INPUT DATA
 ${itemsText}
