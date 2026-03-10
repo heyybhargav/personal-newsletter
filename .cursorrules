@@ -61,3 +61,15 @@ Signal utilizes a very specific, premium design language.
 - **Models Constant Strings**: Always explicitly declare the exact model string (e.g., `gemini-3.1-pro-preview`). Do not use aliases.
 - **Environment Variables**: Local development requires `.env.local` synced precisely with Vercel Production. Critical keys include `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, and `KV_REST_API...`. Never log these.
 - **Caching & ISR**: Blog posts are fetched directly from Redis and cached dynamically. When the cron job finishes a heavy LLM generation, it immediately invokes `revalidatePath('/blog')` for On-Demand ISR updates.
+
+---
+
+## 7. AI Prompt Architecture & Deep Linking Limitations
+- **Gemini Formatting Adherence**: Complex prompt instructions (like formatting Q&As, strict paragraph boundaries, and avoiding data repetition) must be rigorously structured.
+  - **Do NOT** rely on raw markdown lists in a monolithic `systemInstruction` block.
+  - **DO** wrap rigid rules in explicit XML tags (`<role>`, `<mission>`, `<strict_rules>`, `<output_format>`).
+  - **DO** provide a literal `<example_output>` showcasing the exact desired formatting (e.g., bolded questions followed immediately by un-bolted answer paragraphs).
+- **Tone Control**: Be highly explicit with negative constraints. To achieve a casual tone, explicitly **BAN** words like "paradigm" and "synergy" and instruct the model to use "plain English and analogies."
+- **iOS Gmail Deep Linking**: Mobile email clients (specifically the iOS Gmail app) aggressively strip custom URI schemes like `youtube://` or `vnd.youtube://` for security reasons. 
+  - The **ONLY** supported method to achieve an out-of-app deep link from an email is a standard Universal Link (e.g., `https://www.youtube.com/...`). 
+  - If a Universal Link opens in the in-app browser instead of the native app, it is a device-level OS routing issue, not a code issue. Do not attempt to fix it with custom URL hacks.
