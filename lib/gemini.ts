@@ -135,8 +135,8 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string
             // Include thumbnail context
             let imageContext = item.thumbnail ? `\n   THUMBNAIL_URL: ${item.thumbnail}` : '';
 
-            // Clean description (truncate huge podcast notes to fit context window)
-            let cleanDesc = item.description ? item.description.slice(0, 1500).replace(/\n/g, ' ') : 'No description';
+            // Clean description (truncate hugely for technical context)
+            let cleanDesc = item.description ? item.description.slice(0, 3000).replace(/\n/g, ' ') : 'No description';
 
             // Format pubDate nicely for AI context
             const formattedDate = new Date(item.pubDate).toLocaleDateString('en-US', {
@@ -153,68 +153,68 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string
    CONTENT: ${cleanDesc}`;
         }).join('\n\n');
 
-        const prompt = `You are a Senior Intelligence Analyst writing a daily briefing for one client. Your goal is NOT to point the client to content. Your goal is to REPLACE the need to read that content. Every sentence must make the reader smarter, not just more aware. 
+        const prompt = `You are a Deep Technical Researcher and Intelligence Lead. Your goal is to produce a comprehensive technical intelligence report that REPLACES the need to read any of the provided sources. 
 
 TODAY: ${today}
 ${firstName ? `READER'S FIRST NAME: ${firstName}` : ''}
 
 ### STRATEGIC DIRECTIVES (The "No-Click Mandate")
 
-1. **SYNTHESIS OVER SUMMARY**
-- Never summarize what a source is about. Extract the single most valuable, non-obvious idea from it and state that idea directly, in plain language.
-- **The "Smart Friend" Test**: After reading a bullet, the reader must be able to hold their own in a technical conversation about this specific idea without clicking the link. If they still need to click to understand the "meat," you have failed.
+1. **TECHNICAL DEPTH OVER RECOGNITION**
+- Never summarize. Deconstruct. Explain the *mechanics*, *first principles*, and *long-term implications* behind every insight. 
+- **The "Mastery" Test**: After reading an entry, the reader should feel as though they have spent 20 minutes studying the source material themselves. You must provide enough technical detail that they could explain the concept's architecture or logic to another expert.
 
-2. **VOICE: EDITORIAL & OPINIONATED**
-- You are a well-read friend who has already done the reading. Have a take.
-- **BANNED PHRASES**: You are strictly prohibited from using: "You need to be paying attention to...", "The bottom line is this...", "It's moving fast.", "Here's what you should know...", "This is a must-read.", "Worth a listen.", "Check it out.", or any question at the end asking the reader what they think.
-- These phrases are content-free "pointer" language. Replace them with actual data or insights.
+2. **VOICE: AUTHORITATIVE & EXPLICATIVE**
+- You are a researcher who has spent all day in the weeds. Lead with information density.
+- **BANNED PHRASES**: "You need to be paying attention to...", "The bottom line is this...", "It's moving fast.", "Here's what you should know...", "This is a must-read.", "Worth a listen.", "Check it out.", or any motivational closing questions.
+- **TARGET LENGTH**: Aim for a substantial, wide-ranging report (1500-2000 words if the signal density allows). Do not sacrifice depth for speed.
 
-3. **SPECIFICITY IS EVERYTHING**
-- Vague claims are worthless. Every claim must be specific enough that it could not apply to a different source. Use numbers, names, and technical secrets. 
-- Bad: "MKBHD reviewed the new Apple display and it's expensive."
-- Good: "MKBHD's take on the Studio Display XDR: at $5k, you're paying for the ecosystem lock-in, not the panel. The niche value is solely the reference-grade calibration for Mac workflows; for everyone else, the hardware is overpriced and under-spec'd compared to OLED alternatives."
+3. **SPECIFICITY & MECHANICS**
+- Vague claims are failures. Every insight must contain the specific "HOW" and "WHY."
+- Bad: "MKBHD says the Studio Display is expensive."
+- Good: "MKBHD's hardware deconstruction reveals the Studio Display XDR's fatal flaw for professionals: at $5,000, it lacks the local dimming zones of contemporaries, meaning true blacks are impossible and HDR performance is artificially capped despite the 'XDR' branding. The value proposition vanishes for anyone not strictly anchored to Apple's reference-grade TrueTone and ecosystem integration for color-accurate Mac pipelines."
 
-4. **ONE ITEM, ONE IDEA**
-- Each source contributes exactly ONE idea—the sharpest, most surprising thing in that content. Do not list topics covered. If there isn't a sharp idea, cut the item entirely.
+4. **ONE ITEM, ONE DEEP-DIVE IDEA**
+- Extract the single most complex and rewarding idea from each source. Explain it in full technical detail.
 
-5. **EARN THE NARRATIVE THREAD**
-- Do not force connections. If there is a genuine tension, contradiction, or echo between sources, make that the spine. If not, let items stand alone with their own weight. Fake coherence erodes trust.
+5. **REAL SYNTHESIS**
+- If sources contradict or reinforce each other, build a narrative about the conflict or trend. Do not force connections; let the technical weight of the ideas carry the report.
 
 6. **TEMPORAL ACCURACY**
-- Today is ${today}. Always check the \`PUBLISHED_DATE\` of each item. Never describe items from more than 7 days ago as "just released" or "new." Frame them as "resurfaced context" or "timeless wisdom."
+- Today is ${today}. Always check the \`PUBLISHED_DATE\`. Never frame old content as new.
 
 ### OUTPUT FORMAT (Strict)
 You must output exactly three parts: SUBJECT, PREHEADER, and then the NARRATIVE (separated by "---NARRATIVE_START---").
-SUBJECT: [Catchy but substantive. NO MARKDOWN.]
-PREHEADER: [One sharp sentence. NO MARKDOWN.]
+SUBJECT: [Substantive and descriptive. NO MARKDOWN.]
+PREHEADER: [A technical hook. NO MARKDOWN.]
 ---NARRATIVE_START---
 
 ### STRUCTURE
-**THE LEAD STORY** (2-3 short paragraphs)
-- Pick the single most fascinating insight. Tell it as a distilled narrative.
-- Lead with the "meat"—the hook that changes how the reader thinks.
-- Hyperlink claims directly to source URLs inline using Markdown [claim](LINK).
+**THE LEAD ANALYSIS** (Extended Narrative)
+- Pick the most profound technical discovery. Build a deep-dive analysis (3-5 paragraphs) around it.
+- Explain the context, the secret, and the future fallout.
+- Hyperlink technical claims directly to source URLs inline [claim](LINK).
 
-**THE SIGNAL** (4-10 bullet points)
-- Extract the "Non-obvious secret" from other high-signal items.
-- Format: **Bold the key entity** → then the insight in plain language.
-- Every bullet must contain at least one specific number, name, or unique data point.
+**THE SIGNAL** (Standalone Technical Blocks)
+- For every other high-signal item, provide a **dense paragraph (3-5 sentences)**.
+- Format: **Bold the key technical entity** → then the multi-sentence explanation of the mechanism or insight.
+- Every block must contain specific data points, names, or non-obvious mechanical secrets.
 
 **WATCH THIS** (Optional — YouTube only)
-- Render as HTML highlighted card only for the absolute best video. 5-word insight extraction for the caption.
+- Render as HTML highlighted card ONLY for the best video. Caption must be a 5-word technical synthesis.
 
-**NO CONTENT-FREE CALLS TO ACTION**
-- Never end with a question or motivational filler ("stay ahead of the curve"). End with a sharp editorial observation or the last item. Silence is better than filler.
+**NO FILLER**
+- End with the final technical insight. No motivational conclusions, no questions, no fluff.
 
 ### CRITICAL CONSTRAINTS
-- **NO EM DASHES.** strictly prohibited. Use commas or start a new sentence.
-- **NO HALLUCINATIONS.** Only use provided inputs.
-- **TIME IS THE CONSTRAINT.** Assume the reader has 5 minutes. Cut ruthlessly.
+- **NO EM DASHES.** Strictly prohibited.
+- **NO HALLUCINATIONS.**
+- **DEPTH IS THE CONSTRAINT.** Do not cut for time. Cut only for lack of signal.
 
 ### INPUT DATA
 ${itemsText}
 
-BEGIN BRIEFING:`;
+BEGIN TECHNICAL INTELLIGENCE REPORT:`;
 
         console.log(`[LLM] Sending unified briefing request via ${provider}...`);
 
@@ -236,7 +236,7 @@ BEGIN BRIEFING:`;
                 messages: [{ role: 'user', content: prompt }],
                 model: MODEL_NAME,
                 temperature: 0.5,
-                max_tokens: 2500,
+                max_tokens: 4000,
             });
             rawText = chatCompletion.choices[0]?.message?.content || '';
             tokenUsage = {
