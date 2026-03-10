@@ -147,22 +147,40 @@ export async function parseRSSFeed(url: string, sourceType: SourceType, sourceNa
                 } catch { }
             }
 
-            return {
+            const rawPubDate = item.isoDate || item.pubDate;
+            if (!rawPubDate) {
+                console.log(`[Aggregator] 🟠 Discarded item with missing date: ${item.title || 'Untitled'}`);
+                return null; // Mark for filtering
+            }
+
+            let parsedDate: Date;
+            try {
+                parsedDate = new Date(rawPubDate);
+                if (isNaN(parsedDate.getTime())) {
+                    throw new Error('Invalid date format');
+                }
+            } catch {
+                console.log(`[Aggregator] 🔴 Discarded item with unparseable date: ${item.title || 'Untitled'}`);
+                return null; // Mark for filtering
+            }
+            const pubDate = parsedDate.toISOString();
+
+            const contentItem: ContentItem = {
                 title: item.title || 'Untitled',
                 link: item.link || url,
                 description: description,
-                // Add missing fields
                 content: rssItem['content:encoded'] || item.content || rssItem.description || '',
                 contentSnippet: item.contentSnippet || '',
                 categories: item.categories || [],
                 author: item.creator || rssItem.author || '',
-
-                pubDate: item.pubDate || new Date().toISOString(),
+                pubDate: pubDate,
                 source: sourceName,
                 sourceType: sourceType,
                 thumbnail: thumbnail
             };
-        });
+
+            return contentItem;
+        }).filter((item): item is ContentItem => item !== null);
     } catch (error) {
         console.error(`Error parsing RSS feed ${url}:`, error);
         return [];

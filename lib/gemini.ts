@@ -135,81 +135,95 @@ async function synthesizeUnifiedNarrative(items: ContentItem[], provider: string
             // Include thumbnail context
             let imageContext = item.thumbnail ? `\n   THUMBNAIL_URL: ${item.thumbnail}` : '';
 
-            // Clean description (truncate hugely for technical context)
-            let cleanDesc = item.description ? item.description.slice(0, 3000).replace(/\n/g, ' ') : 'No description';
+            // Prioritize full content over truncated description
+            const rawBody = item.content || item.description || '';
+            let technicalData = rawBody.slice(0, 4000).replace(/\n/g, ' ');
 
             // Format pubDate nicely for AI context
-            const formattedDate = new Date(item.pubDate).toLocaleDateString('en-US', {
+            const itemDate = new Date(item.pubDate);
+            const formattedDate = itemDate.toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
             });
 
+            // Calculate days ago for temporal enforcement
+            const diffTime = Math.abs(new Date().getTime() - itemDate.getTime());
+            const daysAgo = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
             return `ITEM #${i + 1} ${typeHint}
    TITLE: "${item.title}"
    SOURCE: ${item.source}
-   PUBLISHED_DATE: ${formattedDate}
-   LINK: ${item.link}${imageContext}
-   CONTENT: ${cleanDesc}`;
+   PUBLISHED_DATE: ${formattedDate} (${daysAgo} days ago)
+    DAYS_AGO: ${daysAgo}
+    LINK: ${item.link}${imageContext}
+    RAW_TECHNICAL_DATA: ${technicalData || 'No data provided'}`;
         }).join('\n\n');
 
-        const prompt = `You are a Deep Technical Researcher and Intelligence Lead. Your goal is to produce a comprehensive technical intelligence report that REPLACES the need to read any of the provided sources. 
+        const prompt = `You are a Deep Technical Researcher. Your goal is to produce a technical intelligence report using ONLY the provided RAW_TECHNICAL_DATA below.
 
 TODAY: ${today}
 ${firstName ? `READER'S FIRST NAME: ${firstName}` : ''}
 
-### STRATEGIC DIRECTIVES (The "No-Click Mandate")
+### THE MANDATE
+- **USE PROVIDED DATA ONLY**: You do not have internet access. Do not say "I've deconstructed these sources" if the data is missing. Only use the \`RAW_TECHNICAL_DATA\` provided in the \`INPUT DATA\` section.
+- **REPLACE THE SOURCE**: The report must be so detailed that the reader does not need to click the link. If you summarize, you fail. If you explain the *mechanics*, you win.
 
 1. **TECHNICAL DEPTH OVER RECOGNITION**
-- Never summarize. Deconstruct. Explain the *mechanics*, *first principles*, and *long-term implications* behind every insight. 
-- **The "Mastery" Test**: After reading an entry, the reader should feel as though they have spent 20 minutes studying the source material themselves. You must provide enough technical detail that they could explain the concept's architecture or logic to another expert.
+- Never de-emphasize mechanics. Explain the *deeper architecture* and *first principles* behind every insight. 
+- **The "Mastery" Test**: After reading an entry, the reader must be able to hold their own in a technical debate about this specific idea without clicking the link.
 
-2. **VOICE: AUTHORITATIVE & EXPLICATIVE**
-- You are a researcher who has spent all day in the weeds. Lead with information density.
+2. **VOICE: AUTHORITATIVE & CURIOUS**
+- You are a researcher who has spent all day deconstructing these sources. Lead with information density.
 - **BANNED PHRASES**: "You need to be paying attention to...", "The bottom line is this...", "It's moving fast.", "Here's what you should know...", "This is a must-read.", "Worth a listen.", "Check it out.", or any motivational closing questions.
-- **TARGET LENGTH**: Aim for a substantial, wide-ranging report (1500-2000 words if the signal density allows). Do not sacrifice depth for speed.
+- **TARGET LENGTH**: Target 1500-2000 words if the signal density allows. Never sacrifice depth for brevity.
 
 3. **SPECIFICITY & MECHANICS**
 - Vague claims are failures. Every insight must contain the specific "HOW" and "WHY."
 - Bad: "MKBHD says the Studio Display is expensive."
-- Good: "MKBHD's hardware deconstruction reveals the Studio Display XDR's fatal flaw for professionals: at $5,000, it lacks the local dimming zones of contemporaries, meaning true blacks are impossible and HDR performance is artificially capped despite the 'XDR' branding. The value proposition vanishes for anyone not strictly anchored to Apple's reference-grade TrueTone and ecosystem integration for color-accurate Mac pipelines."
+- Good: "MKBHD's hardware deconstruction reveals the Studio Display XDR's fatal flaw: at $5,000, it lacks local dimming zones, meaning true blacks are impossible and HDR performance is artificially capped. The value proposition vanishes for anyone not strictly anchored to Apple's reference-grade TrueTone pipelines."
 
 4. **ONE ITEM, ONE DEEP-DIVE IDEA**
 - Extract the single most complex and rewarding idea from each source. Explain it in full technical detail.
 
 5. **REAL SYNTHESIS**
-- If sources contradict or reinforce each other, build a narrative about the conflict or trend. Do not force connections; let the technical weight of the ideas carry the report.
+- Build narratives only when sources genuinely clash or echo each other. Let the technical weight of the ideas carry the report.
 
-6. **TEMPORAL ACCURACY**
-- Today is ${today}. Always check the \`PUBLISHED_DATE\`. Never frame old content as new.
+6. **TEMPORAL ACCURACY (CRITICAL)**
+- Today is ${today}. 
+- For every item, check the \`DAYS_AGO\` metadata provided. 
+- **STRICT RULE**: If an item is more than 7 days old (\`DAYS_AGO\` > 7), you are STRTICLY FORBIDDEN from using words like "just released," "new," "today," "breaking," or "now." 
+- Frame these items as "Archive Depth," "Resurfaced Insight," or "Timeless Wisdom." If you call a 10-year-old essay "new," you have failed.
 
 ### OUTPUT FORMAT (Strict)
 You must output exactly three parts: SUBJECT, PREHEADER, and then the NARRATIVE (separated by "---NARRATIVE_START---").
-SUBJECT: [Substantive and descriptive. NO MARKDOWN.]
-PREHEADER: [A technical hook. NO MARKDOWN.]
+
+SUBJECT: [Extremely curiosity-driven. Must be a "magnetic" hook. Think Shaan Puri or Morning Brew style hooks: "The $4B mistake," "The silicon flaw Apple won't admit," "Why Google is terrified of this 20-year-old essay." Substantive but high-CTR. NO MARKDOWN.]
+PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject. NO MARKDOWN.]
 ---NARRATIVE_START---
 
 ### STRUCTURE
 **THE LEAD ANALYSIS** (Extended Narrative)
-- Pick the most profound technical discovery. Build a deep-dive analysis (3-5 paragraphs) around it.
+- Pick the most profound technical discovery. Build a deep-dive analysis (3-5 paragraphs).
 - Explain the context, the secret, and the future fallout.
 - Hyperlink technical claims directly to source URLs inline [claim](LINK).
 
 **THE SIGNAL** (Standalone Technical Blocks)
 - For every other high-signal item, provide a **dense paragraph (3-5 sentences)**.
-- Format: **Bold the key technical entity** → then the multi-sentence explanation of the mechanism or insight.
-- Every block must contain specific data points, names, or non-obvious mechanical secrets.
+- Format: **Bold the key technical entity** → then the multi-sentence explanation.
+- **CRITICAL**: Every block MUST contain an inline hyperlinked source [text](LINK) woven naturally into the analysis.
+- Every block must contain specific data points, names, or non-obvious secrets.
 
 **WATCH THIS** (Optional — YouTube only)
-- Render as HTML highlighted card ONLY for the best video. Caption must be a 5-word technical synthesis.
+- Render as HTML highlighted card ONLY for the best video. Caption MUST be a 5-word technical synthesis.
 
 **NO FILLER**
-- End with the final technical insight. No motivational conclusions, no questions, no fluff.
+- End with the final technical insight. No motivational conclusions or fluff.
 
 ### CRITICAL CONSTRAINTS
-- **NO EM DASHES.** Strictly prohibited.
-- **NO HALLUCINATIONS.**
-- **DEPTH IS THE CONSTRAINT.** Do not cut for time. Cut only for lack of signal.
+- **NO EM DASHES.** 
+- **NO HALLUCIDATIONS.**
+- **DEPTH IS THE CONSTRAINT.** Do not cut for time.
 
 ### INPUT DATA
 ${itemsText}

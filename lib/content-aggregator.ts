@@ -15,12 +15,12 @@ export async function aggregateContent(sources: Source[], options: { lookbackDay
         try {
             const itemDate = new Date(item.pubDate);
             const keep = isAfter(itemDate, cutoff);
-            if (!keep && allItems.length < 50) {
-                // Log discarded items only if total volume is low, to avoid spam
-                // console.log(`[Aggregator] Discarded old item: ${item.title} (${item.pubDate}) < ${cutoff.toISOString()}`);
+            if (!keep) {
+                // console.log(`[Aggregator] ❄️ Discarded old item: ${item.title} (${item.pubDate})`);
             }
             return keep;
         } catch {
+            console.log(`[Aggregator] 🔴 Discarded item with unparseable date: ${item.title}`);
             return false;
         }
     });
