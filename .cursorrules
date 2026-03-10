@@ -1,0 +1,63 @@
+# Signal: System Architecture & AI Vibe Coding Rules
+
+This document provides permanent, core architectural context for all AI coding assistants (Cursor, Windsurf, Copilot, Gemini) working on the Signal codebase. 
+
+**CRITICAL INSTRUCTION TO AI:** Before proposing any architectural changes or debugging timeouts, you MUST review this document to understand the established bypasses, UI guidelines, and serverless constraints.
+
+## 1. Project Topology
+The project consists of two distinct Next.js (App Router) repositories that share an underlying Upstash Redis database:
+- `signal-admin`: The internal SaaS dashboard for managing users, tracking LLM costs, formatting the Knowledge Base for the blog, and configuring global API/UI components.
+- `email-digest`: The core consumer-facing web platform. It contains the Landing Page, Interactive Demo, User Dashboard, and the Background Execution Engines (Cron dispatchers) for sending daily emails and generating weekly SEO blogs.
+
+## 2. Core Stack & Infrastructure
+- **Framework**: Next.js 15 (App Router).
+- **Styling**: Tailwind CSS + Shadcn UI.
+- **Database**: Upstash Redis (High speed, serverless key-value store).
+- **Queues/Cron**: Upstash QStash (Bypasses Vercel timeout constraints).
+- **AI Models**: Google Gemini 3.1 Pro Preview (Heavy logic) and Gemini 3 Flash Preview (Fast summarization). Groq (Llama 3.3 70B) is heavily utilized for fast email briefings.
+
+---
+
+## 3. Database Architecture (Upstash Redis)
+The system uses a NoSQL Key-Value schema optimized for extreme read/write speed:
+- **`user:{email}:config`**: The core User Profile JSON (stores `sources` array, timezone, delivery time preference, `tier`, and `trialEndsAt`).
+- **`users:index`**: A SET containing all active user email addresses.
+- **`user:{email}:archive_index`**: A ZSET (Sorted Set) tracking the UNIX timestamps of previous briefings for the historical dashboard.
+- **`blog:index`**: A ZSET tracking published blog posts (slugs and scores).
+- **`blog:post:{slug}`**: The complete JSON dataset for an individual rendered blog post.
+
+**Trial Logic:** The `checkSubscriptionStatus(user)` validation is strict. Users on `trial` tier lose access the moment `trialEndsAt` passes, returning a skipped response during the background generation phases unless their tier is upgraded to `active`.
+
+---
+
+## 4. The Serverless Execution Bypasses (CRITICAL)
+
+The most complex part of this system is how it defeats Vercel's strict Hobby Tier limits (which forcefully kill any serverless function after 60 seconds of execution). Do not attempt to refactor this architecture without understanding why it exists.
+
+**The Background Generation Pipelines use multi-layered bypasses:**
+
+### A. The Email Engine (`/api/digest/generate`)
+1. **Next.js `after()` (Backgrounding)**: The cron hits this endpoint. It *immediately* returns `200 OK` (so the webhook doesn't timeout). It wraps the actual scraping/LLM execution inside the Next.js `after()` API context, allowing Vercel to run the heavy processing in the background. Because Groq is fast, emails easily finish within 60s.
+
+### B. The Blog Engine (`/api/cron/blog/generate`)
+1. **Upstash QStash (HTTP Timeout Bypass)**: The heavy blog LLMs take >60 seconds. A fast `/dispatch` endpoint queues a QStash webhook. QStash hits the actual `/generate` worker.
+2. **Recursive State Machine**: The QStash worker runs inside `after()`. Step 1 (Editor) finishes, saves state, and dispatches a *new* QStash webhook for Step 2 (Writer).
+3. **Chunked Streaming Iteration (The 60-Second Kill-Switch Bypass)**: Even in the `after()` background, Vercel will aggressively murder the thread at exactly 60.00s if it suspects the thread is "hanging". Because `gemini-3.1-pro-preview` takes >65s, **we NEVER use blocking `generateContent`** calls for the blog. We ALWAYS use `generateContentStream()`. A `for await (const chunk of responseStream)` loop is utilized to continually accumulate text. Proving active I/O via chunk iteration perpetually resets Vercel's 60s kill clock, allowing the AI indefinite time to reason.
+
+---
+
+## 5. UI/UX Design System (Fire on Paper)
+
+Signal utilizes a very specific, premium design language.
+- **Brand Primary Core**: International Orange (`#FF4F00` or `#FF5700`). All primary buttons, text selection highlights, hover outlines, and Shadcn `--ring` tokens must exact match this color. Do not inject generic Tailwind blues or purples.
+- **Backgrounds**: The UI is NEVER pure white `#FFFFFF` or dark `#000000`. It uses an off-white textured hex (`#FDFBF7`) that feels like physical newspaper.
+- **Typography & Weights**: Headlines should lean into premium serifs or clean geometric sans-serifs with generous tracking. Use bold font weights (600+) for primary data contrast.
+- **Borders & Shadows**: Avoid heavy boxed borders. Rely on subtle drop-shadows `shadow-[0_4px_20px_rgb(0,0,0,0.06)]` to float `<Card>` elements over the textured background.
+- **Shadcn Integration**: All complex data structures (Tables, Tabs, Sidebars) MUST use `@shadcn/ui` components to ensure cross-browser consistency, standardized padding, and headless accessibility. Avoid raw `<table>` or custom `<div>` tab menus.
+
+---
+
+## 6. Deployment & Environment Protocols
+- **Models Constant Strings**: Always explicitly declare the exact model string (e.g., `gemini-3.1-pro-preview`). Do not use aliases.
+- **Environment Variables**: Local development requires `.env.local` synced precisely with Vercel Production. Critical keys include `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, and `KV_REST_API...`. Never log these.
+- **Caching & ISR**: Blog posts are fetched directly from Redis and cached dynamically. When the cron job finishes a heavy LLM generation, it immediately invokes `revalidatePath('/blog')` for On-Demand ISR updates.
