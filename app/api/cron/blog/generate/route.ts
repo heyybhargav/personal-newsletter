@@ -6,7 +6,10 @@ import { runEditorPhase, runWriterPhase, runReviewerPhase } from '@/lib/blogEngi
 import { validateGeneratedPost } from '@/lib/blogValidation';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60; // Max out the Vercel Hobby tier
+// 🔴 VERCEL CONFIG OVERRIDE: 
+// Gemini 3.1 Pro is extremely slow to load the KB context during the EDITOR phase (>60s).
+// We request the absolute maximum Vercel execution time (up to 300s/5mins depending on tier).
+export const maxDuration = 300;
 
 const receiver = new Receiver({
     currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || '',
@@ -22,7 +25,16 @@ export async function POST(request: Request) {
     console.log("[Blog Worker] 🔴 INCOMING QSTASH POST REQUEST DETECTED 🔴");
     try {
         const bodyText = await request.text();
-        // TEMPORARY DEBUG: Skipped signature verification to test delivery
+        const signature = request.headers.get('upstash-signature');
+
+        if (!signature) {
+            return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
+        }
+
+        const isValid = await receiver.verify({ signature, body: bodyText });
+        if (!isValid) {
+            return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+        }
 
         let body;
         try {

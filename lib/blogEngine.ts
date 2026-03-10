@@ -101,23 +101,29 @@ OUTPUT FORMAT (Respond ONLY with valid JSON):
 `;
 
     console.time('[Blog Engine] Editor Phase LLM Time');
-    const response = await ai.models.generateContent({
+    const responseStream = await ai.models.generateContentStream({
         model: MODEL,
         contents: prompt,
         config: { responseMimeType: 'application/json' }
     });
+
+    let fullText = '';
+    let totalTokens = 0;
+
+    // 🔴 STREAMING FIX: Iterating chunks keeps the Vercel Hobby execution thread alive 
+    // past the 60s hard timeout by showing active I/O.
+    for await (const chunk of responseStream) {
+        fullText += chunk.text;
+        // Optionally count tokens if available per chunk, but primarily this loop prevents Vercel freeze
+    }
     console.timeEnd('[Blog Engine] Editor Phase LLM Time');
 
-    if (response.usageMetadata) {
-        console.log(`[Blog Engine] Editor Tokens: In=${response.usageMetadata.promptTokenCount}, Out=${response.usageMetadata.candidatesTokenCount}`);
-    }
-
     try {
-        const json = JSON.parse(response.text || '{}');
+        const json = JSON.parse(fullText || '{}');
         console.log(`[Blog Engine] Editor Plan Parsed Successfully:`, Object.keys(json));
         return json;
     } catch (e) {
-        console.error('[Blog Engine] CRITICAL: Editor failed to output valid JSON!', response.text);
+        console.error('[Blog Engine] CRITICAL: Editor failed to output valid JSON!', fullText);
         throw e;
     }
 }
@@ -157,20 +163,22 @@ Write the full blog post text.
 `;
 
     console.time('[Blog Engine] Writer Phase LLM Time');
-    const response = await ai.models.generateContent({
+    console.time('[Blog Engine] Writer Phase LLM Time');
+    const responseStream = await ai.models.generateContentStream({
         model: MODEL,
         contents: prompt
     });
+
+    let fullText = '';
+    // 🔴 STREAMING FIX: Keep Vercel execution thread alive
+    for await (const chunk of responseStream) {
+        fullText += chunk.text;
+    }
     console.timeEnd('[Blog Engine] Writer Phase LLM Time');
 
-    if (response.usageMetadata) {
-        console.log(`[Blog Engine] Writer Tokens: In=${response.usageMetadata.promptTokenCount}, Out=${response.usageMetadata.candidatesTokenCount}`);
-    }
+    console.log(`[Blog Engine] Writer generated ${fullText.length} raw characters.`);
 
-    const text = response.text || '';
-    console.log(`[Blog Engine] Writer generated ${text.length} raw characters.`);
-
-    return text;
+    return fullText;
 }
 
 export async function runReviewerPhase(rawText: string, plan: any, kb: any) {
@@ -217,23 +225,26 @@ OUTPUT FORMAT:
 `;
 
     console.time('[Blog Engine] Reviewer Phase LLM Time');
-    const response = await ai.models.generateContent({
+    console.time('[Blog Engine] Reviewer Phase LLM Time');
+    const responseStream = await ai.models.generateContentStream({
         model: MODEL,
         contents: prompt,
         config: { responseMimeType: 'application/json' }
     });
+
+    let fullText = '';
+    // 🔴 STREAMING FIX: Keep Vercel execution thread alive
+    for await (const chunk of responseStream) {
+        fullText += chunk.text;
+    }
     console.timeEnd('[Blog Engine] Reviewer Phase LLM Time');
 
-    if (response.usageMetadata) {
-        console.log(`[Blog Engine] Reviewer Tokens: In=${response.usageMetadata.promptTokenCount}, Out=${response.usageMetadata.candidatesTokenCount}`);
-    }
-
     try {
-        const json = JSON.parse(response.text || '{}');
+        const json = JSON.parse(fullText || '{}');
         console.log(`[Blog Engine] Reviewer JSON Parsed Successfully. Subheadings:`, json.content?.length || 0);
         return json;
     } catch (e) {
-        console.error('[Blog Engine] CRITICAL: Reviewer failed to output valid JSON!', response.text);
+        console.error('[Blog Engine] CRITICAL: Reviewer failed to output valid JSON!', fullText);
         throw e;
     }
 }
