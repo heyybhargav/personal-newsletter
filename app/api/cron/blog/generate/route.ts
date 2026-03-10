@@ -19,9 +19,11 @@ const qstash = new Client({
 });
 
 export async function POST(request: Request) {
+    console.log("[Blog Worker] 🔴 INCOMING QSTASH POST REQUEST DETECTED 🔴");
     try {
         const bodyText = await request.text();
         const signature = request.headers.get('upstash-signature');
+        console.log(`[Blog Worker] Signature Present: ${!!signature}`);
 
         if (!signature) {
             return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
