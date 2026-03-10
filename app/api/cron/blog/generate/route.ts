@@ -48,9 +48,10 @@ export async function POST(request: Request) {
         console.log(`[Blog Worker] Has Context: ${Object.keys(context).join(', ') || 'None'}`);
 
         // Recover the webhook URL to pass execution forward.
-        const host = request.headers.get('host');
-        const protocol = request.headers.get('x-forwarded-proto') || (process.env.NODE_ENV === 'development' ? 'http' : 'https');
-        const workerUrl = `${protocol}://${host}/api/cron/blog/generate`;
+        // 🔴 SECURITY FIX: Hardcode production URL to avoid Vercel edge header parsing issues
+        const workerUrl = process.env.NODE_ENV === 'development'
+            ? `http://${request.headers.get('host')}/api/cron/blog/generate`
+            : `https://www.signaldaily.me/api/cron/blog/generate`;
 
         console.log(`[Blog Worker] Step: ${step} starting...`);
 

@@ -21,11 +21,11 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const host = request.headers.get('host');
-        const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-
         // The target worker URL that QStash will call
-        const workerUrl = `${protocol}://${host}/api/cron/blog/generate`;
+        // 🔴 SECURITY FIX: Hardcode production URL to avoid Vercel edge header parsing issues
+        const workerUrl = process.env.NODE_ENV === 'development'
+            ? `http://${request.headers.get('host')}/api/cron/blog/generate`
+            : `https://www.signaldaily.me/api/cron/blog/generate`;
 
         // 2. Publish message to Upstash QStash
         const res = await qstash.publishJSON({
