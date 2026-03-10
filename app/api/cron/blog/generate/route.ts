@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { Receiver, Client } from '@upstash/qstash';
 import { getFullKnowledgeBaseContext, isSlugTaken, saveBlogPost } from '@/lib/blogDb';
@@ -55,60 +55,80 @@ export async function POST(request: Request) {
         console.log(`[Blog Worker] Step: ${step} starting...`);
 
         if (step === 'editor') {
-            const kb = await getFullKnowledgeBaseContext();
-            const editorPlan = await runEditorPhase(kb);
+            after(async () => {
+                try {
+                    const kb = await getFullKnowledgeBaseContext();
+                    const editorPlan = await runEditorPhase(kb);
 
-            if (await isSlugTaken(editorPlan.slug)) {
-                throw new Error(`Duplicate slug: ${editorPlan.slug}`);
-            }
+                    if (await isSlugTaken(editorPlan.slug)) {
+                        console.error(`[Blog Worker] Duplicate slug: ${editorPlan.slug}`);
+                        return;
+                    }
 
-            await qstash.publishJSON({
-                url: workerUrl,
-                body: { step: 'writer', context: { editorPlan } },
-                retries: 3,
+                    await qstash.publishJSON({
+                        url: workerUrl,
+                        body: { step: 'writer', context: { editorPlan } },
+                        retries: 3,
+                    });
+                    console.log(`[Blog Worker Background] Editor completed. Queued Writer for ${editorPlan.slug}`);
+                } catch (err) {
+                    console.error('[Blog Worker Background] Editor failed:', err);
+                }
             });
-            console.log(`[Blog Worker] Editor completed. Queued Writer for ${editorPlan.slug}`);
-            return NextResponse.json({ success: true, action: 'queued_writer' });
+            return NextResponse.json({ success: true, action: 'queued_editor_bg' });
         }
 
         if (step === 'writer') {
-            const kb = await getFullKnowledgeBaseContext();
-            const rawContent = await runWriterPhase(context.editorPlan, kb);
+            after(async () => {
+                try {
+                    const kb = await getFullKnowledgeBaseContext();
+                    const rawContent = await runWriterPhase(context.editorPlan, kb);
 
-            await qstash.publishJSON({
-                url: workerUrl,
-                body: { step: 'reviewer', context: { editorPlan: context.editorPlan, rawContent } },
-                retries: 3,
+                    await qstash.publishJSON({
+                        url: workerUrl,
+                        body: { step: 'reviewer', context: { editorPlan: context.editorPlan, rawContent } },
+                        retries: 3,
+                    });
+                    console.log(`[Blog Worker Background] Writer completed. Queued Reviewer for ${context.editorPlan.slug}`);
+                } catch (err) {
+                    console.error('[Blog Worker Background] Writer failed:', err);
+                }
             });
-            console.log(`[Blog Worker] Writer completed. Queued Reviewer for ${context.editorPlan.slug}`);
-            return NextResponse.json({ success: true, action: 'queued_reviewer' });
+            return NextResponse.json({ success: true, action: 'queued_writer_bg' });
         }
 
         if (step === 'reviewer') {
-            const kb = await getFullKnowledgeBaseContext();
-            const finalPostJSON = await runReviewerPhase(context.rawContent, context.editorPlan, kb);
+            after(async () => {
+                try {
+                    const kb = await getFullKnowledgeBaseContext();
+                    const finalPostJSON = await runReviewerPhase(context.rawContent, context.editorPlan, kb);
 
-            const finalPost = {
-                ...finalPostJSON,
-                publishedAt: new Date().toISOString()
-            };
+                    const finalPost = {
+                        ...finalPostJSON,
+                        publishedAt: new Date().toISOString()
+                    };
 
-            const validation = validateGeneratedPost(finalPost);
-            if (!validation.isValid) {
-                throw new Error(`Quality Gate Failed: ${validation.errors.join(', ')}`);
-            }
+                    const validation = validateGeneratedPost(finalPost);
+                    if (!validation.isValid) {
+                        console.error(`[Blog Worker Background] Quality Gate Failed: ${validation.errors.join(', ')}`);
+                        return;
+                    }
 
-            console.log(`[Blog Worker] Reviewer completed! Post valid. Saving to Redis for slug: ${finalPost.slug}...`);
-            await saveBlogPost(finalPost);
+                    console.log(`[Blog Worker Background] Reviewer completed! Post valid. Saving to Redis for slug: ${finalPost.slug}...`);
+                    await saveBlogPost(finalPost);
 
-            if (finalPost.slug) {
-                console.log(`[Blog Worker] Triggering On-Demand ISR for /blog and /blog/${finalPost.slug}`);
-                revalidatePath('/blog');
-                revalidatePath(`/blog/${finalPost.slug}`);
-            }
+                    if (finalPost.slug) {
+                        console.log(`[Blog Worker Background] Triggering On-Demand ISR for /blog and /blog/${finalPost.slug}`);
+                        revalidatePath('/blog');
+                        revalidatePath(`/blog/${finalPost.slug}`);
+                    }
 
-            console.log(`[Blog Worker] Reviewer completed! Published: ${finalPost.slug}`);
-            return NextResponse.json({ success: true, action: 'completed', post: finalPost });
+                    console.log(`[Blog Worker Background] Reviewer completed! Published: ${finalPost.slug}`);
+                } catch (err) {
+                    console.error('[Blog Worker Background] Reviewer failed:', err);
+                }
+            });
+            return NextResponse.json({ success: true, action: 'queued_reviewer_bg' });
         }
 
     } catch (error) {
