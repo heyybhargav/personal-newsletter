@@ -203,12 +203,12 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 
 [MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
 - Pick the most profound technical discovery. Build a deep-dive analysis.
-- **STRUCTURE**: Start with a 1-2 sentence context-setting paragraph explaining what this analysis is about and the core takeaway. THEN, transition into the **Q&A Format**.
+- **STRUCTURE**: Start with a 1-2 sentence context-setting paragraph explaining what this analysis is about and the core takeaway. THEN, transition into the **Q&A Format** with exactly 3 to 4 deeply probing questions.
 - **Q&A RULES:**
   1. DO NOT use bullet points or lists for the questions.
   2. **Bold** the question text completely.
-  3. Start the answer paragraph on the very next line (leaving empty space below the bolded question).
-  4. The next question MUST have a double-newline (more space) separating it from the previous answer paragraph.
+  3. **CRITICAL MARKDOWN RULE**: You must leave a completely blank line (double newline) between the bolded question and the start of the answer paragraph. Do not start the answer immediately below the question without a blank line space.
+  4. The next question MUST also have a blank line (double-newline) separating it from the previous answer paragraph.
 - **MANDATORY LINKS**: You MUST include at least **two** different inline hyperlinked source [claims](LINK) naturally within the answers.
 - **ZERO TOLERANCE FOR DUPLICATION**: Whatever happens in the Lead Analysis MUST NOT show up in the Signal section.
 
@@ -259,10 +259,16 @@ PREHEADER: A supply chain constraint that changes the entire wearable roadmap.
 Apple's ambitious decade-long micro-LED project has officially been scrapped. This cancellation reveals the brutal realities of mass-manufacturing next-generation displays and signals a definitive shift back to OLED architectures for the entire wearable market.
 
 **Why did Apple completely abandon their multi-billion dollar micro-LED project?**
+
 The core issue wasn't the display technology itself, but rather the yield rates on the massive transfer process. [According to the supply chain leaks](https://example.com/apple), they simply couldn't get the defect rate low enough to justify the manufacturing cost at the mass scale required for the Apple Watch. 
 
 **What does this mean for the future of their display architecture?**
+
 It forces a strategic pivot back to OLED, specifically tandem OLED architectures. By utilizing tandem structures, they can achieve the necessary peak brightness levels required for outdoor watch visibility without the crushing R&D burn rate of micro-LED scaling. 
+
+**Who are the immediate winners and losers in the supply chain shift?**
+
+Suppliers who invested heavily in micro-LED transfer equipment are facing massive write-downs, while legacy OLED manufacturers are seeing an unexpected resurgence in long-term contracts for consumer wearables.
 
 **THE SIGNAL**
 
