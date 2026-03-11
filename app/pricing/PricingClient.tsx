@@ -112,7 +112,7 @@ export default function PricingClient() {
                             <ul className="space-y-4">
                                 <ComparisonItem text="Inbox overflowing with 50+ unread newsletters." isPositive={false} />
                                 <ComparisonItem text="Spending 5+ hours a week trying to stay updated." isPositive={false} />
-                                <ComparisonItem text="Constant FOMO on industry trends and technical shifts." isPositive={false} />
+                                <ComparisonItem text="Constant FOMO on industry trends and market shifts." isPositive={false} />
                                 <ComparisonItem text="Skimming articles without retaining the deep insights." isPositive={false} />
                             </ul>
                         </div>
@@ -161,7 +161,7 @@ export default function PricingClient() {
 
             </div>
 
-            <Footer hideBorder={true} transparentBg={false} showSocials={true} />
+            <Footer hideBorder={true} transparentBg={false} />
         </main>
     );
 }

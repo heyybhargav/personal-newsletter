@@ -11,7 +11,7 @@ interface PublicNavProps {
 
 const NAV_LINKS = [
     { label: 'Blog', href: '/blog' },
-    { label: 'FAQ', href: '/faq' },
+    { label: 'Pricing', href: '/pricing' },
     { label: 'Contact', href: 'mailto:editor@signaldaily.me' },
 ];
 

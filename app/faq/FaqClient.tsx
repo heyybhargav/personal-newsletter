@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import PublicNav from '@/components/PublicNav';
+import Footer from '@/components/Footer';
 
 const faqs = [
     {
@@ -18,7 +19,7 @@ const faqs = [
     {
         question: 'What is the best alternative to Morning Brew?',
         answer: 'The best alternative to Morning Brew for niche professionals is a personalized AI briefing service like Signal, which synthesizes industry-specific sources instead of general mass-market news.',
-        details: 'Morning Brew is excellent for general business overviews. However, if you are a specialized founder or investor who only cares about deeply technical developments in your exact sector, an AI alternative that lets you define the sources is infinitely more valuable.',
+        details: 'Morning Brew is excellent for general business overviews. However, if you are a specialized founder or investor who only cares about deeply specific developments in your exact sector, an AI alternative that lets you define the sources is infinitely more valuable.',
     },
     {
         question: 'How can I automate an RSS feed summary using ChatGPT?',
@@ -49,30 +50,22 @@ export default function FaqClient() {
 
             <section className="pt-36 pb-24 px-6">
                 <div className="max-w-2xl mx-auto">
-                    {/* Header */}
+                    {/* Minimalist Header */}
                     <div className="mb-16">
                         <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium tracking-tight leading-[1.05] text-[#1A1A1A] mb-5"
+                            className="text-[40px] md:text-[52px] font-serif text-[#1A1A1A] tracking-tighter leading-tight mb-2"
                         >
-                            Answers.
+                            Frequently Asked Questions
                         </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="text-lg text-gray-400 font-serif italic leading-relaxed"
-                        >
-                            Understanding AI summarization, newsletter fatigue, and staying informed.
-                        </motion.p>
                     </div>
 
                     <motion.div
                         initial={{ scaleX: 0, opacity: 0 }}
                         animate={{ scaleX: 1, opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+                        transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
                         className="h-px bg-gray-200 origin-left w-full mb-16"
                     />
 
@@ -124,6 +117,7 @@ export default function FaqClient() {
                     </motion.div>
                 </div>
             </section>
+            <Footer />
         </main>
     );
 }

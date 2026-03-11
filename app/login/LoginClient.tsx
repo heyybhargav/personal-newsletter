@@ -70,7 +70,7 @@ export default function LoginClient() {
                 </section>
 
                 {/* Footer */}
-                <Footer hideBorder={true} transparentBg={true} showSocials={false} />
+                <Footer hideBorder={true} transparentBg={true} />
             </div>
         </main>
     );
