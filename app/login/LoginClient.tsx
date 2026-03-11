@@ -30,8 +30,8 @@ export default function LoginClient() {
             <Manifesto />
 
             {/* The Banger Final CTA & Footer Wrapper (Exactly 100vh minus Header) */}
-            <div id="cta" className="flex flex-col h-[calc(100vh-76px)] md:h-[calc(100vh-92px)] bg-[#1A1A1A]">
-                <section className="flex-1 flex flex-col items-center justify-center px-6 text-center relative overflow-hidden text-white border-b border-[#2A2A2A]">
+            <div id="cta" className="flex flex-col min-h-[calc(100vh-76px)] md:min-h-[calc(100vh-92px)] bg-[#1A1A1A]">
+                <section className="flex-1 flex flex-col items-center justify-center px-6 text-center relative overflow-hidden text-white">
                     <div className="max-w-3xl mx-auto relative z-10 w-full py-16 md:py-24">
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
@@ -70,7 +70,7 @@ export default function LoginClient() {
                 </section>
 
                 {/* Footer */}
-                <Footer />
+                <Footer hideBorder={true} transparentBg={true} showSocials={false} />
             </div>
         </main>
     );
