@@ -50,7 +50,7 @@ export default function Footer({
                         <div className="flex flex-col gap-4">
                             <Link href="/blog" className="text-sm text-gray-400 hover:text-white transition-colors">Blog</Link>
                             <Link href="/faq" className="text-sm text-gray-400 hover:text-white transition-colors">FAQ</Link>
-                            <Link href="/#pricing" className="text-sm text-gray-400 hover:text-white transition-colors">Pricing</Link>
+                            <Link href="/pricing" className="text-sm text-gray-400 hover:text-white transition-colors">Pricing</Link>
                         </div>
                     </div>
 

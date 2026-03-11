@@ -54,6 +54,7 @@ Signal utilizes a very specific, premium design language.
 - **Typography & Weights**: Headlines should lean into premium serifs or clean geometric sans-serifs with generous tracking. Use bold font weights (600+) for primary data contrast.
 - **Borders & Shadows**: Avoid heavy boxed borders. Rely on subtle drop-shadows `shadow-[0_4px_20px_rgb(0,0,0,0.06)]` to float `<Card>` elements over the textured background.
 - **Shadcn Integration**: All complex data structures (Tables, Tabs, Sidebars) MUST use `@shadcn/ui` components to ensure cross-browser consistency, standardized padding, and headless accessibility. Avoid raw `<table>` or custom `<div>` tab menus.
+- **Header Architecture (Double-Header Prevention)**: The app uses two independent navigation systems. The global authenticated `Navbar` is injected at the `layout.tsx` level. Any new public-facing route (e.g., `/blog`, `/pricing`, `/privacy`) that uses its own header (like `PublicNav`) MUST explicitly be added to the `PUBLIC_NAV_PAGES` array inside `components/Navbar.tsx` so the global header hides itself. Failure to do this will result in a double-header bug.
 
 ---
 
