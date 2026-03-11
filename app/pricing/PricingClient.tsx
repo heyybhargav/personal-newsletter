@@ -3,6 +3,7 @@
 import { ArrowRight, Check, X, Shield, Zap, Brain } from 'lucide-react';
 import PublicNav from '@/components/PublicNav';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 export default function PricingClient() {
     const triggerLogin = () => {
@@ -67,13 +68,13 @@ export default function PricingClient() {
                         </ul>
 
                         <div className="space-y-3">
-                            <a
-                                href={checkoutUrl}
+                            <button
+                                onClick={triggerLogin}
                                 className="block w-full py-4 px-6 bg-[#FDFBF7] hover:bg-white text-[#1A1A1A] text-center font-bold tracking-widest uppercase text-xs rounded-xl transition-all duration-300 shadow-[0_10px_20px_-10px_rgba(255,255,255,0.1)] hover:shadow-[0_12px_24px_-10px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2"
                             >
                                 Start 7-Day Free Trial
                                 <ArrowRight className="w-4 h-4" />
-                            </a>
+                            </button>
                             <p className="text-center text-[11px] text-gray-400 font-medium">No credit card required for trial.</p>
                         </div>
 

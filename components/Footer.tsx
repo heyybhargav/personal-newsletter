@@ -14,10 +14,10 @@ export default function Footer({
                 <div className="flex flex-col gap-6 max-w-sm">
                     <div className="flex items-center gap-2">
                         {/* Minimalist Logo Icon */}
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#FF5700]">
-                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="32" height="32" rx="16" fill="#1A1A1A"/>
+                            <circle cx="16" cy="16" r="6" fill="#FF5700"/>
+                            <circle cx="16" cy="16" r="10" stroke="#FF5700" strokeOpacity={0.3} strokeWidth="2"/>
                         </svg>
                         <span className="text-lg font-bold tracking-tight text-white">Signal</span>
                     </div>
