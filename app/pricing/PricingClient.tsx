@@ -27,9 +27,8 @@ export default function PricingClient() {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#FF5700] opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
 
                     <header className="text-center mb-16">
-                        <h1 className="text-5xl md:text-7xl font-serif text-[#1A1A1A] tracking-tighter leading-tight mb-6 relative">
-                            Reclaim your attention.<br />
-                            <span className="italic font-light">Outsmart the noise.</span>
+                        <h1 className="text-5xl md:text-7xl font-serif font-normal text-[#1A1A1A] tracking-tighter leading-tight mb-6 relative">
+                            Reclaim your attention.
                         </h1>
                         <p className="text-xl md:text-2xl text-gray-500 font-serif max-w-2xl mx-auto leading-relaxed">
                             For less than a coffee, get the synthesized intelligence of the top 1%. Start your 7-day trial today.

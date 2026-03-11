@@ -13,6 +13,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const { slug } = await params;
     const post = await getBlogPost(slug);
     if (!post) return { title: 'Not Found' };
+    
+    const baseUrl = 'https://signaldaily.me';
+    
     return {
         title: `${post.title} — Signal`,
         description: post.metaDescription || post.subtitle,
@@ -22,7 +25,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             description: post.metaDescription || post.subtitle,
             type: 'article',
             publishedTime: post.publishedAt || new Date(post.date).toISOString(),
-            // NOTE: OG Image will be added in Phase 5
+            url: `${baseUrl}/blog/${post.slug}`,
+            siteName: 'Signal',
+            images: [
+                {
+                    url: `${baseUrl}/icon.svg`, // Fallback until dynamic OG images are implemented
+                    width: 800,
+                    height: 800,
+                    alt: 'Signal Logo',
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary',
+            title: post.title,
+            description: post.metaDescription || post.subtitle,
+            images: [`${baseUrl}/icon.svg`],
         },
     };
 }

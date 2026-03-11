@@ -22,7 +22,7 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold tracking-[-0.03em] text-[#1A1A1A] leading-none"
+                        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal text-[#1A1A1A] tracking-tighter leading-none"
                     >
                         One email.
                     </motion.h1>
@@ -31,7 +31,7 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium tracking-[-0.02em] text-[#666666] leading-[1.1] italic font-serif mt-1"
+                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-normal tracking-tight text-[#666666] leading-[1.1] italic mt-1"
                     >
                         Everything that matters.
                     </motion.h2>
@@ -89,7 +89,7 @@ export default function Hero() {
                         {/* Mock Email Body */}
                         <div className="p-6 md:p-12 text-left space-y-6">
                             <div className="flex justify-between items-baseline border-b border-black pb-4 md:pb-6">
-                                <h3 className="font-serif text-2xl md:text-3xl font-bold">Signal.</h3>
+                                <h3 className="font-serif text-2xl md:text-3xl tracking-tight text-[#1A1A1A]">Signal.</h3>
                                 <div className="hidden md:block font-mono text-xs text-gray-400 uppercase tracking-widest">Daily Briefing</div>
                             </div>
                             <div className="space-y-3 md:space-y-4">
