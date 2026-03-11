@@ -45,7 +45,7 @@ export default function LegalLayout({ children, title, lastUpdated }: LegalLayou
                 </div>
             </div>
 
-            <Footer hideBorder={true} transparentBg={false} showSocials={true} />
+            <Footer hideBorder={true} transparentBg={false} />
         </main>
     );
 }
