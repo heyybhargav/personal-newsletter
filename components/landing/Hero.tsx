@@ -25,10 +25,10 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-[32px] sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal text-[#1A1A1A] tracking-tighter leading-[1.1] sm:leading-[1.05]"
+                        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal text-[#1A1A1A] tracking-tighter leading-[1.1] sm:leading-[1.05]"
                     >
                         Know Everything <br className="hidden sm:block" />
-                        <span className="text-[32px] sm:text-5xl md:text-6xl lg:text-7xl text-[#666666] block mt-1 sm:mt-2">
+                        <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#666666] block mt-1 sm:mt-2">
                             Without Reading Everything.
                         </span>
                     </motion.h1>
@@ -43,7 +43,7 @@ export default function Hero() {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="text-base md:text-lg text-[#777777] font-medium tracking-tight max-w-lg mx-auto leading-relaxed px-4 md:px-0"
                 >
-                    Signal Daily reads your favorite sources every day and sends you one simple briefing email. Stay smart in 5 minutes.
+                    Signal Daily reads your favorite sources and sends you one simple briefing email every day. Stay smart in 5 minutes.
                 </motion.h2>
 
                 <motion.div
