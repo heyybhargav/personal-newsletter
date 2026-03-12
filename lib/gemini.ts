@@ -223,7 +223,7 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 **WATCH THIS** (Optional — YouTube only)
 - Pick the single best video from the input.
 - Render as this EXACT premium HTML card:
-  <div style="margin-top:20px; margin-bottom: 30px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
+  <div style="margin-top:20px; margin-bottom: 30px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
      <a href="LINK_URL" style="text-decoration:none; color: inherit; display: block;">
         <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
         <div style="padding: 16px; background: #ffffff;">

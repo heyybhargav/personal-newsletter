@@ -16,17 +16,67 @@ export interface TrialContext {
   trialDaysRemaining: number;
 }
 
+function generateHeaderHTML(title: string, subtitle: string, dateText?: string, isDark: boolean = true): string {
+  const bgColor = isDark ? '#111111' : '#F9F9F9';
+  const metaColor = isDark ? '#999999' : '#888888';
+  const textColor = metaColor; // Standardize all to date line color
+  const subTextColor = metaColor;
+  const subtitleColor = metaColor;
+
+  return `
+    <tr>
+      <td class="header-bg" style="padding: 50px 30px 40px 30px; background-color: ${bgColor}; background-image: linear-gradient(${bgColor}, ${bgColor}); text-align: center;" bgcolor="${bgColor}">
+        <p class="header-text" style="font-family: 'Merriweather', Georgia, serif; font-size: 32px; font-weight: 900; margin: 0; color: ${textColor}; letter-spacing: -1px;">
+          <span style="color: ${textColor} !important;">${title}</span>
+        </p>
+        <p class="header-subtitle" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: ${subTextColor}; margin: 12px 0 0 0; text-transform: uppercase; letter-spacing: 3px; font-weight: 600;">
+          <span style="color: ${subTextColor} !important;">${subtitle}</span>
+        </p>
+        ${dateText ? `
+        <p class="header-meta" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: ${metaColor}; margin: 8px 0 0 0; text-transform: uppercase; letter-spacing: 2px;">
+          <span style="color: ${metaColor} !important;">${dateText}</span>
+        </p>
+        ` : ''}
+      </td>
+    </tr>
+  `;
+}
+
+function generateFooterHTML(): string {
+  const bgColor = '#111111';
+  const metaColor = '#999999';
+  const textColor = metaColor;
+  const subTextColor = metaColor;
+  const mutedColor = metaColor;
+
+  return `
+    <tr>
+      <td class="footer-bg" style="padding: 40px 30px; background-color: ${bgColor}; background-image: linear-gradient(${bgColor}, ${bgColor}); text-align: center;" bgcolor="${bgColor}">
+        <p class="footer-text" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; font-weight: bold; color: ${textColor}; margin: 0; letter-spacing: 1px; text-transform: uppercase;">
+          <span style="color: ${textColor} !important;">Signal Daily</span>
+        </p>
+        <p class="footer-subtext" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: ${subTextColor}; margin: 15px 0 0 0; line-height: 1.5;">
+          <span style="color: ${subTextColor} !important;">Everything you need to know, without the noise.<br>Reply to this email with feedback. We read everything.</span>
+        </p>
+        <p class="footer-muted" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: ${mutedColor}; margin: 20px 0 0 0;">
+          <a href="https://signaldaily.me/settings" style="color: ${mutedColor} !important; text-decoration: underline;">Pause briefings.</a>
+        </p>
+      </td>
+    </tr>
+  `;
+}
+
 async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string, trialContext?: TrialContext): Promise<string> {
   const narrativeHTML = await formatNarrative(briefing.narrative);
 
   const linksHTML = briefing.topStories.map(item => `
     <tr>
       <td style="padding: 10px 0; border-bottom: 1px solid #eee;">
-        <a href="${item.link}" style="color: #000; text-decoration: none; font-weight: 600; font-family: 'Helvetica Neue', sans-serif; font-size: 15px;">
+        <a href="${item.link}" style="color: #000; text-decoration: none; font-weight: 600; font-family: 'Inter', -apple-system, sans-serif; font-size: 15px;">
           ${item.title}
         </a>
         <br>
-        <span style="color: #888; font-size: 13px; font-family: 'Helvetica Neue', sans-serif;">
+        <span style="color: #888; font-size: 13px; font-family: 'Inter', -apple-system, sans-serif;">
           ${item.source}
         </span>
       </td>
@@ -39,15 +89,27 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Merriweather:wght@300;400;700;900&amp;display=swap" rel="stylesheet">
       <style>
-        body { margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; }
+        body { margin: 0; padding: 0; background-color: #111111; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 600px; margin: 0 auto; }
         .narrative p { margin: 0 0 18px 0; }
         .narrative strong { color: #000; }
+
+        /* General Dark Mode CSS (Android/iOS) */
+        @media (prefers-color-scheme: dark) {
+          .header-bg, .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+          .header-text, .footer-text, .header-subtitle, .footer-subtext, .header-meta, .footer-muted { color: #999999 !important; }
+          /* Removed global container bg */
+          .narrative, .narrative p { color: #dddddd !important; }
+        }
+
+        /* Gmail-Specific Inversion Overrides */
+        u + .body .header-bg, u + .body .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+        u + .body .header-text, u + .body .footer-text, u + .body .header-subtitle, u + .body .footer-subtext, u + .body .header-meta, u + .body .footer-muted { color: #999999 !important; }
       </style>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f4f4f4;">
+    <body class="body" style="margin: 0; padding: 0; background-color: #111111;">
 
       <!-- PREHEADER HACK (Hidden preview text) -->
       <div style="display: none; max-height: 0px; overflow: hidden; opacity: 0; mso-hide: all; font-size: 0px; line-height: 0px;">
@@ -55,30 +117,18 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
         &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
       </div>
 
-      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
         <tr>
-          <td align="center" style="padding: 20px 0;">
-            <table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; background: #ffffff; border: 1px solid #e0e0e0;">
+          <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
+            <table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 
               <!-- Header -->
-              <tr>
-                <td style="padding: 40px 30px 30px 30px; border-bottom: 4px solid #000; text-align: center;">
-                  <h1 style="font-family: 'Merriweather', Georgia, serif; font-size: 28px; font-weight: 900; margin: 0; color: #000; letter-spacing: -1px;">
-                    Signal
-                  </h1>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #888; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">
-                    Daily Executive Briefing
-                  </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #888; margin: 10px 0 0 0; text-transform: uppercase; letter-spacing: 2px;">
-                    ${date}
-                  </p>
-                </td>
-              </tr>
+              ${generateHeaderHTML('Signal', 'Everything you need to know today', date)}
 
               <!-- Main Narrative -->
               <tr>
-                <td style="padding: 35px 30px;">
-                  <div class="narrative" style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 17px; line-height: 1.7; color: #222;">
+                <td style="padding: 35px 30px; background-color: #ffffff;" bgcolor="#ffffff">
+                  <div class="narrative" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: #222;">
                     ${narrativeHTML}
                   </div>
                 </td>
@@ -86,15 +136,15 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
 
               <!-- Divider -->
               <tr>
-                <td style="padding: 0 30px;">
+                <td style="padding: 0 30px; background-color: #ffffff;">
                   <hr style="border: none; border-top: 2px solid #000; margin: 0;">
                 </td>
               </tr>
 
               <!-- Deep Dive Links -->
               <tr>
-                <td style="padding: 30px;">
-                  <h2 style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0;">
+                <td style="padding: 30px; background-color: #ffffff;" bgcolor="#ffffff">
+                  <h2 style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0;">
                     📚 Deep Dive Links
                   </h2>
                   <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -107,7 +157,7 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
               <!-- Trial Banner -->
               <tr>
                 <td style="padding: 15px 30px; background: #FFF8F0; text-align: center; border-top: 1px solid #FFE0C0;">
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 13px; color: #B45309; margin: 0; font-weight: 500;">
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; color: #B45309; margin: 0; font-weight: 500;">
                     📡 Free trial: ${trialContext.trialDaysRemaining} day${trialContext.trialDaysRemaining === 1 ? '' : 's'} remaining &middot; 
                     <a href="https://signaldaily.me/subscribe" style="color: #FF5700; font-weight: bold; text-decoration: none;">Subscribe now</a>
                   </p>
@@ -116,26 +166,7 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
               ` : ''}
 
               <!-- Footer -->
-              <tr>
-                <td style="padding: 30px; background: #1a1a1a; text-align: center;">
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; color: #fff; margin: 0;">
-                    Signal Daily
-                  </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #666; margin: 15px 0 0 0;">
-                    Reply to this email with feedback. We read everything.
-                  </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 11px; color: #444; margin: 15px 0 0 0;">
-                    Want to stop receiving these emails? <a href="https://signaldaily.me/settings" style="color: #666; text-decoration: underline;">Pause them here.</a>
-                  </p>
-                </td>
-              </tr>
-
-            </table>
-          </td>
-        </tr>
-      </table>
-
-    </body>
+              ${generateFooterHTML()}</table></td></tr></table></body>
     </html>
   `;
 }
@@ -149,7 +180,7 @@ async function formatNarrative(text: string): Promise<string> {
   const html = await marked.parse(text);
 
   // Add custom styling to paragraphs
-  return html.replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word;">')
+  return html.replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Inter\', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;">')
     .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-word; overflow-wrap: anywhere;" ') // Mobile link fix v3
     .replace(/<li>/g, '<li style="margin-bottom: 8px; overflow-wrap: break-word;">')
     .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
@@ -194,21 +225,21 @@ function generateEmailHTML(sections: DigestSection[], date: string): string {
           ${section.title}
         </h2>
         
-        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
+        <div style="font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 20px;">
           ${formatNarrative(section.summary || '')}
         </div>
 
         <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-            <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; margin: 0 0 10px 0;">
+            <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; margin: 0 0 10px 0;">
                 DEEP DIVE SOURCES
             </p>
             <ul style="list-style: none; padding: 0; margin: 0;">
                 ${section.items.map(item => `
                     <li style="margin-bottom: 10px; padding-left: 0;">
-                        <a href="${item.link}" style="color: #2563eb; text-decoration: none; font-weight: 600; font-family: 'Helvetica Neue', sans-serif; font-size: 15px;">
+                        <a href="${item.link}" style="color: #2563eb; text-decoration: none; font-weight: 600; font-family: 'Inter', -apple-system, sans-serif; font-size: 15px;">
                             ${item.title}
                         </a>
-                        <span style="color: #666; font-size: 13px; font-family: 'Helvetica Neue', sans-serif;">
+                        <span style="color: #666; font-size: 13px; font-family: 'Inter', -apple-system, sans-serif;">
                             — ${item.source}
                         </span>
                     </li>
@@ -224,46 +255,25 @@ function generateEmailHTML(sections: DigestSection[], date: string): string {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Merriweather:wght@300;400;700;900&amp;display=swap" rel="stylesheet">
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
+    <body style="margin: 0; padding: 0; background-color: #111111; -webkit-font-smoothing: antialiased;">
       
-      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
         <tr>
-          <td align="center" style="padding: 20px 0;">
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; background: #ffffff; border: 1px solid #e0e0e0;">
+          <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
               
-              <tr>
-                <td style="padding: 40px 30px; border-bottom: 4px solid #000; text-align: center;">
-                    <h1 style="font-family: 'Merriweather', serif; font-size: 32px; font-weight: 900; margin: 0; color: #000; letter-spacing: -1px;">
-                        The Daily Brief
-                    </h1>
-                    <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; color: #666; margin: 10px 0 0 0; text-transform: uppercase; letter-spacing: 1px;">
-                        ${date} • Prepared for You
-                    </p>
-                </td>
-              </tr>
+              <!-- Header -->
+              ${generateHeaderHTML('The Daily Brief', 'Everything you need to know today', `${date} • Prepared for You`)}
 
               <tr>
-                <td style="padding: 30px;">
+                <td style="padding: 30px; background-color: #ffffff;" bgcolor="#ffffff" bgcolor="#ffffff">
                     ${sectionsHTML}
                 </td>
               </tr>
 
-              <tr>
-                <td style="padding: 30px; background: #000; color: #fff; text-align: center;">
-                    <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; margin: 0;">
-                        Signal Daily
-                    </p>
-                </td>
-              </tr>
-
-            </table>
-          </td>
-        </tr>
-      </table>
-
-    </body>
+              ${generateFooterHTML()}</table></td></tr></table></body>
     </html>
   `;
 }
@@ -322,33 +332,37 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
       <style>
-        .cta-button { display: inline-block; background-color: #FF5700; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Helvetica Neue', sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
+        .cta-button { display: inline-block; background-color: #FF5700; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
+
+        /* General Dark Mode CSS (Android/iOS) */
+        @media (prefers-color-scheme: dark) {
+          .header-bg, .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+          .header-text, .footer-text, .header-subtitle, .footer-subtext, .header-meta, .footer-muted { color: #999999 !important; }
+        }
+
+        /* Gmail-Specific Inversion Overrides */
+        u + .body .header-bg, u + .body .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+        u + .body .header-text, u + .body .footer-text, u + .body .header-subtitle, u + .body .footer-subtext, u + .body .header-meta, u + .body .footer-muted { color: #999999 !important; }
       </style>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
-      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+    <body class="body" style="margin: 0; padding: 0; background-color: #111111; -webkit-font-smoothing: antialiased;">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
         <tr>
-          <td align="center" style="padding: 40px 0;">
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; background: #ffffff; border: 1px solid #e0e0e0; overflow: hidden;">
+          <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden;">
+              <!-- Header -->
+              ${generateHeaderHTML('Signal', 'Your Intelligence Progress', undefined, true)}
               <tr>
-                <td style="padding: 50px 40px 30px 40px; text-align: center; border-bottom: 4px solid #111;">
-                  <h1 style="font-family: 'Merriweather', serif; font-size: 32px; font-weight: 900; margin: 0; color: #111; letter-spacing: -1px;">Signal.</h1>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 40px; text-align: center;">
+                <td style="padding: 40px; text-align: center; background-color: #ffffff;">
                   <h2 style="font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: #111; margin: 0 0 20px 0;">${title}</h2>
-                  <p style="font-family: 'Georgia', serif; font-size: 18px; line-height: 1.6; color: #444; margin-bottom: 40px;">${message}</p>
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; line-height: 1.6; color: #444; margin-bottom: 40px;">${message}</p>
                   <a href="https://signaldaily.me/subscribe" class="cta-button">Subscribe to Signal →</a>
                 </td>
               </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </body>
+              <!-- Footer -->
+              ${generateFooterHTML()}</table></td></tr></table></body>
     </html>
   `;
 
@@ -380,38 +394,42 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Merriweather:wght@300;400;700;900&amp;display=swap" rel="stylesheet">
       <style>
         .step-container { margin-bottom: 30px; }
-        .step-number { font-family: 'Helvetica Neue', sans-serif; font-size: 12px; font-weight: bold; color: #ff5700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .step-number { font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; font-weight: bold; color: #ff5700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .step-title { font-family: 'Merriweather', serif; font-size: 18px; font-weight: 700; color: #111; margin: 0 0 5px 0; }
-        .step-desc { font-family: 'Helvetica Neue', sans-serif; font-size: 14px; line-height: 1.5; color: #666; margin: 0; }
-        .cta-button { display: inline-block; background-color: #111; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Helvetica Neue', sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
+        .step-desc { font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; color: #666; margin: 0; }
+        .cta-button { display: inline-block; background-color: #111; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
+
+        /* General Dark Mode CSS (Android/iOS) */
+        @media (prefers-color-scheme: dark) {
+          .header-bg, .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+          .header-text, .footer-text, .header-subtitle, .footer-subtext, .header-meta, .footer-muted { color: #999999 !important; }
+        }
+
+        /* Gmail-Specific Inversion Overrides */
+        u + .body .header-bg, u + .body .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+        u + .body .header-text, u + .body .footer-text, u + .body .header-subtitle, u + .body .footer-subtext, u + .body .header-meta, u + .body .footer-muted { color: #999999 !important; }
       </style>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f4f4f4; -webkit-font-smoothing: antialiased;">
+    <body class="body" style="margin: 0; padding: 0; background-color: #111111; -webkit-font-smoothing: antialiased;">
       
-      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
         <tr>
-          <td align="center" style="padding: 40px 0;">
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; background: #ffffff; border: 1px solid #e0e0e0; overflow: hidden;">
+          <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden;">
               
               <!-- Header -->
-              <tr>
-                <td style="padding: 50px 40px 30px 40px; text-align: center; border-bottom: 4px solid #111;">
-                  <h1 style="font-family: 'Merriweather', serif; font-size: 32px; font-weight: 900; margin: 0; color: #111; letter-spacing: -1px;">
-                    Signal.
-                  </h1>
-                </td>
-              </tr>
+              ${generateHeaderHTML('Signal', 'The quiet side of the internet', undefined, true)}
 
               <!-- Body -->
               <tr>
-                <td style="padding: 40px;">
-                  <p style="font-family: 'Georgia', serif; font-size: 18px; line-height: 1.6; color: #111; margin-bottom: 30px;">
+                <td style="padding: 40px; background-color: #ffffff;">
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; line-height: 1.6; color: #111; margin-bottom: 30px;">
                     ${context?.isTrial ? `Welcome to your ${context.trialDays}-day free trial of Signal.` : 'Welcome to the quiet side of the internet.'}
                   </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 40px;">
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 40px;">
                     ${context?.isTrial ? `You have full access for the next ${context.trialDays} days. Here is how to get the most out of it:` : 'You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Signal:'}
                   </p>
 
@@ -438,7 +456,7 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
                       <a href="${link}" class="cta-button">
                         Connect Your Sources &rarr;
                       </a>
-                      <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-top: 20px; margin-bottom: 0;">
+                      <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-top: 20px; margin-bottom: 0;">
                         Connect your sources now to start receiving your briefing from tomorrow.
                       </p>
                   </div>
@@ -446,26 +464,7 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://si
               </tr>
 
               <!-- Footer -->
-              <tr>
-                <td style="padding: 30px; background: #111; text-align: center;">
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 14px; color: #fff; margin: 0;">
-                    Signal Daily
-                  </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #666; margin: 10px 0 0 0;">
-                    Reply to this email with feedback. We read everything.
-                  </p>
-                  <p style="font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: #444; margin: 20px 0 0 0; font-style: italic;">
-                    Made with love by Bhargav.
-                  </p>
-                </td>
-              </tr>
-
-            </table>
-          </td>
-        </tr>
-      </table>
-
-    </body>
+              ${generateFooterHTML()}</table></td></tr></table></body>
     </html>
   `;
 

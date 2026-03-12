@@ -62,6 +62,15 @@ Signal utilizes a very specific, premium design language.
 
 ---
 
+## 6. Email Design Standards (Resilient Editorial)
+- **Constraint**: Emails must be borderless and flush with the device edges.
+- **Layout**: Use `#111111` for body background and mastheads. Use `#ffffff` strictly for content rows (Narrative/Links).
+- **Typography**: Force **Inter** for all text. Use specific CSS hacks (`u + .body`) and `linear-gradient` backgrounds to lock colors against mobile inversion.
+- **Colors**: Masthead text must use the **Muted Grey (#999999)** from the date line for visual comfort.
+- **Deep Linking**: Standard Universal Links only (`https`), never custom URI schemes.
+
+---
+
 ## 6. Deployment & Environment Protocols
 - **Models Constant Strings**: Always explicitly declare the exact model string (e.g., `gemini-3.1-pro-preview`). Do not use aliases.
 - **Environment Variables**: Local development requires `.env.local` synced precisely with Vercel Production. Critical keys include `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, and `KV_REST_API...`. Never log these.
