@@ -76,7 +76,7 @@ export default function DashboardClient({
               className="space-y-4"
             >
               <h1 className="text-5xl md:text-7xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-[0.9]">
-                Your <span className="italic text-gray-400">Briefing</span>
+                Your <span className="text-gray-400">Briefing</span>
               </h1>
             </motion.div>
 
@@ -253,7 +253,7 @@ export default function DashboardClient({
 
               {sources.length === 0 ? (
                 <div className="py-12 border border-dashed border-gray-300 rounded-xl text-center">
-                  <p className="text-gray-500 font-serif italic mb-4">No sources configured yet.</p>
+                  <p className="text-gray-500 font-serif mb-4">No sources configured yet.</p>
                   <Link href="/sources" className="text-sm font-bold underline decoration-[#FF5700] decoration-2 underline-offset-4 hover:bg-[#FF5700] hover:text-white hover:no-underline transition-all px-2 py-1 rounded">
                     Add Sources
                   </Link>
@@ -331,7 +331,7 @@ function EmailStyleMarkdown({ content }: { content: string }) {
         .replace(/<ul>/g, '<ul style="padding-left: 20px; margin-bottom: 18px; list-style-type: disc;">')
         .replace(/<ol>/g, '<ol style="padding-left: 20px; margin-bottom: 18px; list-style-type: decimal;">')
         .replace(/<li>/g, '<li style="margin-bottom: 8px; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; padding-left: 4px;">')
-        .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
+        .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
 
       setHtml(formatted);
     }

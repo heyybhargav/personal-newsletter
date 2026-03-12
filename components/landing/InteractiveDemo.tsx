@@ -194,7 +194,7 @@ export default function InteractiveDemo() {
                             No Sign-Up
                         </span>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-[#1A1A1A] tracking-[-0.02em] leading-tight mb-5">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal text-[#1A1A1A] tracking-[-0.02em] leading-tight mb-5">
                         Create your custom AI briefing.
                     </h2>
                     <p className="text-base md:text-lg text-[#777777] font-medium max-w-lg mx-auto leading-relaxed">
@@ -367,11 +367,11 @@ export default function InteractiveDemo() {
                                         <span className="font-serif text-lg font-bold text-[#1A1A1A]">Signal.</span>
                                         <span className="text-[10px] font-bold tracking-widest text-gray-300 uppercase">Demo Briefing</span>
                                     </div>
-                                    <h3 className="text-xl md:text-2xl font-semibold text-[#1A1A1A] tracking-tight leading-snug">{subject}</h3>
+                                    <h3 className="text-xl md:text-2xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-snug">{subject}</h3>
                                 </div>
 
                                 {/* Narrative */}
-                                <div className="px-6 py-4 md:px-8 md:py-6 prose prose-sm md:prose-base prose-neutral max-w-none font-[family-name:var(--font-newsreader)] prose-headings:font-sans prose-headings:tracking-tight prose-h2:text-lg prose-h2:font-bold prose-h3:text-base prose-a:text-[#FF5700] prose-a:no-underline prose-a:hover:underline prose-blockquote:border-l-[#FF5700] prose-blockquote:italic prose-strong:font-semibold">
+                                <div className="px-6 py-4 md:px-8 md:py-6 prose prose-sm md:prose-base prose-neutral max-w-none font-[family-name:var(--font-newsreader)] prose-headings:font-sans prose-headings:tracking-tight prose-h2:text-lg prose-h2:font-bold prose-h3:text-base prose-a:text-[#FF5700] prose-a:no-underline prose-a:hover:underline prose-blockquote:border-l-[#FF5700] prose-strong:font-semibold">
                                     <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                                         {narrative}
                                     </ReactMarkdown>

@@ -19,10 +19,10 @@ export default function Footer({
                             <circle cx="16" cy="16" r="6" fill="#FF5700"/>
                             <circle cx="16" cy="16" r="10" stroke="#FF5700" strokeOpacity={0.3} strokeWidth="2"/>
                         </svg>
-                        <span className="text-lg font-bold tracking-tight text-white">Signal</span>
+                        <span className="text-xl font-serif font-bold tracking-tight text-white">Signal.</span>
                     </div>
                     <p className="text-sm text-gray-400 leading-relaxed font-medium">
-                        The agentic knowledge engine that helps you consume high-value signals 10x faster.
+                        Signal Daily is the agentic knowledge engine that helps you consume high-value signals 10x faster.
                     </p>
 
                 </div>

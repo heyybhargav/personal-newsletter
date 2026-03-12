@@ -36,7 +36,7 @@ const steps = [
     {
         id: "02",
         title: "Pick your time.",
-        description: "Choose when your briefing arrives. Morning coffee or evening wind-down. You decide.",
+        description: "Choose when your briefing arrives. On your schedule. Whenever it suits you.",
         icon: Clock,
         color: "bg-orange-500",
         visual: (
@@ -83,7 +83,7 @@ export default function HowItWorks() {
         <section className="pb-24 pt-12 md:pb-32 md:pt-16 bg-[#FDFBF7] relative overflow-hidden">
             <div className="max-w-5xl mx-auto px-6">
                 <div className="mb-24 md:text-center max-w-2xl mx-auto">
-                    <h2 className="text-4xl md:text-5xl font-semibold text-[#1A1A1A] tracking-tighter mb-6">
+                    <h2 className="text-4xl md:text-5xl font-serif font-normal text-[#1A1A1A] tracking-tighter mb-6">
                         How it works.
                     </h2>
                     <p className="text-lg text-[#4A4A4A] leading-relaxed">

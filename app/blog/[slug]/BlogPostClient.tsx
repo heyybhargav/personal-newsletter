@@ -59,7 +59,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-lg text-gray-400 font-serif italic leading-relaxed"
+                        className="text-lg text-gray-400 font-serif leading-relaxed"
                     >
                         {post.subtitle}
                     </motion.p>

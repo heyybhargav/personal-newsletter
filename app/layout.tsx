@@ -12,16 +12,16 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const newsreader = Newsreader({
   subsets: ["latin"],
-  style: ['normal', 'italic'],
+  style: ['normal'],
   variable: "--font-newsreader"
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://signaldaily.me'),
-  title: "Signal - High-Signal Intelligence Briefing",
+  title: "Signal Daily - High-Signal Intelligence Briefing",
   description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
   openGraph: {
-    title: "Signal - High-Signal Intelligence Briefing",
+    title: "Signal Daily - High-Signal Intelligence Briefing",
     description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
     url: 'https://signaldaily.me',
     siteName: 'Signal Daily',
@@ -30,12 +30,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Signal - High-Signal Intelligence Briefing",
+    title: "Signal Daily - High-Signal Intelligence Briefing",
     description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
   },
   appleWebApp: {
     capable: true,
-    title: "Signal",
+    title: "Signal Daily",
     statusBarStyle: "default",
   },
 

@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             type: 'article',
             publishedTime: post.publishedAt || new Date(post.date).toISOString(),
             url: `${baseUrl}/blog/${post.slug}`,
-            siteName: 'Signal',
+            siteName: 'Signal Daily',
             images: [
                 {
                     url: `${baseUrl}/icon.svg`, // Fallback until dynamic OG images are implemented

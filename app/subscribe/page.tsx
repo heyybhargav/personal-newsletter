@@ -65,7 +65,7 @@ export default function SubscribePage() {
                 <div className="text-center mb-6">
                     <h1 className="text-4xl md:text-5xl font-serif font-normal text-[#1A1A1A] mb-3 tracking-tight leading-tight">
                         The trial concludes.<br />
-                        <span className="italic text-gray-400">The intelligence continues.</span>
+                        <span className="text-gray-400">The intelligence continues.</span>
                     </h1>
                     <p className="text-lg text-gray-500 font-serif max-w-md mx-auto">
                         Secure your unfair advantage with unlimited access to premium synthetic intelligence.

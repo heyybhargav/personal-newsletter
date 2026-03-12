@@ -1,7 +1,7 @@
 import FaqClient from './FaqClient';
 
 export const metadata = {
-    title: 'FAQ & Glossary — Signal',
+    title: 'FAQ & Glossary — Signal Daily',
     description: 'Answers to the most common questions about AI news summarizers, overcoming newsletter fatigue, and how Signal personalized briefings work.',
 };
 

@@ -15,46 +15,42 @@ export default function Hero() {
     };
 
     return (
-        <section ref={containerRef} className="relative min-h-[100vh] flex flex-col items-center justify-center px-6 pt-36 pb-28 overflow-hidden">
-            <div className="max-w-4xl mx-auto text-center relative z-10 space-y-10">
+        <section ref={containerRef} itemScope itemType="https://schema.org/WebApplication" className="relative min-h-[100vh] flex flex-col items-center justify-center px-6 pt-24 pb-20 md:pt-36 md:pb-28 overflow-hidden">
+            <meta itemProp="name" content="Signal Daily" />
+            <meta itemProp="applicationCategory" content="BusinessApplication" />
+            <div className="max-w-6xl mx-auto text-center relative z-10 space-y-6 md:space-y-10">
                 <div className="flex flex-col items-center justify-center">
                     <motion.h1
+                        itemProp="headline"
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal text-[#1A1A1A] tracking-tighter leading-none"
+                        className="text-[32px] sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal text-[#1A1A1A] tracking-tighter leading-[1.1] sm:leading-[1.05]"
                     >
-                        One email.
+                        Know Everything <br className="hidden sm:block" />
+                        <span className="text-[32px] sm:text-5xl md:text-6xl lg:text-7xl text-[#666666] block mt-1 sm:mt-2">
+                            Without Reading Everything.
+                        </span>
                     </motion.h1>
 
-                    <motion.h2
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-normal tracking-tight text-[#666666] leading-[1.1] italic mt-1"
-                    >
-                        Everything that matters.
-                    </motion.h2>
+
                 </div>
 
-                <motion.div
+                <motion.h2
+                    itemProp="description"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-base md:text-lg text-[#777777] font-medium tracking-wide flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-3 max-w-[320px] sm:max-w-none mx-auto leading-relaxed"
+                    className="text-base md:text-lg text-[#777777] font-medium tracking-tight max-w-lg mx-auto leading-relaxed px-4 md:px-0"
                 >
-                    <span className="whitespace-nowrap">Add your sources</span>
-                    <span className="text-gray-300">·</span>
-                    <span className="whitespace-nowrap">We read everything</span>
-                    <span className="text-gray-300 hidden sm:inline">·</span>
-                    <span className="whitespace-nowrap w-full sm:w-auto mt-1 sm:mt-0 text-center">You read one email</span>
-                </motion.div>
+                    Signal Daily reads your favorite sources every day and sends you one simple briefing email. Stay smart in 5 minutes.
+                </motion.h2>
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.5 }}
-                    className="flex flex-col md:flex-row items-center justify-center gap-6"
+                    className="flex flex-col md:flex-row items-center justify-center gap-6 mt-4 md:mt-2"
                 >
                     <button
                         onClick={triggerLogin}
@@ -65,7 +61,7 @@ export default function Hero() {
                     </button>
                     <button
                         onClick={() => document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="text-sm sm:text-base text-[#4A4A4A] hover:text-[#1A1A1A] font-medium transition-colors cursor-pointer"
+                        className="text-sm sm:text-base text-[#4A4A4A] hover:text-[#1A1A1A] font-medium transform hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
                     >
                         See how it works ↓
                     </button>
@@ -97,7 +93,7 @@ export default function Hero() {
                                 <div className="h-3 md:h-4 bg-gray-100 rounded w-full"></div>
                                 <div className="h-3 md:h-4 bg-gray-100 rounded w-5/6"></div>
                             </div>
-                            <div className="p-4 md:p-6 bg-[#FDFBF7] rounded-lg border border-gray-100 italic text-sm md:text-base text-gray-600 font-serif">
+                            <div className="p-4 md:p-6 bg-[#FDFBF7] rounded-lg border border-gray-100 text-sm md:text-base text-gray-600 font-serif">
                                 "5 minutes. That's all it takes to know everything I need to."
                             </div>
                         </div>

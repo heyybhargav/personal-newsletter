@@ -26,7 +26,7 @@ export default function AntiList() {
                             whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="text-xl md:text-3xl text-[#CCCCCC] font-serif italic line-through decoration-2 decoration-[#FF5700]/50"
+                            className="text-xl md:text-3xl text-[#CCCCCC] font-serif line-through decoration-2 decoration-[#FF5700]/50"
                         >
                             {item}
                         </motion.span>

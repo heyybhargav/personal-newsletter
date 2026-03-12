@@ -538,7 +538,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                     {loading ? (
                         <div className="py-24 text-center">
                             <div className="inline-block w-8 h-8 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
-                            <p className="text-gray-400 font-serif italic">Loading intelligence streams...</p>
+                            <p className="text-gray-400 font-serif">Loading intelligence streams...</p>
                         </div>
                     ) : sources.length === 0 ? (
                         <div className="py-12">
@@ -806,7 +806,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                     {/* Intro Text / Helper (only when empty) */}
                                     {!inputUrl && !detectedSource && (
                                         <div className="h-full flex flex-col items-center justify-center opacity-60 pb-10">
-                                            <p className="font-serif italic text-gray-400 text-lg text-center max-w-sm leading-relaxed">
+                                            <p className="font-serif text-gray-400 text-lg text-center max-w-sm leading-relaxed">
                                                 Search for YouTube channels, subreddits, podcasts, or paste any RSS link.
                                             </p>
                                         </div>
@@ -888,7 +888,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                                         {sampleItems.length > 0 && (
                                                             <ul className="mt-4 space-y-2 border-l-2 border-gray-100 pl-4">
                                                                 {sampleItems.slice(0, 3).map((item, i) => (
-                                                                    <li key={i} className="text-sm text-gray-500 font-serif italic line-clamp-1">
+                                                                    <li key={i} className="text-sm text-gray-500 font-serif line-clamp-1">
                                                                         "{item.title}"
                                                                     </li>
                                                                 ))}

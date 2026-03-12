@@ -12,7 +12,7 @@ export default function Manifesto() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
                 >
-                    <p className="text-2xl md:text-3xl lg:text-4xl font-serif italic leading-relaxed text-[#1A1A1A]">
+                    <p className="text-2xl md:text-3xl lg:text-4xl font-serif leading-relaxed text-[#1A1A1A]">
                         "You become what you consume. In an age of endless distraction, Signal is built to protect your attention. One inbox. One briefing. Every day."
                     </p>
                     <div className="mt-8 flex items-center justify-center gap-4">

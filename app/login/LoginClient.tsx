@@ -46,13 +46,13 @@ export default function LoginClient() {
                                 </span>
                             </div>
 
-                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-semibold text-white tracking-tighter leading-[1.05]">
-                                Your briefing is ready<br className="hidden sm:block" />
-                                <span className="font-serif italic font-medium text-[#FF5700] block sm:inline"> tomorrow.</span>
+                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-serif font-normal text-white tracking-tighter leading-[1.05]">
+                                Know more.<br className="hidden sm:block" />
+                                <span className="text-[#FF5700] block sm:inline"> Read less.</span>
                             </h2>
 
                             <p className="text-lg sm:text-xl md:text-2xl text-gray-400 font-medium leading-relaxed px-2">
-                                Sign up in 10 seconds. Your first briefing arrives tomorrow.
+                                We read the hard stuff for you. Sign up in 10 seconds to get your first briefing tomorrow.
                             </p>
 
                             <div className="pt-6 md:pt-8 w-full flex flex-col items-center">
