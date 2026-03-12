@@ -7,6 +7,7 @@ import { getSession } from "@/lib/auth";
 import { getUser, getTrialDaysRemaining } from "@/lib/db";
 
 import { Analytics } from "@vercel/analytics/react";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const newsreader = Newsreader({
@@ -67,6 +68,7 @@ export default async function RootLayout({
         <Navbar initialUser={initialUser} tier={tier} trialDaysRemaining={trialDaysRemaining} />
         {children}
         <Analytics />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!} />
         <div className="fixed inset-0 z-50 pointer-events-none bg-noise opacity-[0.03] mix-blend-overlay"></div>
       </body>
     </html>
