@@ -1,6 +1,7 @@
 'use client';
 
 import LegalLayout from '@/components/landing/LegalLayout';
+import { CONTACT_EMAIL } from '@/lib/config';
 
 export default function PrivacyClient() {
     return (
@@ -47,7 +48,7 @@ export default function PrivacyClient() {
 
             <h2>5. Contact Us</h2>
             <p>
-                For any questions regarding this privacy policy or your data, please contact us directly at <a href="mailto:editor@signaldaily.me">editor@signaldaily.me</a>.
+                For any questions regarding this privacy policy or your data, please contact us directly at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
             </p>
         </LegalLayout>
     );

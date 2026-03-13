@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { Receiver, Client } from '@upstash/qstash';
 import { getFullKnowledgeBaseContext, isSlugTaken, saveBlogPost } from '@/lib/blogDb';
 import { runEditorPhase, runWriterPhase, runReviewerPhase } from '@/lib/blogEngine';
+import { SITE_URL } from '@/lib/config';
 import { validateGeneratedPost } from '@/lib/blogValidation';
 import { logUsageEvent, logErrorEvent, calculateCost } from '@/lib/db';
 
@@ -49,9 +50,7 @@ export async function POST(request: Request) {
 
         console.log(`\n========= [Blog Worker] STEP EXECUTING: ${step.toUpperCase()} (Attempt: ${attempt}) =========`);
 
-        const workerUrl = process.env.NODE_ENV === 'development'
-            ? `http://${request.headers.get('host')}/api/cron/blog/generate`
-            : `https://www.signaldaily.me/api/cron/blog/generate`;
+        const workerUrl = `${SITE_URL}/api/cron/blog/generate`;
 
         if (step === 'editor') {
             after(async () => {

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getBlogPost, getBlogPosts } from '@/lib/blogDb';
 import BlogPostClient from './BlogPostClient';
 import type { Metadata } from 'next';
+import { SITE_URL, getAbsoluteUrl } from '@/lib/config';
 
 export async function generateStaticParams() {
     // Generate static params for the last 50 posts to ensure they are fast
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const post = await getBlogPost(slug);
     if (!post) return { title: 'Not Found' };
     
-    const baseUrl = 'https://signaldaily.me';
+    const baseUrl = SITE_URL;
     
     return {
         title: `${post.title} — Signal`,
@@ -66,15 +67,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         publisher: {
             '@type': 'Organization',
             name: 'Signal',
-            url: 'https://signaldaily.me',
+            url: '${SITE_URL}',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://signaldaily.me/icon.svg',
+                url: '${SITE_URL}/icon.svg',
             },
         },
         mainEntityOfPage: {
             '@type': 'WebPage',
-            '@id': `https://signaldaily.me/blog/${post!.slug}`,
+            '@id': `${SITE_URL}/blog/${post!.slug}`,
         },
     };
 
@@ -82,8 +83,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Blog', item: 'https://signaldaily.me/blog' },
-            { '@type': 'ListItem', position: 2, name: post!.title, item: `https://signaldaily.me/blog/${post!.slug}` },
+            { '@type': 'ListItem', position: 1, name: 'Blog', item: '${SITE_URL}/blog' },
+            { '@type': 'ListItem', position: 2, name: post!.title, item: `${SITE_URL}/blog/${post!.slug}` },
         ],
     };
 

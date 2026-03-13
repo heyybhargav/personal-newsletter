@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Client } from '@upstash/qstash';
+import { SITE_URL } from '@/lib/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,10 +23,7 @@ export async function GET(request: Request) {
         }
 
         // The target worker URL that QStash will call
-        // 🔴 SECURITY FIX: Hardcode production URL to avoid Vercel edge header parsing issues
-        const workerUrl = process.env.NODE_ENV === 'development'
-            ? `http://${request.headers.get('host')}/api/cron/blog/generate`
-            : `https://www.signaldaily.me/api/cron/blog/generate`;
+        const workerUrl = `${SITE_URL}/api/cron/blog/generate`;
 
         // 2. Publish message to Upstash QStash
         const res = await qstash.publishJSON({

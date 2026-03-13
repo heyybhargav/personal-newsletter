@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { X, Menu, Loader2 } from 'lucide-react';
+import { CONTACT_EMAIL } from '@/lib/config';
 
 interface PublicNavProps {
     onLogin?: () => void;
@@ -12,7 +13,7 @@ interface PublicNavProps {
 const NAV_LINKS = [
     { label: 'Blog', href: '/blog' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Contact', href: 'mailto:editor@signaldaily.me' },
+    { label: 'Contact', href: `mailto:${CONTACT_EMAIL}` },
 ];
 
 export default function PublicNav({ onLogin, isLoggingIn }: PublicNavProps) {

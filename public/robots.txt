@@ -4,7 +4,7 @@ Allow: /blog
 Allow: /blog/*
 
 # Sitemap
-Sitemap: https://signaldaily.me/sitemap.xml
+Sitemap: /sitemap.xml
 
 # AI crawlers - explicitly allowed
 User-agent: GPTBot

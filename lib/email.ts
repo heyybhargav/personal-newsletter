@@ -2,6 +2,7 @@ import sgMail from '@sendgrid/mail';
 import { DigestSection, ContentItem } from './types';
 import { UnifiedBriefing } from './gemini';
 import { format } from 'date-fns';
+import { SITE_URL, CONTACT_EMAIL, SENDER_NAME } from './config';
 
 if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -59,7 +60,7 @@ function generateFooterHTML(): string {
           <span style="color: ${subTextColor} !important;">Everything you need to know, without the noise.<br>Reply to this email with feedback. We read everything.</span>
         </p>
         <p class="footer-muted" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: ${mutedColor}; margin: 20px 0 0 0;">
-          <a href="https://signaldaily.me/settings" style="color: ${mutedColor} !important; text-decoration: underline;">Pause briefings.</a>
+          <a href="${SITE_URL}/settings" style="color: ${mutedColor} !important; text-decoration: underline;">Pause briefings.</a>
         </p>
       </td>
     </tr>
@@ -159,7 +160,7 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
                 <td style="padding: 15px 30px; background: #FFF8F0; text-align: center; border-top: 1px solid #FFE0C0;">
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; color: #B45309; margin: 0; font-weight: 500;">
                     📡 Free trial: ${trialContext.trialDaysRemaining} day${trialContext.trialDaysRemaining === 1 ? '' : 's'} remaining &middot; 
-                    <a href="https://signaldaily.me/subscribe" style="color: #FF5700; font-weight: bold; text-decoration: none;">Subscribe now</a>
+                    <a href="${SITE_URL}/subscribe" style="color: #FF5700; font-weight: bold; text-decoration: none;">Subscribe now</a>
                   </p>
                 </td>
               </tr>
@@ -358,7 +359,7 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
                 <td style="padding: 40px; text-align: center; background-color: #ffffff;">
                   <h2 style="font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: #111; margin: 0 0 20px 0;">${title}</h2>
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; line-height: 1.6; color: #444; margin-bottom: 40px;">${message}</p>
-                  <a href="https://signaldaily.me/subscribe" class="cta-button">Subscribe to Signal →</a>
+                  <a href="${SITE_URL}/subscribe" class="cta-button">Subscribe to Signal →</a>
                 </td>
               </tr>
               <!-- Footer -->
@@ -381,7 +382,7 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
   }
 }
 
-export async function sendWelcomeEmail(to: string, baseUrl: string = 'https://signaldaily.me', context?: { isTrial?: boolean, trialDays?: number }): Promise<void> {
+export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL}', context?: { isTrial?: boolean, trialDays?: number }): Promise<void> {
   const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to; // Fallback
 
   const subject = "Bhargav from Signal: Welcome! Let's set up your briefing.";

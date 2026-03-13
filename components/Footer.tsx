@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CONTACT_EMAIL } from '@/lib/config';
 
 export default function Footer({
     hideBorder = false,
@@ -49,7 +50,7 @@ export default function Footer({
                     <div className="flex flex-col gap-6">
                         <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest font-mono">Company</h4>
                         <div className="flex flex-col gap-4">
-                            <a href="mailto:editor@signaldaily.me" className="text-sm text-gray-400 hover:text-white transition-colors">Contact</a>
+                            <a href={`mailto:${CONTACT_EMAIL}`} className="text-sm text-gray-400 hover:text-white transition-colors">Contact</a>
                         </div>
                     </div>
                 </div>

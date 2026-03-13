@@ -8,6 +8,7 @@ import { getUser, getTrialDaysRemaining } from "@/lib/db";
 
 import { Analytics } from "@vercel/analytics/react";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SITE_URL } from "@/lib/config";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const newsreader = Newsreader({
@@ -17,13 +18,13 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://signaldaily.me'),
+  metadataBase: new URL(SITE_URL),
   title: "Signal Daily - High-Signal Intelligence Briefing",
   description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
   openGraph: {
     title: "Signal Daily - High-Signal Intelligence Briefing",
     description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
-    url: 'https://signaldaily.me',
+    url: SITE_URL,
     siteName: 'Signal Daily',
     locale: 'en_US',
     type: 'website',

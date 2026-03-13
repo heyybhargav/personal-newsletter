@@ -4,6 +4,7 @@ import { signSession } from '@/lib/auth';
 import { createUser, getUser, saveUser } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { sendWelcomeEmail } from '@/lib/email';
+import { SITE_URL } from '@/lib/config';
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 
@@ -39,7 +40,7 @@ export async function POST(request: Request) {
 
             // Send Welcome Email
             try {
-                const origin = request.headers.get('origin') || 'https://signaldaily.me';
+                const origin = request.headers.get('origin') || SITE_URL;
                 await sendWelcomeEmail(email, origin, { isTrial: true, trialDays: 7 });
             } catch (emailError) {
                 console.error('[Auth] Failed to send welcome email:', emailError);

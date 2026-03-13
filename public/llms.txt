@@ -20,7 +20,7 @@ Signal is for knowledge workers, founders, investors, and curious people who wan
 
 ## Blog Posts
 
-- [The Smartest Thing You Can Do With 5 Minutes Every Day](https://signaldaily.me/blog/why-signal) — On staying informed, building reading habits, and why Signal exists
+- [The Smartest Thing You Can Do With 5 Minutes Every Day](${SITE_URL}/blog/why-signal) — On staying informed, building reading habits, and why Signal exists
 
 ## Frequently Asked Questions
 
@@ -38,5 +38,5 @@ Once per day, at a time you choose.
 
 ## Contact
 
-Website: https://signaldaily.me
+Website: ${SITE_URL}
 Twitter: https://twitter.com/heyybhargav
