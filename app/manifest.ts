@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'Signal Daily',
-        short_name: 'Signal',
+        name: 'Siftl',
+        short_name: 'Siftl',
         description: 'Your AI-curated daily executive briefing. Less scrolling, more knowing.',
         start_url: '/',
         display: 'standalone',

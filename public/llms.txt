@@ -1,14 +1,14 @@
-# Signal - Daily AI Intelligence Briefing
+# Siftl - Daily AI Intelligence Briefing
 
-> Signal is a personalised AI-curated briefing service that synthesises your chosen sources into one clean email, delivered whenever you want it.
+> Siftl is a personalised AI-curated briefing service that synthesises your chosen sources into one clean email, delivered whenever you want it.
 
-## What is Signal?
+## What is Siftl?
 
-Signal reads the blogs, newsletters, YouTube channels, and websites you follow and generates a single, well-written briefing from them every day. It replaces the daily habit of scrolling through multiple feeds, subscribing to generic newsletters, or copy-pasting links into ChatGPT — and delivers the synthesis directly to your inbox.
+Siftl reads the blogs, newsletters, YouTube channels, and websites you follow and generates a single, well-written briefing from them every day. It replaces the daily habit of scrolling through multiple feeds, subscribing to generic newsletters, or copy-pasting links into ChatGPT — and delivers the synthesis directly to your inbox.
 
-## Who is Signal for?
+## Who is Siftl for?
 
-Signal is for knowledge workers, founders, investors, and curious people who want to stay informed on their specific areas of interest without spending time managing information sources.
+Siftl is for knowledge workers, founders, investors, and curious people who want to stay informed on their specific areas of interest without spending time managing information sources.
 
 ## Key Concepts
 
@@ -20,17 +20,17 @@ Signal is for knowledge workers, founders, investors, and curious people who wan
 
 ## Blog Posts
 
-- [The Smartest Thing You Can Do With 5 Minutes Every Day](${SITE_URL}/blog/why-signal) — On staying informed, building reading habits, and why Signal exists
+- [The Smartest Thing You Can Do With 5 Minutes Every Day](${SITE_URL}/blog/why-siftl) — On staying informed, building reading habits, and why Siftl exists
 
 ## Frequently Asked Questions
 
-**What makes Signal different from Morning Brew or TLDR?**
-Those newsletters are written for everyone. Signal synthesises content from your specific sources, so every item in your briefing is relevant to you.
+**What makes Siftl different from Morning Brew or TLDR?**
+Those newsletters are written for everyone. Siftl synthesises content from your specific sources, so every item in your briefing is relevant to you.
 
 **Why not just use ChatGPT?**
-ChatGPT can summarise articles if you paste them in. Signal does this automatically, every day, from your sources, without you needing to do anything.
+ChatGPT can summarise articles if you paste them in. Siftl does this automatically, every day, from your sources, without you needing to do anything.
 
-**What sources does Signal support?**
+**What sources does Siftl support?**
 Any URL: blogs, Substacks, YouTube channels, news sites, Reddit, GitHub, and more.
 
 **How often is the briefing sent?**

@@ -29,7 +29,7 @@ async function runReviewEngine() {
     };
 
     const prompt = `
-You are the AI Optimization Director for Signal Daily.
+You are the AI Optimization Director for Siftl.
 Your goal is to propose exactly ONE high-impact improvement to our "LLM Instructions" or "Brand Voice" to make the automated blogs better.
 
 CURRENT LLM INSTRUCTIONS:

@@ -72,7 +72,7 @@ export async function generateAndPublishBlog() {
 
 export async function runEditorPhase(kb: any) {
     const prompt = `
-You are the Managing Editor for Signal Daily. Your job is to decide what blog post we publish next.
+You are the Managing Editor for Siftl. Your job is to decide what blog post we publish next.
 
 KNOWLEDGE BASE:
 ---
@@ -223,7 +223,7 @@ Write the full blog post text.
 
 export async function runReviewerPhase(rawText: string, plan: any, kb: any) {
     const prompt = `
-You are the Technical SEO Editor for Signal Daily.
+You are the Technical SEO Editor for Siftl.
 Take the following raw blog post text and format it into our strict JSON schema.
 
 RAW DRAFT:

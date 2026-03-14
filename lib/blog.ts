@@ -58,7 +58,7 @@ export const BLOG_POSTS: BlogPost[] = [
                 heading: 'The synthesis layer',
                 paragraphs: [
                     'The solution isn’t another subscription. The solution is an automated synthesis layer. What knowledge workers actually want is the breadth of 40 specific niche sources, condensed into the reading time of 1 mass-market newsletter.',
-                    'This is what <strong>Signal</strong> does. By using large language models to read your specific RSS feeds, Substack links, and YouTube channels, it replaces the human editor with a personalized AI indexer.'
+                    'This is what <strong>Siftl</strong> does. By using large language models to read your specific RSS feeds, Substack links, and YouTube channels, it replaces the human editor with a personalized AI indexer.'
                 ],
                 listItems: [
                     'Instead of 40 unread emails, you get 1 daily email.',
@@ -76,26 +76,26 @@ export const BLOG_POSTS: BlogPost[] = [
         ]
     },
     {
-        slug: 'signal-vs-morning-brew',
-        title: 'Signal vs. Morning Brew: Why Personalization Beats Curation',
+        slug: 'siftl-vs-morning-brew',
+        title: 'Siftl vs. Morning Brew: Why Personalization Beats Curation',
         subtitle: 'When you need high-signal intelligence, mass media curations fall short.',
         date: 'March 7, 2026',
         readTime: '5 min read',
         content: [
             {
                 paragraphs: [
-                    'If you are looking for an alternative to Morning Brew that focuses entirely on your specific industry, <strong>Signal is a better option because it uses AI to synthesize the exact sources you follow into a daily briefing.</strong>',
+                    'If you are looking for an alternative to Morning Brew that focuses entirely on your specific industry, <strong>Siftl is a better option because it uses AI to synthesize the exact sources you follow into a daily briefing.</strong>',
                     'Morning Brew is a fantastic newsletter for general business news. But it is written for millions of people. If you work in a niche industry, or if you need to track specific competitors, a mass-market newsletter will always miss the highly specific signals you need.'
                 ]
             },
             {
                 heading: 'The Core Difference',
                 paragraphs: [
-                    'The fundamental difference between Morning Brew and Signal is <strong>editorial control vs. automated personalization.</strong>',
+                    'The fundamental difference between Morning Brew and Siftl is <strong>editorial control vs. automated personalization.</strong>',
                 ],
                 listItems: [
                     '<strong>Morning Brew</strong> relies on human editors to decide what the most important business stories of the day are for a general audience.',
-                    '<strong>Signal</strong> relies on large language models (LLMs) to read the specific blogs, highly-technical Substacks, and YouTube channels <em>you</em> select, summarizing only what matters to <em>your</em> work.'
+                    '<strong>Siftl</strong> relies on large language models (LLMs) to read the specific blogs, highly-technical Substacks, and YouTube channels <em>you</em> select, summarizing only what matters to <em>your</em> work.'
                 ]
             },
             {
@@ -106,13 +106,13 @@ export const BLOG_POSTS: BlogPost[] = [
                 ]
             },
             {
-                heading: 'How Signal solves information overload',
+                heading: 'How Siftl solves information overload',
                 paragraphs: [
-                    'Signal was built specifically to solve newsletter fatigue by flipping the model. Instead of subscribing to pre-packaged newsletters, you define the inputs.',
+                    'Siftl was built specifically to solve newsletter fatigue by flipping the model. Instead of subscribing to pre-packaged newsletters, you define the inputs.',
                 ],
                 listItems: [
                     '<strong>Bring your own sources:</strong> Paste URLs for any blog, RSS feed, or YouTube channel.',
-                    '<strong>AI Synthesis:</strong> Signal reads them all before you wake up and writes a single, cohesive briefing.',
+                    '<strong>AI Synthesis:</strong> Siftl reads them all before you wake up and writes a single, cohesive briefing.',
                     '<strong>Zero noise:</strong> Because the inputs are strictly controlled by you, the output never contains filler or irrelevant mass-market news.'
                 ]
             },
@@ -120,13 +120,13 @@ export const BLOG_POSTS: BlogPost[] = [
                 heading: 'Which one should you choose?',
                 paragraphs: [
                     'If you want an entertaining, well-written summary of macro business news and pop culture, stick with Morning Brew.',
-                    'If you need a highly tailored intelligence briefing designed around your specific career, investments, and interests, you should switch to Signal.'
+                    'If you need a highly tailored intelligence briefing designed around your specific career, investments, and interests, you should switch to Siftl.'
                 ]
             }
         ]
     },
     {
-        slug: 'why-signal',
+        slug: 'why-siftl',
         title: 'The Smartest Thing You Can Do With 5 Minutes Every Day',
         subtitle: 'And why you\'re probably spending 45 instead.',
         date: 'March 7, 2026',
@@ -172,9 +172,9 @@ export const BLOG_POSTS: BlogPost[] = [
                 ],
             },
             {
-                heading: 'Why Signal',
+                heading: 'Why Siftl',
                 paragraphs: [
-                    'Signal reads what you follow and turns it into a single, well-written briefing, delivered whenever you want it.',
+                    'Siftl reads what you follow and turns it into a single, well-written briefing, delivered whenever you want it.',
                     'No feeds. No apps. No remembering to check anything.',
                     'Just the things that matter to you, already read and synthesized, waiting in your inbox.',
                 ],

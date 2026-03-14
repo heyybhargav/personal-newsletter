@@ -210,7 +210,7 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
   3. **CRITICAL MARKDOWN RULE**: You must leave a completely blank line (double newline) between the bolded question and the start of the answer paragraph. Do not start the answer immediately below the question without a blank line space.
   4. The next question MUST also have a blank line (double-newline) separating it from the previous answer paragraph.
 - **MANDATORY LINKS**: You MUST include at least **two** different inline hyperlinked source [claims](LINK) naturally within the answers.
-- **ZERO TOLERANCE FOR DUPLICATION**: Whatever happens in the Lead Analysis MUST NOT show up in the Signal section.
+- **ZERO TOLERANCE FOR DUPLICATION**: Whatever happens in the Lead Analysis MUST NOT show up in the Siftl section.
 
 **THE SIGNAL**
 
@@ -246,7 +246,7 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 <strict_rules>
 - NO EM DASHES.
 - NO HALLUCINATIONS. Check source text strictly.
-- STRICT SECTION EXCLUSIVITY: Do not repeat Lead content in Signal blocks.
+- STRICT SECTION EXCLUSIVITY: Do not repeat Lead content in Siftl blocks.
 - NO EMOJIS IN BODY TEXT. Only permitted in the Watch This card icon area.
 </strict_rules>
 
@@ -321,7 +321,7 @@ BEGIN BRIEFING:`;
         }
 
         // Parse Output
-        let subject = `Signal: ${today}`;
+        let subject = `Siftl: ${today}`;
         let preheader = `Your daily intelligence briefing for ${today}.`;
         let narrative = rawText;
 
@@ -359,7 +359,7 @@ BEGIN BRIEFING:`;
     } catch (error: any) {
         console.error('[LLM] Error generating unified narrative:', error.message || error);
         return {
-            subject: `Signal: Your Daily Briefing — ${new Date().toLocaleDateString()}`,
+            subject: `Siftl: Your Daily Briefing — ${new Date().toLocaleDateString()}`,
             preheader: `Quick intelligence updates for today.`,
             narrative: generateFallbackBriefing(items),
             tokenUsage: { input: 0, output: 0, model: (provider === 'gemini' || provider === 'gemini-pro') ? 'gemini-3-flash-preview' : MODEL_NAME, provider: provider || 'groq' }

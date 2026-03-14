@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
 export const runtime = 'edge';
 
 // Image metadata
-export const alt = 'Signal - High-Signal Intelligence Briefing';
+export const alt = 'Siftl - High-Signal Intelligence Briefing';
 export const size = {
     width: 1200,
     height: 630,
@@ -29,7 +29,7 @@ export default async function Image() {
                     color: 'white',
                 }}
             >
-                {/* Signal Dot */}
+                {/* Siftl Dot */}
                 <div
                     style={{
                         display: 'flex',
@@ -60,7 +60,7 @@ export default async function Image() {
                         marginBottom: 20,
                     }}
                 >
-                    Signal.
+                    Siftl.
                 </div>
 
                 {/* Tagline */}

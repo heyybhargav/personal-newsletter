@@ -83,8 +83,8 @@ async function seedKnowledgeBase() {
     const blogIdeas = {
         backlog: [
             { topic: "The psychological cost of unread newsletters", category: "philosophical", cluster: "newsletter-fatigue" },
-            { topic: "Signal vs Feedly: The difference between reading and curating", category: "comparison", cluster: "alternatives" },
-            { topic: "How to use Signal to track competitor product releases", category: "how-to", cluster: "use-cases" },
+            { topic: "Siftl vs Feedly: The difference between reading and curating", category: "comparison", cluster: "alternatives" },
+            { topic: "How to use Siftl to track competitor product releases", category: "how-to", cluster: "use-cases" },
             { topic: "Why the creator economy broke the internet for readers", category: "industry", cluster: "curation-economy" },
             { topic: "Best alternatives to Substack for readers in 2026", category: "alternatives", cluster: "alternatives" }
         ]
@@ -102,12 +102,12 @@ async function seedKnowledgeBase() {
             },
             {
                 id: "alternatives",
-                theme: "Comparing Signal to manual curation tools (Feedly, Morning Brew, Substack, TLDR).",
+                theme: "Comparing Siftl to manual curation tools (Feedly, Morning Brew, Substack, TLDR).",
                 target_posts: 10
             },
             {
                 id: "use-cases",
-                theme: "Specific high-value workflows enabled by Signal (VC tracking, competitor intel).",
+                theme: "Specific high-value workflows enabled by Siftl (VC tracking, competitor intel).",
                 target_posts: 6
             }
         ]
@@ -117,7 +117,7 @@ async function seedKnowledgeBase() {
     // 5. Brand Voice Guidelines - THE QUALITATIVE ENGINE
     console.log('↳ Establishing Brand Voice...');
     const brandVoice = {
-        identity: "We are building the antidote to noise. Signal is a premium, automated synthesis layer. We are cynical about mass media, but optimistic about high-quality, targeted intelligence.",
+        identity: "We are building the antidote to noise. Siftl is a premium, automated synthesis layer. We are cynical about mass media, but optimistic about high-quality, targeted intelligence.",
         banned_words: ["delve", "landscape", "testament", "tapestry", "in conclusion", "furthermore", "realm", "unlock"],
         formatting: [
             "Paragraphs must be short. Maximum 3-4 sentences.",
@@ -134,7 +134,7 @@ async function seedKnowledgeBase() {
     await redis.set(KB_KEYS.PERFORMANCE_LOG, { runs: [] });
     await redis.set(KB_KEYS.INSTRUCTION_PROPOSALS, { proposals: [] });
     await redis.set(KB_KEYS.LLM_INSTRUCTIONS, {
-        system: "You are the autonomous content engine behind Signal Daily. Your goal is to write SEO dominating content with the distinctive Signal voice.",
+        system: "You are the autonomous content engine behind Siftl. Your goal is to write SEO dominating content with the distinctive Siftl voice.",
         rules: ["Never write fluff.", "Assume the reader is a highly-paid professional with zero time.", "Always return structurally perfect JSON when asked."]
     });
 

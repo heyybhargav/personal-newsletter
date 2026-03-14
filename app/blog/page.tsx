@@ -17,10 +17,10 @@ export default async function BlogPage() {
             <section className="pt-24 pb-16 px-6">
                 <div className="max-w-2xl mx-auto">
                     <span className="text-[10px] font-bold tracking-[0.25em] text-[#FF5700] uppercase">
-                        Signal Blog
+                        Siftl Blog
                     </span>
                     <h1 className="mt-4 text-5xl md:text-6xl font-serif font-normal tracking-tighter leading-[1.05] text-[#1A1A1A]">
-                        Signal Blog.
+                        Siftl Blog.
                     </h1>
                     <p className="mt-6 text-base text-gray-500 font-medium leading-relaxed max-w-md">
                         On staying informed, building good habits, and why the way you consume information matters.

@@ -16,7 +16,7 @@ export default function Hero() {
 
     return (
         <section ref={containerRef} itemScope itemType="https://schema.org/WebApplication" className="relative min-h-[100vh] flex flex-col items-center justify-center px-6 pt-24 pb-20 md:pt-36 md:pb-28 overflow-hidden">
-            <meta itemProp="name" content="Signal Daily" />
+            <meta itemProp="name" content="Siftl" />
             <meta itemProp="applicationCategory" content="BusinessApplication" />
             <div className="max-w-6xl mx-auto text-center relative z-10 space-y-6 md:space-y-10">
                 <div className="flex flex-col items-center justify-center">
@@ -25,26 +25,19 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-normal text-[#1A1A1A] tracking-tighter leading-[1.1] sm:leading-[1.05]"
+                        className="text-5xl md:text-7xl lg:text-8xl font-serif text-black leading-[1.1] mb-8 tracking-tight"
                     >
-                        Know Everything <br className="hidden sm:block" />
-                        <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#666666] block mt-1 sm:mt-2">
-                            Without Reading Everything.
-                        </span>
+                        Know more. <br className="hidden md:block" /> Read less.
                     </motion.h1>
-
-
+                    
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                        className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl font-sans" itemProp="description">
+                        Siftl reads your favorite sources and sends you one simple briefing email every day. Stay smart in 5 minutes.
+                    </motion.p>
                 </div>
-
-                <motion.h2
-                    itemProp="description"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-base md:text-lg text-[#777777] font-medium tracking-tight max-w-lg mx-auto leading-relaxed px-4 md:px-0"
-                >
-                    Signal Daily reads your favorite sources and sends you one simple briefing email every day. Stay smart in 5 minutes.
-                </motion.h2>
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -85,7 +78,7 @@ export default function Hero() {
                         {/* Mock Email Body */}
                         <div className="p-6 md:p-12 text-left space-y-6">
                             <div className="flex justify-between items-baseline border-b border-black pb-4 md:pb-6">
-                                <h3 className="font-serif text-2xl md:text-3xl tracking-tight text-[#1A1A1A]">Signal.</h3>
+                                <h3 className="font-serif text-2xl md:text-3xl tracking-tight text-[#1A1A1A]">Siftl.</h3>
                                 <div className="hidden md:block font-mono text-xs text-gray-400 uppercase tracking-widest">Daily Briefing</div>
                             </div>
                             <div className="space-y-3 md:space-y-4">

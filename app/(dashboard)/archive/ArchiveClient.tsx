@@ -88,7 +88,7 @@ export default function ArchiveClient({ initialArchives }: ArchiveClientProps) {
 
                         <h3 className="font-serif text-3xl sm:text-4xl mb-4 text-[#1A1A1A] tracking-tight">Awaiting Intel</h3>
                         <p className="text-gray-500 max-w-md mx-auto mb-8 font-serif text-lg leading-relaxed">
-                            Signal is actively monitoring your curated sources. Your first executive briefing will be synthesized and archived here after your next scheduled delivery.
+                            Siftl is actively monitoring your curated sources. Your first executive briefing will be synthesized and archived here after your next scheduled delivery.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full sm:w-auto">

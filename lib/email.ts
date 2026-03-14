@@ -54,7 +54,7 @@ function generateFooterHTML(): string {
     <tr>
       <td class="footer-bg" style="padding: 40px 30px; background-color: ${bgColor}; background-image: linear-gradient(${bgColor}, ${bgColor}); text-align: center;" bgcolor="${bgColor}">
         <p class="footer-text" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; font-weight: bold; color: ${textColor}; margin: 0; letter-spacing: 1px; text-transform: uppercase;">
-          <span style="color: ${textColor} !important;">Signal Daily</span>
+          <span style="color: ${textColor} !important;">Siftl</span>
         </p>
         <p class="footer-subtext" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: ${subTextColor}; margin: 15px 0 0 0; line-height: 1.5;">
           <span style="color: ${subTextColor} !important;">Everything you need to know, without the noise.<br>Reply to this email with feedback. We read everything.</span>
@@ -115,7 +115,7 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
       <!-- PREHEADER HACK (Hidden preview text) -->
       <div style="display: none; max-height: 0px; overflow: hidden; opacity: 0; mso-hide: all; font-size: 0px; line-height: 0px;">
         ${briefing.preheader || 'Your Daily Executive Intelligence Briefing.'}
-        &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+        &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
       </div>
 
       <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
@@ -124,7 +124,7 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
             <table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
 
               <!-- Header -->
-              ${generateHeaderHTML('Signal', 'Everything you need to know today', date)}
+              ${generateHeaderHTML('Siftl', 'Everything you need to know today', date)}
 
               <!-- Main Narrative -->
               <tr>
@@ -184,7 +184,7 @@ async function formatNarrative(text: string): Promise<string> {
   return html.replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Inter\', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;">')
     .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-word; overflow-wrap: anywhere;" ') // Mobile link fix v3
     .replace(/<li>/g, '<li style="margin-bottom: 8px; overflow-wrap: break-word;">')
-    .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
+    .replace(/blockquote/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; font-style: italic; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
 }
 
 // ============================================================================
@@ -198,8 +198,8 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
 
   const msg = {
     to,
-    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Signal Daily' },
-    subject: briefing.subject || `☕ Signal: Your Daily Briefing | ${today}`,
+    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Siftl' },
+    subject: briefing.subject || `☕ Siftl: Your Daily Briefing | ${today}`,
     html: await generateUnifiedEmailHTML(briefing, today, trialContext),
   };
 
@@ -286,7 +286,7 @@ export async function sendDigestEmail(to: string, sections: DigestSection[]): Pr
 
   const msg = {
     to,
-    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Signal Daily' },
+    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Siftl' },
     subject: `☕️ Your Daily Briefing - ${today}`,
     html: generateEmailHTML(sections, today),
   };
@@ -314,15 +314,15 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
   let message = '';
 
   if (type === 'expiring_soon') {
-    subject = `Your Signal trial ends in ${stats.daysRemaining} days`;
+    subject = `Your Siftl trial ends in ${stats.daysRemaining} days`;
     title = 'Your trial is ending soon';
     message = `You've received ${stats.briefingsSent || 0} briefings so far. Subscribe to keep your daily intelligence flowing from your ${stats.totalSources} sources without interruption.`;
   } else if (type === 'expired') {
-    subject = 'Your Signal trial has ended';
+    subject = 'Your Siftl trial has ended';
     title = 'Your trial has ended';
     message = `Your trial is over, but your ${stats.totalSources} sources are saved perfectly. Subscribe for $4/mo to resume your daily briefings immediately.`;
   } else if (type === 'miss_you') {
-    subject = 'We miss you — Signal';
+    subject = 'We miss you — Siftl';
     title = 'Still want your briefings?';
     message = `It's been a week since your trial ended. Your ${stats.totalSources} sources are still waiting for you. Come back and resume your signal for $4/mo.`;
   }
@@ -354,12 +354,12 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
           <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
             <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden;">
               <!-- Header -->
-              ${generateHeaderHTML('Signal', 'Your Intelligence Progress', undefined, true)}
+              ${generateHeaderHTML('Siftl', 'Your Intelligence Progress', undefined, true)}
               <tr>
                 <td style="padding: 40px; text-align: center; background-color: #ffffff;">
                   <h2 style="font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: #111; margin: 0 0 20px 0;">${title}</h2>
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; line-height: 1.6; color: #444; margin-bottom: 40px;">${message}</p>
-                  <a href="${SITE_URL}/subscribe" class="cta-button">Subscribe to Signal →</a>
+                  <a href="${SITE_URL}/subscribe" class="cta-button">Subscribe to Siftl →</a>
                 </td>
               </tr>
               <!-- Footer -->
@@ -369,7 +369,7 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
 
   const msg = {
     to,
-    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Signal Daily' },
+    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Siftl' },
     subject,
     html,
   };
@@ -385,7 +385,7 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
 export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL}', context?: { isTrial?: boolean, trialDays?: number }): Promise<void> {
   const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to; // Fallback
 
-  const subject = "Bhargav from Signal: Welcome! Let's set up your briefing.";
+  const subject = "Bhargav from Siftl: Welcome! Let's set up your briefing.";
 
   const link = `${baseUrl}/sources`;
 
@@ -422,16 +422,16 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
             <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden;">
               
               <!-- Header -->
-              ${generateHeaderHTML('Signal', 'The quiet side of the internet', undefined, true)}
+              ${generateHeaderHTML('Siftl', 'The quiet side of the internet', undefined, true)}
 
               <!-- Body -->
               <tr>
                 <td style="padding: 40px; background-color: #ffffff;">
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; line-height: 1.6; color: #111; margin-bottom: 30px;">
-                    ${context?.isTrial ? `Welcome to your ${context.trialDays}-day free trial of Signal.` : 'Welcome to the quiet side of the internet.'}
+                    ${context?.isTrial ? `Welcome to your ${context.trialDays}-day free trial of Siftl.` : 'Welcome to the quiet side of the internet.'}
                   </p>
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 40px;">
-                    ${context?.isTrial ? `You have full access for the next ${context.trialDays} days. Here is how to get the most out of it:` : 'You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Signal:'}
+                    ${context?.isTrial ? `You have full access for the next ${context.trialDays} days. Here is how to get the most out of it:` : 'You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Siftl:'}
                   </p>
 
                   <!-- Steps -->
@@ -448,8 +448,8 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
                   </div>
 
                   <div class="step-container" style="margin-bottom: 0;">
-                    <p class="step-number">03 Signal</p>
-                    <h3 class="step-title">Receive the Signal.</h3>
+                    <p class="step-number">03 Siftl</p>
+                    <h3 class="step-title">Receive the Siftl.</h3>
                     <p class="step-desc">We extract the key updates from all your sources. You get the information without the clicking.</p>
                   </div>
 
@@ -471,7 +471,7 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
 
   const msg = {
     to,
-    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Signal Daily' },
+    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Siftl' },
     subject,
     html,
   };
@@ -497,7 +497,7 @@ export async function sendAdminAlertEmail(stage: string, error: string, details?
 
   const msg = {
     to: adminEmail,
-    from: { email: fromEmail, name: `${SENDER_NAME} Alerts` },
+    from: { email: fromEmail, name: `${SENDER_NAME === 'Siftl' ? 'Siftl' : SENDER_NAME} Alerts` },
     subject: `🚨 SYSTEM ALERT: ${stage} Failure`,
     html: `
       <div style="font-family: sans-serif; padding: 20px; border: 1px solid #cc0000; border-radius: 8px; background-color: #fff5f5;">
@@ -506,7 +506,7 @@ export async function sendAdminAlertEmail(stage: string, error: string, details?
         <p><strong>Error:</strong> <span style="color: #d32f2f;">${error}</span></p>
         ${details ? `<p><strong>Details:</strong></p><pre style="background: #ffffff; padding: 10px; border: 1px solid #ddd; overflow-x: auto;">${JSON.stringify(details, null, 2)}</pre>` : ''}
         <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-        <p style="font-size: 12px; color: #666; margin-bottom: 0;">This is an automated alert from your Signal Daily engine.</p>
+        <p style="font-size: 12px; color: #666; margin-bottom: 0;">This is an automated alert from your Siftl engine.</p>
       </div>
     `,
   };

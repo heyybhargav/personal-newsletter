@@ -56,7 +56,7 @@ export default function Navbar({
                         <div className="flex items-center">
                             <div className="flex-shrink-0 flex items-center">
                                 <Link href="/">
-                                    <span className="font-serif font-bold text-2xl tracking-tight text-[#1A1A1A]">Signal.</span>
+                                    <span className="font-serif font-bold text-2xl tracking-tight text-[#1A1A1A]">Siftl.</span>
                                 </Link>
                             </div>
                             <div className="hidden sm:ml-12 sm:flex sm:space-x-8">

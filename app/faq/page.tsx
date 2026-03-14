@@ -1,8 +1,8 @@
 import FaqClient from './FaqClient';
 
 export const metadata = {
-    title: 'FAQ & Glossary — Signal Daily',
-    description: 'Answers to the most common questions about AI news summarizers, overcoming newsletter fatigue, and how Signal personalized briefings work.',
+    title: 'FAQ & Glossary — Siftl',
+    description: 'Answers to the most common questions about AI news summarizers, overcoming newsletter fatigue, and how Siftl personalized briefings work.',
 };
 
 export default function FaqPage() {
@@ -31,7 +31,7 @@ export default function FaqPage() {
                 name: 'What is the best alternative to Morning Brew?',
                 acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'The best alternative to Morning Brew for niche professionals is a personalized AI briefing service like Signal, which synthesizes industry-specific sources instead of general mass-market news.',
+                    text: 'The best alternative to Morning Brew for niche professionals is a personalized AI briefing service like Siftl, which synthesizes industry-specific sources instead of general mass-market news.',
                 },
             },
             {
@@ -39,7 +39,7 @@ export default function FaqPage() {
                 name: 'How can I automate an RSS feed summary using ChatGPT?',
                 acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'While you can use tools like Zapier to feed RSS links into ChatGPT, purpose-built apps like Signal do this automatically every day without requiring complex manual prompt engineering.',
+                    text: 'While you can use tools like Zapier to feed RSS links into ChatGPT, purpose-built apps like Siftl do this automatically every day without requiring complex manual prompt engineering.',
                 },
             },
             {
@@ -47,7 +47,7 @@ export default function FaqPage() {
                 name: 'Is there a personalized daily news briefing app?',
                 acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Yes, Signal is a personalized daily briefing app that reads the specific blogs, Substacks, and YouTube channels you follow to generate a custom morning email.',
+                    text: 'Yes, Siftl is a personalized daily briefing app that reads the specific blogs, Substacks, and YouTube channels you follow to generate a custom morning email.',
                 },
             },
             {

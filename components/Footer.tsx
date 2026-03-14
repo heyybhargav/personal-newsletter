@@ -20,10 +20,10 @@ export default function Footer({
                             <circle cx="16" cy="16" r="6" fill="#FF5700"/>
                             <circle cx="16" cy="16" r="10" stroke="#FF5700" strokeOpacity={0.3} strokeWidth="2"/>
                         </svg>
-                        <span className="text-xl font-serif font-bold tracking-tight text-white">Signal.</span>
+                        <span className="text-xl font-serif font-bold tracking-tight text-white">Siftl.</span>
                     </div>
                     <p className="text-sm text-gray-400 leading-relaxed font-medium">
-                        Signal Daily is the agentic knowledge engine that helps you consume high-value signals 10x faster.
+                        Siftl is the agentic knowledge engine that helps you consume high-value signals 10x faster.
                     </p>
 
                 </div>
@@ -59,7 +59,7 @@ export default function Footer({
             {/* Bottom Bar: Copyright and Status */}
             <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
                 <p className="text-xs text-gray-500 font-medium tracking-tight">
-                    &copy; {new Date().getFullYear()} Signal Daily Inc. All rights reserved.
+                    &copy; {new Date().getFullYear()} Siftl Inc. All rights reserved.
                 </p>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>

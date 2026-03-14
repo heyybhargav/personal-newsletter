@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import { BrainCircuit, Radio, Mail } from 'lucide-react';
 
-export default function WhatIsSignal() {
+export default function WhatIsSiftl() {
     return (
         <section
-            id="what-is-signal"
-            aria-labelledby="what-is-signal-title"
+            id="what-is-siftl"
+            aria-labelledby="what-is-siftl-title"
             className="w-full py-20 md:py-32 px-6 relative overflow-hidden flex flex-col items-center border-b border-gray-100"
         >
             <div className="max-w-4xl mx-auto w-full relative z-10 text-center">
@@ -22,20 +22,19 @@ export default function WhatIsSignal() {
                         id="what-is-signal-title"
                         className="text-xs md:text-sm font-bold tracking-[0.2em] text-[#FF5700] uppercase mb-8 flex items-center justify-center opacity-90"
                     >
-                        What is Signal Daily?
+                        What is Siftl?
                     </h2>
-
-                    <article itemScope itemType="https://schema.org/WebApplication">
-                        <meta itemProp="name" content="Signal Daily" />
-                        <p itemProp="description" className="text-3xl md:text-5xl lg:text-6xl font-serif font-normal text-[#1A1A1A] tracking-tight leading-snug md:leading-[1.12] mb-8">
-                            Signal Daily is an <strong className="font-serif font-semibold text-black">AI powered briefing engine</strong> that extracts insights from <span className="text-gray-500">essays, podcasts, and videos</span> and delivers a <strong className="font-serif font-semibold text-black relative inline-block">
+                    <div className="flex flex-col items-center justify-center">
+                        <meta itemProp="name" content="Siftl" />
+                        <p className="text-3xl md:text-5xl lg:text-6xl font-serif font-normal text-[#1A1A1A] tracking-tight leading-snug md:leading-[1.12] mb-8">
+                            Siftl is an <strong className="font-serif font-semibold text-black">AI powered briefing engine</strong> that extracts insights from <span className="text-gray-500">essays, podcasts, and videos</span> and delivers a <strong className="font-serif font-semibold text-black relative inline-block">
                                 daily intelligence email.
                                 <svg aria-hidden="true" className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-3 md:h-4 text-[#FF5700]/40 -z-10" viewBox="0 0 100 15" preserveAspectRatio="none">
                                     <path d="M2,8 Q40,-2 98,6 Q50,12 5,8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="transparent" className="opacity-90" />
                                 </svg>
                             </strong>
                         </p>
-                    </article>
+                    </div>
                 </motion.div>
 
                 {/* Semantic Icon Grid to unpack the definition for extra SEO parser context without cluttering the text */}

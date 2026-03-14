@@ -165,7 +165,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                         </a>
                     </p>
                     <p className="text-xs text-gray-600 font-mono tracking-widest uppercase">
-                        Signal &copy; {new Date().getFullYear()}
+                        Siftl &copy; {new Date().getFullYear()}
                     </p>
                 </div>
             </footer>

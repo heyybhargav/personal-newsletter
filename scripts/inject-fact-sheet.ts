@@ -8,15 +8,15 @@ import { KB_KEYS, updateKnowledgeBaseDoc } from '../lib/blogDb';
 async function injectFactSheet() {
     console.log("Injecting Product Fact Sheet into Knowledge Base...");
 
-    // The definitively true facts about Signal. 
+    // The definitively true facts about Siftl. 
     // The LLM must consult this to avoid hallucinating features like "mobile app", "social sharing", "dashboards" etc.
     const factSheet = {
-        core_product: "Signal is an automated, high-fidelity briefing tool. It is NOT a generic RSS reader and NOT a newsletter.",
+        core_product: "Siftl is an automated, high-fidelity briefing tool. It is NOT a generic RSS reader and NOT a newsletter.",
         target_audience: "B2B professionals, executives, VCs, and researchers who need raw intelligence without the noise.",
         key_value_props: [
             "Users curate specific sources (e.g. competitor blogs, specific X profiles, SEC filings).",
-            "Signal monitors these sources continuously.",
-            "Signal synthesizes the data into a concise, plain-text email digest delivered on a schedule (e.g., 8 AM daily)."
+            "Siftl monitors these sources continuously.",
+            "Siftl synthesizes the data into a concise, plain-text email digest delivered on a schedule (e.g., 8 AM daily)."
         ],
         what_it_is_not: [
             "It does NOT have a full-blown interactive dashboard with charts.",

@@ -4,10 +4,10 @@
  * Falls back to localhost in development.
  */
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 
-  (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://signaldaily.me');
+  (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://siftl.com');
 
-export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'editor@signaldaily.me';
-export const SENDER_NAME = 'Signal Daily';
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'editor@siftl.com';
+export const SENDER_NAME = 'Siftl';
 
 // Helper for absolute URLs to ensure consistency
 export const getAbsoluteUrl = (path: string) => {

@@ -29,7 +29,7 @@ export async function POST(req: Request) {
         // In the future, this is where we feed Google Search Console data. 
         // For MVP, we feed semantic structural data logged during generation.
         const prompt = `
-You are the AI Optimization Director for Signal Daily.
+You are the AI Optimization Director for Siftl.
 Your goal is to propose exactly ONE high-impact improvement to our "LLM Instructions" or "Brand Voice" to make the automated blogs better.
 
 CURRENT LLM INSTRUCTIONS:

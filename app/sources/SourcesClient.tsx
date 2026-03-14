@@ -506,7 +506,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                             Sources
                         </h1>
                         <p className="text-base sm:text-xl text-gray-500 font-light mt-4 sm:mt-6 max-w-lg leading-relaxed font-serif">
-                            Curate the signal. All configured streams are synthesized into your daily briefing.
+                            Curate high-signal streams. All configured streams are synthesized into your daily briefing.
                         </p>
                     </motion.div>
                     <motion.button

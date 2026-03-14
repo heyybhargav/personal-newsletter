@@ -19,24 +19,30 @@ const newsreader = Newsreader({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Signal Daily - High-Signal Intelligence Briefing",
-  description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
+  title: "Siftl - High-Signal Intelligence Briefing",
+  description: "The agentic knowledge engine that helps you consume high-value signals 10x faster.",
   openGraph: {
-    title: "Signal Daily - High-Signal Intelligence Briefing",
-    description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
+    title: "Siftl - High-Signal Intelligence Briefing",
+    description: "The agentic knowledge engine that helps you consume high-value signals 10x faster.",
     url: SITE_URL,
-    siteName: 'Signal Daily',
+    siteName: 'Siftl',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Signal Daily - High-Signal Intelligence Briefing",
-    description: "Your AI-curated daily executive briefing. Less scrolling, more knowing.",
+    title: "Siftl - High-Signal Intelligence Briefing",
+    description: "The agentic knowledge engine that helps you consume high-value signals 10x faster.",
+    images: ['/og-image.png'],
   },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  applicationName: 'Siftl',
   appleWebApp: {
     capable: true,
-    title: "Signal Daily",
+    title: "Siftl",
     statusBarStyle: "default",
   },
 

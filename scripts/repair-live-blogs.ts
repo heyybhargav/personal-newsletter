@@ -23,7 +23,7 @@ async function fixLiveBlogs() {
         console.log(`\nAnalyzing: ${post.slug}`);
 
         const prompt = `
-You are the Lead Writer for Signal Daily. We need to revise an existing blog post because it contains hallucinations about our product.
+You are the Lead Writer for Siftl. We need to revise an existing blog post because it contains hallucinations about our product.
 
 PRODUCT FACT SHEET:
 ---
@@ -42,7 +42,7 @@ ${JSON.stringify(post.content)}
 
 INSTRUCTIONS:
 1. Review the CURRENT POST CONTENT.
-2. Identify any mentions of features that Signal does NOT have (e.g., interactive dashboards, mobile apps, social tools).
+2. Identify any mentions of features that Siftl does NOT have (e.g., interactive dashboards, mobile apps, social tools).
 3. Rewrite the content to remove these hallucinations while keeping the exact same JSON structure so it can be saved back to the database.
 4. Maintain the aggressive, high-signal Brand Voice.
 

@@ -18,18 +18,18 @@ const faqs = [
     },
     {
         question: 'What is the best alternative to Morning Brew?',
-        answer: 'The best alternative to Morning Brew for niche professionals is a personalized AI briefing service like Signal, which synthesizes industry-specific sources instead of general mass-market news.',
+        answer: 'The best alternative to Morning Brew for niche professionals is a personalized AI briefing service like Siftl, which synthesizes industry-specific sources instead of general mass-market news.',
         details: 'Morning Brew is excellent for general business overviews. However, if you are a specialized founder or investor who only cares about deeply specific developments in your exact sector, an AI alternative that lets you define the sources is infinitely more valuable.',
     },
     {
         question: 'How can I automate an RSS feed summary using ChatGPT?',
-        answer: 'While you can use tools like Zapier to feed RSS links into ChatGPT, purpose-built apps like Signal do this automatically every day without requiring complex manual prompt engineering.',
+        answer: 'While you can use tools like Zapier to feed RSS links into ChatGPT, purpose-built apps like Siftl do this automatically every day without requiring complex manual prompt engineering.',
         details: 'Building your own automation requires maintaining Zapier workflows, handling API limits, and writing prompts that format the output well. A dedicated tool abstracts all of that away so you just input a URL and receive a clean email.',
     },
     {
         question: 'Is there a personalized daily news briefing app?',
-        answer: 'Yes, Signal is a personalized daily briefing app that reads the specific blogs, Substacks, and YouTube channels you follow to generate a custom morning email.',
-        details: 'Unlike traditional news apps that rely on editors or algorithms to guess what you might like, Signal only reads the exact sources you explicitly tell it to track. This guarantees zero filler.',
+        answer: 'Yes, Siftl is a personalized daily briefing app that reads the specific blogs, Substacks, and YouTube channels you follow to generate a custom morning email.',
+        details: 'Unlike traditional news apps that rely on editors or algorithms to guess what you might like, Siftl only reads the exact sources you explicitly tell it to track. This guarantees zero filler.',
     },
     {
         question: 'What is newsletter fatigue?',

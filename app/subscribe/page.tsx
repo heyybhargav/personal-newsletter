@@ -80,7 +80,7 @@ export default function SubscribePage() {
                     <div className="flex items-end justify-between mb-4 pb-4 border-b border-gray-100">
                         <div>
                             <h2 className="text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-1">Membership Plan</h2>
-                            <h3 className="text-2xl font-serif font-bold text-[#1A1A1A]">Signal Pro</h3>
+                            <h3 className="text-2xl font-serif font-bold text-[#1A1A1A]">Siftl Pro</h3>
                         </div>
                         <div className="text-right">
                             <div className="text-4xl font-mono text-[#1A1A1A] -mb-1">$4</div>
@@ -107,7 +107,7 @@ export default function SubscribePage() {
                         href={checkoutUrl}
                         className="block w-full py-3.5 px-6 bg-[#1A1A1A] hover:bg-[#2A2A2A] text-white text-center font-bold tracking-widest uppercase text-xs rounded-xl transition-all duration-300 shadow-[0_10px_20px_-10px_rgba(26,26,26,0.3)] hover:shadow-[0_12px_24px_-10px_rgba(26,26,26,0.5)]"
                     >
-                        Activate Signal Pro
+                        Activate Siftl Pro
                     </a>
                 </div>
 

@@ -189,7 +189,7 @@ export async function getArchiveListWithMetadata(email: string): Promise<Archive
         const briefing = briefings[idx];
         return {
             dateStr,
-            subject: briefing?.subject || 'Signal Daily Briefing',
+            subject: briefing?.subject || 'Siftl Briefing',
             preheader: briefing?.preheader || 'Your daily executive intelligence summary.',
         };
     });

@@ -31,7 +31,7 @@ export interface StarterPack {
 
 
 
-// --- The Curated Library (High Signal Sources) ---
+// --- The Curated Library (Siftl Sources) ---
 export const CURATED_LIBRARY: RecommendedSource[] = [
 
     // ═══════════════════════════════════════

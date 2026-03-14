@@ -364,7 +364,7 @@ export default function InteractiveDemo() {
                                 {/* Header */}
                                 <div className="p-6 md:p-8 border-b border-gray-100">
                                     <div className="flex items-center justify-between mb-3">
-                                        <span className="font-serif text-lg font-bold text-[#1A1A1A]">Signal.</span>
+                                        <span className="font-serif text-lg font-bold text-[#1A1A1A]">Siftl.</span>
                                         <span className="text-[10px] font-bold tracking-widest text-gray-300 uppercase">Demo Briefing</span>
                                     </div>
                                     <h3 className="text-xl md:text-2xl font-serif font-medium text-[#1A1A1A] tracking-tight leading-snug">{subject}</h3>

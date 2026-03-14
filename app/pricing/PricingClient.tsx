@@ -43,7 +43,7 @@ export default function PricingClient() {
                         <div className="flex items-end justify-between mb-8 pb-8 border-b border-white/10">
                             <div>
                                 <h2 className="text-[10px] font-bold tracking-widest text-gray-500 uppercase mb-2 font-mono">Premium Intelligence</h2>
-                                <h3 className="text-3xl font-serif text-white">Signal Pro</h3>
+                                <h3 className="text-3xl font-serif text-white">Siftl Pro</h3>
                             </div>
                             <div className="text-right">
                                 <div className="text-5xl font-mono text-white tracking-tighter -mb-1">$4</div>
@@ -96,7 +96,7 @@ export default function PricingClient() {
                 {/* SECTION 2: STATUS QUO VS SIGNAL */}
                 <div className="w-full max-w-4xl mx-auto mb-32">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-serif text-[#1A1A1A]">Why pay for Signal?</h2>
+                        <h2 className="text-3xl font-serif text-[#1A1A1A]">Why pay for Siftl?</h2>
                         <p className="text-gray-500 mt-3 font-medium">Because your time is worth more than $4 a month.</p>
                     </div>
 
@@ -107,7 +107,7 @@ export default function PricingClient() {
                                 <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center">
                                     <X className="w-4 h-4 text-red-500" />
                                 </div>
-                                <h3 className="font-serif text-xl text-gray-400 line-through decoration-red-500/30">Life without Signal</h3>
+                                <h3 className="font-serif text-xl text-gray-400 line-through decoration-red-500/30">Life without Siftl</h3>
                             </div>
                             <ul className="space-y-4">
                                 <ComparisonItem text="Inbox overflowing with 50+ unread newsletters." isPositive={false} />
@@ -117,14 +117,14 @@ export default function PricingClient() {
                             </ul>
                         </div>
 
-                        {/* With Signal */}
+                        {/* With Siftl */}
                         <div className="bg-[#1A1A1A] rounded-2xl p-8 border border-[#1A1A1A] shadow-xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF5700] opacity-10 blur-[50px] rounded-full pointer-events-none"></div>
                             <div className="flex items-center gap-3 mb-6 relative z-10">
                                 <div className="w-8 h-8 rounded-full bg-[#FF5700]/10 flex items-center justify-center">
                                     <Check className="w-4 h-4 text-[#FF5700]" />
                                 </div>
-                                <h3 className="font-serif text-xl text-white">Life with Signal</h3>
+                                <h3 className="font-serif text-xl text-white">Life with Siftl</h3>
                             </div>
                             <ul className="space-y-4 relative z-10">
                                 <ComparisonItem text="One clean, consolidated daily briefing." isPositive={true} />
@@ -142,11 +142,11 @@ export default function PricingClient() {
                     <div className="max-w-2xl mx-auto">
                         <FaqItem
                             question="What happens after the 7-day trial?"
-                            answer="We don't require a credit card upfront. After your 7-day trial, your email deliveries will pause. To reactivate them, you can securely upgrade to Signal Pro for $4/month via Polar.sh."
+                            answer="We don't require a credit card upfront. After your 7-day trial, your email deliveries will pause. To reactivate them, you can securely upgrade to Siftl Pro for $4/month via Polar.sh."
                         />
                         <FaqItem
                             question="Can I add my own obscure newsletters and blogs?"
-                            answer="Absolutely. Signal can ingest any valid RSS feed or forwardable email address. Whether it's a massive tech blog or a niche Substack with 100 subscribers, Signal will read it and extract the insights."
+                            answer="Absolutely. Siftl can ingest any valid RSS feed or forwardable email address. Whether it's a massive tech blog or a niche Substack with 100 subscribers, Siftl will read it and extract the insights."
                         />
                         <FaqItem
                             question="Is my data used to train the AI models?"
@@ -154,7 +154,7 @@ export default function PricingClient() {
                         />
                         <FaqItem
                             question="How is this different from Feedly or an RSS reader?"
-                            answer="RSS readers give you the firehose, but you still have to do the reading. Signal actually reads the firehose for you, connects the dots between different articles, and delivers a synthesized summary of what you actually need to know."
+                            answer="RSS readers give you the firehose, but you still have to do the reading. Siftl actually reads the firehose for you, connects the dots between different articles, and delivers a synthesized summary of what you actually need to know."
                         />
                     </div>
                 </div>

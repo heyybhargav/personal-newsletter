@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const baseUrl = SITE_URL;
     
     return {
-        title: `${post.title} — Signal`,
+        title: `${post.title} — Siftl`,
         description: post.metaDescription || post.subtitle,
         keywords: post.targetKeywords,
         openGraph: {
@@ -27,13 +27,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             type: 'article',
             publishedTime: post.publishedAt || new Date(post.date).toISOString(),
             url: `${baseUrl}/blog/${post.slug}`,
-            siteName: 'Signal Daily',
+            siteName: 'Siftl',
             images: [
                 {
                     url: `${baseUrl}/icon.svg`, // Fallback until dynamic OG images are implemented
                     width: 800,
                     height: 800,
-                    alt: 'Signal Logo',
+                    alt: 'Siftl Logo',
                 },
             ],
         },
@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         },
         publisher: {
             '@type': 'Organization',
-            name: 'Signal',
+            name: 'Siftl',
             url: '${SITE_URL}',
             logo: {
                 '@type': 'ImageObject',

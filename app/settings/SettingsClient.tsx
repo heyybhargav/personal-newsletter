@@ -142,7 +142,7 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-3">
                                         <h4 className="text-2xl font-serif font-bold text-white tracking-tight">
-                                            {tier === 'active' ? 'Signal Pro' : 'Signal Trial'}
+                                            {tier === 'active' ? 'Siftl Pro' : 'Siftl Trial'}
                                         </h4>
                                         {tier === 'active' && (
                                             <span className="bg-white/5 border border-white/10 text-gray-300 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase -translate-y-[2px]">ACTIVE</span>
@@ -342,15 +342,15 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                             </svg>
-                            <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">The Signal Advantage</span>
+                            <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">The Siftl Advantage</span>
                         </div>
                         <h3 className="text-3xl font-serif mb-6 text-[#1A1A1A]">Reclaim your attention.</h3>
                         <p className="text-gray-600 leading-relaxed font-serif text-lg">
-                            Signal is designed to be the quietest part of your internet experience. We monitor your selected sources 24/7, aggressively filter out PR fluff and noise, and synthesize the actionable insights into one concise executive briefing.
+                            Siftl is designed to be the quietest part of your internet experience. We monitor your selected sources 24/7, aggressively filter out PR fluff and noise, and synthesize the actionable insights into one concise executive briefing.
                         </p>
                         <hr className="my-8 border-t border-[#FF5700]/20 w-24 mx-auto" />
                         <p className="text-gray-600 leading-relaxed font-serif text-lg">
-                            By reading Signal instead of doomscrolling feeds, you save <b>hours every week</b> while staying better informed. No algorithms. No engagement traps. Just what matters, delivered exactly when you want it.
+                            By reading Siftl instead of doomscrolling feeds, you save <b>hours every week</b> while staying better informed. No algorithms. No engagement traps. Just what matters, delivered exactly when you want it.
                         </p>
                     </div>
                 </div>
