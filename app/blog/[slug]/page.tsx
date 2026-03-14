@@ -67,10 +67,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         publisher: {
             '@type': 'Organization',
             name: 'Siftl',
-            url: '${SITE_URL}',
+            url: SITE_URL,
             logo: {
                 '@type': 'ImageObject',
-                url: '${SITE_URL}/icon.svg',
+                url: `${SITE_URL}/icon.svg`,
             },
         },
         mainEntityOfPage: {

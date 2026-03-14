@@ -29,16 +29,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     type: 'website',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Siftl - High-Signal Intelligence Briefing",
-    description: "The agentic knowledge engine that helps you consume high-value signals 10x faster.",
-    images: ['/og-image.png'],
-  },
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-  },
+  // Next.js will automatically use app/icon.svg and app/apple-icon.tsx
   applicationName: 'Siftl',
   appleWebApp: {
     capable: true,

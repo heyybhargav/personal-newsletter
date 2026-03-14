@@ -7,7 +7,7 @@ import { getUser, hasAccess } from '@/lib/db';
 const PROTECTED_PATHS = ['/', '/settings', '/sources', '/archive', '/api/sources', '/api/settings', '/api/latest-briefing', '/api/digest', '/api/archive'];
 
 // Public paths that should not be protected
-const PUBLIC_PATHS = ['/login', '/blog', '/faq', '/api/auth', '/api/cron', '/api/webhook', '/api/debug'];
+const PUBLIC_PATHS = ['/login', '/blog', '/faq', '/api/auth', '/api/cron', '/api/webhook', '/api/debug', '/opengraph-image', '/icon.svg'];
 
 // Paths that expired users can still access (they need these to subscribe)
 const EXPIRED_ALLOWED_PATHS = ['/subscribe', '/api/webhook', '/api/auth'];
@@ -73,7 +73,7 @@ export const config = {
          * - favicon.ico (favicon file)
          * - public folder
          */
-        '/((?!_next/static|_next/image|favicon.ico|public).*)',
+        '/((?!_next/static|_next/image|favicon.ico|icon.svg|public).*)',
     ],
 };
 

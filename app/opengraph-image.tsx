@@ -32,19 +32,43 @@ export default async function Image() {
                 {/* Siftl Dot */}
                 <div
                     style={{
+                        position: 'relative',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        marginBottom: 40,
+                        marginBottom: 60,
+                        width: 140,
+                        height: 140,
                     }}
                 >
+                    {/* outer circle */}
                     <div
                         style={{
-                            width: 80,
-                            height: 80,
+                            position: 'absolute',
+                            width: 140,
+                            height: 140,
+                            borderRadius: '50%',
+                            border: '4px solid rgba(255, 87, 0, 0.2)',
+                        }}
+                    />
+                    {/* pulse circle */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            width: 100,
+                            height: 100,
+                            borderRadius: '50%',
+                            border: '2px solid rgba(255, 87, 0, 0.4)',
+                        }}
+                    />
+                    {/* inner circle */}
+                    <div
+                        style={{
+                            width: 60,
+                            height: 60,
                             borderRadius: '50%',
                             backgroundColor: '#FF5700',
-                            boxShadow: '0 0 60px rgba(255, 87, 0, 0.6)',
+                            boxShadow: '0 0 40px rgba(255, 87, 0, 0.8)',
                         }}
                     />
                 </div>
