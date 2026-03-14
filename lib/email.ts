@@ -487,3 +487,34 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
     // Don't throw, just log. We don't want to block login if email fails.
   }
 }
+// ============================================================================
+// NEW: Admin Alert Emails
+// ============================================================================
+
+export async function sendAdminAlertEmail(stage: string, error: string, details?: any): Promise<void> {
+  const adminEmail = CONTACT_EMAIL;
+  const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || adminEmail;
+
+  const msg = {
+    to: adminEmail,
+    from: { email: fromEmail, name: `${SENDER_NAME} Alerts` },
+    subject: `🚨 SYSTEM ALERT: ${stage} Failure`,
+    html: `
+      <div style="font-family: sans-serif; padding: 20px; border: 1px solid #cc0000; border-radius: 8px; background-color: #fff5f5;">
+        <h2 style="color: #cc0000; margin-top: 0;">System Error Detected</h2>
+        <p><strong>Stage:</strong> ${stage}</p>
+        <p><strong>Error:</strong> <span style="color: #d32f2f;">${error}</span></p>
+        ${details ? `<p><strong>Details:</strong></p><pre style="background: #ffffff; padding: 10px; border: 1px solid #ddd; overflow-x: auto;">${JSON.stringify(details, null, 2)}</pre>` : ''}
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+        <p style="font-size: 12px; color: #666; margin-bottom: 0;">This is an automated alert from your Signal Daily engine.</p>
+      </div>
+    `,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log(`[Alert] Admin alert sent for ${stage}`);
+  } catch (err: any) {
+    console.error('[Alert] Failed to send admin alert:', err);
+  }
+}

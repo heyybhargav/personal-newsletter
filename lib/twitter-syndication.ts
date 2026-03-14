@@ -44,6 +44,9 @@ export interface Tweet {
     permalink?: string;
 }
 
+import { sendAdminAlertEmail } from './email';
+import { logErrorEvent } from './db';
+
 export async function fetchTwitterSyndication(handle: string): Promise<Tweet[]> {
     const url = `https://syndication.twitter.com/srv/timeline-profile/screen-name/${handle}`;
 
@@ -64,8 +67,8 @@ export async function fetchTwitterSyndication(handle: string): Promise<Tweet[]> 
         const nextData = $('#__NEXT_DATA__').html();
 
         if (!nextData) {
-            console.warn('No __NEXT_DATA__ found in Twitter response');
-            return [];
+            // This is a common failure point for Twitter scraping
+            throw new Error('Twitter discovery failed: No __NEXT_DATA__ found in payload. Scraper might be broken.');
         }
 
         const json = JSON.parse(nextData);
@@ -80,8 +83,24 @@ export async function fetchTwitterSyndication(handle: string): Promise<Tweet[]> 
         }
 
         return tweets;
-    } catch (error) {
+    } catch (error: any) {
+        const message = error.message || String(error);
         console.error('Error fetching Twitter syndication:', error);
+
+        // --- Proactive Notifications ---
+        // 1. Log to Redis for dashboard visibility
+        await logErrorEvent({
+            email: 'SYSTEM',
+            stage: 'twitter_scraper',
+            message: `[${handle}] ${message}`,
+            timestamp: new Date().toISOString()
+        });
+
+        // 2. Alert the Admin via Email (proactive)
+        // We include the handle to help debug if it's a specific profile or the whole system
+        await sendAdminAlertEmail('Twitter Scraper', message, { handle, url });
+
         return [];
     }
 }
+

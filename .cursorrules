@@ -89,3 +89,10 @@ Signal utilizes a very specific, premium design language.
 - **iOS Gmail Deep Linking**: Mobile email clients (specifically the iOS Gmail app) aggressively strip custom URI schemes like `youtube://` or `vnd.youtube://` for security reasons. 
   - The **ONLY** supported method to achieve an out-of-app deep link from an email is a standard Universal Link (e.g., `https://www.youtube.com/...`). 
   - If a Universal Link opens in the in-app browser instead of the native app, it is a device-level OS routing issue, not a code issue. Do not attempt to fix it with custom URL hacks.
+
+---
+
+## 9. Deployment Protocol (STRICT)
+- **NO AUTOMATED DEPLOYS**: Never run `git push` or trigger a production deployment (e.g., Vercel) without explicit verbal approval from the user.
+- **Verification Prerequisite**: All changes must be verified locally (via `npm run dev`) before even proposing a deployment.
+- **Commit Transparency**: Always describe the exact changes in the commit message if a push is eventually authorized.
