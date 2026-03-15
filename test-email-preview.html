@@ -1,0 +1,169 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Merriweather:wght@300;400;700;900&amp;display=swap" rel="stylesheet">
+      <style>
+        body { margin: 0; padding: 0; background-color: #111111; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .narrative p { margin: 0 0 18px 0; }
+        .narrative strong { color: #000; }
+
+        /* General Dark Mode CSS (Android/iOS) */
+        @media (prefers-color-scheme: dark) {
+          .header-bg, .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+          .header-text, .footer-text, .header-subtitle, .footer-subtext, .header-meta, .footer-muted { color: #999999 !important; }
+          /* Removed global container bg */
+          .narrative, .narrative p { color: #dddddd !important; }
+        }
+
+        /* Gmail-Specific Inversion Overrides */
+        u + .body .header-bg, u + .body .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+        u + .body .header-text, u + .body .footer-text, u + .body .header-subtitle, u + .body .footer-subtext, u + .body .header-meta, u + .body .footer-muted { color: #999999 !important; }
+      </style>
+    </head>
+    <body class="body" style="margin: 0; padding: 0; background-color: #111111;">
+
+      <!-- PREHEADER HACK (Hidden preview text) -->
+      <div style="display: none; max-height: 0px; overflow: hidden; opacity: 0; mso-hide: all; font-size: 0px; line-height: 0px;">
+        Why the latest NPU benchmarks don't tell the whole story.
+        &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+      </div>
+
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
+        <tr>
+          <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
+            <table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
+
+              <!-- Header -->
+              
+    <tr>
+      <td class="header-bg" style="padding: 50px 30px 40px 30px; background-color: #111111; background-image: linear-gradient(#111111, #111111); text-align: center;" bgcolor="#111111">
+        <p class="header-text" style="font-family: 'Merriweather', Georgia, serif; font-size: 32px; font-weight: 900; margin: 0; color: #999999; letter-spacing: -1px;">
+          <span style="color: #999999 !important;">Siftl</span>
+        </p>
+        <p class="header-subtitle" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: #999999; margin: 12px 0 0 0; text-transform: uppercase; letter-spacing: 3px; font-weight: 600;">
+          <span style="color: #999999 !important;">Everything you need to know today</span>
+        </p>
+        
+        <p class="header-meta" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: #999999; margin: 8px 0 0 0; text-transform: uppercase; letter-spacing: 2px;">
+          <span style="color: #999999 !important;">Sunday, March 15, 2026</span>
+        </p>
+        
+      </td>
+    </tr>
+  
+
+              <!-- Main Narrative -->
+              <tr>
+                <td style="padding: 35px 30px; background-color: #ffffff;" bgcolor="#ffffff">
+                  <div class="narrative" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; color: #222;">
+                    <p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;"><strong style="display: block; margin-top: 10px; margin-bottom: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #888;">THE LEAD ANALYSIS</strong></p>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;">The chip wars have shifted from raw clock speeds to specialized neural processing units. This transition isn&#39;t just about speed; it&#39;s about the efficiency of local inference for smaller, more efficient models.</p>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;"><strong>Why are engineers suddenly prioritizing NPU bandwidth over raw FLOPS?</strong></p>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;">The bottleneck in modern AI isn&#39;t math; it&#39;s movement. <a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-word; overflow-wrap: anywhere;" href="https://example.com">Recent benchmarks</a> show that data transfer between memory and logic is where most energy is wasted. NPUs solve this by putting data closer to the calculation.</p>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;"><strong>How does this impact the battery life of next-gen mobile devices?</strong></p>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;">By reducing the data travel distance, we see a 40% reduction in thermal throttle. This means you can run a local LLM for hours instead of minutes without the phone getting hot.</p>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;"><strong style="display: block; margin-top: 30px; margin-bottom: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #888;">THE SIGNAL</strong></p>
+<h3 style="margin: 24px 0 8px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; font-weight: 700; color: #111; line-height: 1.3;"><strong>The rise of hybrid-core designs</strong></h3>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;">Modern laptops are moving to a mix of performance and efficiency cores. This ensures that background tasks don&#39;t eat into the power budget reserved for heavy AI workloads. <a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-word; overflow-wrap: anywhere;" href="https://example.com/leak">New leaks</a> suggest this trend will only accelerate in upcoming releases.</p>
+<h3 style="margin: 24px 0 8px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; font-weight: 700; color: #111; line-height: 1.3;"><strong>Unified memory&#39;s secret edge</strong></h3>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;">Sharing a single pool of RAM between the CPU, GPU, and NPU is the real secret sauce. It prevents the slow process of copying data between different silos, allowing for instant &quot;zero-copy&quot; data access for AI tasks.</p>
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;"><strong style="display: block; margin-top: 30px; margin-bottom: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #888;">WATCH THIS</strong></p>
+<div style="margin-top:20px; margin-bottom: 30px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
+     <a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: break-word; overflow-wrap: anywhere;" href="https://youtube.com/watch?v=dQw4w9WgXcQ" style="text-decoration:none !important; color: inherit; display: block;">
+        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" style="width:100%; height: auto; display:block;" />
+        <div style="padding: 16px; background: #ffffff;">
+           <div style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; font-weight: 700; color: #666; margin-bottom: 8px;">Technical Review</div>
+           <p style="margin:0; font-size:16px; font-weight:600; color:#111; line-height: 1.4; text-decoration: none !important;">A deep dive into unified memory</p>
+           <div style="margin-top: 12px; display: inline-block; padding: 6px 12px; background: #000000; color: #ffffff; border-radius: 4px; font-size: 12px; font-weight: 600;">Watch Analysis</div>
+        </div>
+     </a>
+  </div>
+
+<p style="margin: 0 0 18px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; color: #333; overflow-wrap: break-word;"><strong style="display: block; margin-top: 30px; margin-bottom: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #888;">KEY TAKEAWAYS</strong></p>
+<ul>
+<li style="margin-bottom: 8px; overflow-wrap: break-word;">Memory bandwidth is the new bottleneck for local AI inference.</li>
+<li style="margin-bottom: 8px; overflow-wrap: break-word;">Unified memory architectures eliminate slow zero-copy data transfers.</li>
+<li style="margin-bottom: 8px; overflow-wrap: break-word;">Hybrid-core designs protect battery life during heavy AI workloads.</li>
+</ul>
+
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Divider -->
+              <tr>
+                <td style="padding: 0 30px; background-color: #ffffff;">
+                  <hr style="border: none; border-top: 2px solid #000; margin: 0;">
+                </td>
+              </tr>
+
+              <!-- Deep Dive Links -->
+              <tr>
+                <td style="padding: 30px; background-color: #ffffff;" bgcolor="#ffffff">
+                  <h2 style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 20px 0;">
+                    📚 Deep Dive Links
+                  </h2>
+                  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                    
+    <tr>
+      <td style="padding: 10px 0; border-bottom: 1px solid #eee;">
+        <a href="https://theverge.com" style="color: #000; text-decoration: none; font-weight: 600; font-family: 'Inter', -apple-system, sans-serif; font-size: 15px;">
+          Apple M4 Benchmarks leaked
+        </a>
+        <br>
+        <span style="color: #888; font-size: 13px; font-family: 'Inter', -apple-system, sans-serif;">
+          The Verge
+        </span>
+      </td>
+    </tr>
+  
+    <tr>
+      <td style="padding: 10px 0; border-bottom: 1px solid #eee;">
+        <a href="https://techcrunch.com" style="color: #000; text-decoration: none; font-weight: 600; font-family: 'Inter', -apple-system, sans-serif; font-size: 15px;">
+          NVIDIA's next move in mobile
+        </a>
+        <br>
+        <span style="color: #888; font-size: 13px; font-family: 'Inter', -apple-system, sans-serif;">
+          TechCrunch
+        </span>
+      </td>
+    </tr>
+  
+                  </table>
+                </td>
+              </tr>
+
+              
+              <!-- Trial Banner -->
+              <tr>
+                <td style="padding: 15px 30px; background: #FFF8F0; text-align: center; border-top: 1px solid #FFE0C0;">
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; color: #B45309; margin: 0; font-weight: 500;">
+                    📡 Free trial: 5 days remaining &middot; 
+                    <a href="https://siftl.com/subscribe" style="color: #FF5700; font-weight: bold; text-decoration: none;">Subscribe now</a>
+                  </p>
+                </td>
+              </tr>
+              
+
+              <!-- Footer -->
+              
+    <tr>
+      <td class="footer-bg" style="padding: 40px 30px; background-color: #111111; background-image: linear-gradient(#111111, #111111); text-align: center;" bgcolor="#111111">
+        <p class="footer-text" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; font-weight: bold; color: #999999; margin: 0; letter-spacing: 1px; text-transform: uppercase;">
+          <span style="color: #999999 !important;">Siftl</span>
+        </p>
+        <p class="footer-subtext" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: #999999; margin: 15px 0 0 0; line-height: 1.5;">
+          <span style="color: #999999 !important;">Everything you need to know, without the noise.<br>Reply to this email with feedback. We read everything.</span>
+        </p>
+        <p class="footer-muted" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: #999999; margin: 20px 0 0 0;">
+          <a href="https://siftl.com/settings" style="color: #999999 !important; text-decoration: underline;">Pause briefings.</a>
+        </p>
+      </td>
+    </tr>
+  </table></td></tr></table></body>
+    </html>
+  

@@ -19,15 +19,24 @@ const newsreader = Newsreader({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Siftl - High-Signal Intelligence Briefing",
-  description: "The agentic knowledge engine that helps you consume high-value signals 10x faster.",
+  title: "Siftl: Newsletters, podcasts, and YouTube in one daily briefing",
+  description: "Stop the manual scroll. Siftl distills your favorite newsletters, podcasts, and YouTube channels into a single briefing, delivered exactly on your schedule.",
   openGraph: {
-    title: "Siftl - High-Signal Intelligence Briefing",
-    description: "The agentic knowledge engine that helps you consume high-value signals 10x faster.",
+    title: "Siftl: Newsletters, podcasts, and YouTube in one daily briefing",
+    description: "Stop the manual scroll. Siftl distills your favorite newsletters, podcasts, and YouTube channels into a single briefing, delivered exactly on your schedule.",
     url: SITE_URL,
     siteName: 'Siftl',
     locale: 'en_US',
     type: 'website',
+  },
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
   },
   // Next.js will automatically use app/icon.svg and app/apple-icon.tsx
   applicationName: 'Siftl',

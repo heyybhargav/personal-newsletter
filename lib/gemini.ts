@@ -175,7 +175,7 @@ ${firstName ? `READER'S FIRST NAME: ${firstName}` : ''}
 - **NO-CLICK MANDATE**: The briefing should be so satisfyingly detailed that they don't actually need to click. Give them the "aha!" moment right here.
 
 1. **TECHNICAL DEPTH, GENTLE PACE**
-- You must explain complex ideas using **plain English and analogies**. Imagine you are explaining this to a smart friend at a bar, not writing a whitepaper. Keep it extremely light.
+- You must explain complex ideas using **very simple English and analogies**. Imagine you are explaining this to a smart friend at a bar, not writing a whitepaper. Keep it extremely light.
 - **The "Aha" Test**: The reader should understand the *secret mechanics* of the topic without needing a dictionary.
 
 2. **VOICE: EXTREMELY CASUAL, RELAXED, AND ACCESSIBLE**
@@ -215,8 +215,9 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 **THE SIGNAL**
 
 [MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
-- For every other high-signal item, provide a **dense paragraph (3-5 sentences)**. (NO Q&A FORMAT HERE).
-- Format: **Bold the key technical entity** → then the multi-sentence explanation.
+- For every other high-signal item, provide a **dense paragraph (3-5 sentences)** along with its own short punchy title.
+- Format: **Bold the title** → then the multi-sentence explanation.
+- You must leave a completely blank line (double newline) between the bolded title and the start of the explanation paragraph.
 - **CRITICAL**: Every block MUST contain an inline hyperlinked source [text](LINK) woven naturally into the analysis.
 - **ABSOLUTE EXCLUSIVITY**: If an item was in the Lead, skip it here. Every block here must cover *different* items from the input.
 
@@ -224,11 +225,11 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 - Pick the single best video from the input.
 - Render as this EXACT premium HTML card:
   <div style="margin-top:20px; margin-bottom: 30px; border-radius: 12px; overflow: hidden; border: 1px solid #e0e0e0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #ffffff;">
-     <a href="LINK_URL" style="text-decoration:none; color: inherit; display: block;">
+     <a href="LINK_URL" style="text-decoration: none !important; color: inherit; display: block;">
         <img src="THUMBNAIL_URL" style="width:100%; height: auto; display:block;" />
         <div style="padding: 16px; background: #ffffff;">
            <div style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; font-weight: 700; color: #666; margin-bottom: 8px;">[ACTUAL_CHANNEL_NAME_HERE]</div>
-           <p style="margin:0; font-size:16px; font-weight:600; color:#111; line-height: 1.4;">[5-word professional technical synthesis]</p>
+           <p style="margin:0; font-size:16px; font-weight:600; color:#111; line-height: 1.4; text-decoration: none;">[5-word professional technical synthesis]</p>
            <div style="margin-top: 12px; display: inline-block; padding: 6px 12px; background: #000000; color: #ffffff; border-radius: 4px; font-size: 12px; font-weight: 600;">Watch Analysis</div>
         </div>
      </a>
@@ -238,8 +239,8 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 **KEY TAKEAWAYS**
 
 [MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
-- Provide 2-3the  rapid-fire, single-sentence bullet points summarizing the absolute highest-leverage insights from the entire email.
-- This is the "TL;DR for the executive" section. Make them punchy and independent.
+- Provide 2-3 rapid-fire, ultra-concise bullet points (maximum 10-12 words per point).
+- This is the "TL;DR for the executive" section. Use punchy fragments and avoid fillers.
 - Use standard markdown bullets (-).
 </output_format>
 
@@ -272,15 +273,19 @@ Suppliers who invested heavily in micro-LED transfer equipment are facing massiv
 
 **THE SIGNAL**
 
-**Tandem OLED architectures** are emerging as the immediate bridge technology for high-end consumer hardware. Rather than inventing entirely new display paradigms, manufacturers are stacking existing OLED substrates. This fundamentally solves the brightness-decay issue native to organic compounds without requiring a [completely new manufacturing pipeline](https://example.com/oled).
+**Why Tandem OLED is the new wearable standard**
 
-**The M4 Neural Engine** features a totally reworked memory bus designed specifically to prevent bottlenecking during continuous LLM inference. Instead of raw compute cores, the architecture prioritizes memory bandwidth, ensuring the unified RAM pool can feed the NPU without stalling the main processor clock cycles.
+Tandem OLED architectures are emerging as the immediate bridge technology for high-end consumer hardware. Rather than inventing entirely new display paradigms, manufacturers are stacking existing OLED substrates. This fundamentally solves the brightness-decay issue native to organic compounds without requiring a [completely new manufacturing pipeline](https://example.com/oled).
+
+**The M4 Neural Engine's memory breakthrough**
+
+The M4 Neural Engine features a totally reworked memory bus designed specifically to prevent bottlenecking during continuous LLM inference. Instead of raw compute cores, the architecture prioritizes memory bandwidth, ensuring the unified RAM pool can feed the NPU without stalling the main processor clock cycles.
 
 **KEY TAKEAWAYS**
 
-- Apple's pivot away from micro-LED cements tandem OLED as the dominant wearable display tech for the next decade.
-- M4 NPU architecture proves that memory bandwidth, not raw core count, is the actual bottleneck for local LLM inference.
-- Hardware supply chains are increasingly abandoning theoretical perfection for scalable yield rates.
+- Apple's micro-LED pivot cements tandem OLED as the dominant wearable display tech.
+- M4 architecture proves memory bandwidth is the actual LLM inference bottleneck.
+- Hardware supply chains prioritize scalable yield rates over theoretical perfection.
 </example_output>`;
 
         const prompt = `### INPUT DATA

@@ -35,7 +35,7 @@ export default function Hero() {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl font-sans" itemProp="description">
-                        Siftl reads your favorite sources and sends you one simple briefing email every day. Stay smart in 5 minutes.
+                        Stop the manual scroll. Siftl distills your favorite newsletters, podcasts, and YouTube channels into a single briefing, delivered exactly on your schedule.
                     </motion.p>
                 </div>
 
