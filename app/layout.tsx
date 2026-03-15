@@ -73,6 +73,53 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${newsreader.variable} font-sans antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Siftl",
+              "url": SITE_URL,
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": `${SITE_URL}/blog?q={search_term_string}`,
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SiteNavigationElement",
+              "hasPart": [
+                {
+                  "@type": "WebPage",
+                  "name": "Home",
+                  "url": SITE_URL
+                },
+                {
+                  "@type": "WebPage",
+                  "name": "Blog",
+                  "url": `${SITE_URL}/blog`
+                },
+                {
+                  "@type": "WebPage",
+                  "name": "Pricing",
+                  "url": `${SITE_URL}/pricing`
+                },
+                {
+                  "@type": "WebPage",
+                  "name": "FAQ",
+                  "url": `${SITE_URL}/faq`
+                }
+              ]
+            })
+          }}
+        />
         <GoogleAuthProvider />
         <Navbar initialUser={initialUser} tier={tier} trialDaysRemaining={trialDaysRemaining} />
         {children}
