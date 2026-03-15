@@ -27,7 +27,7 @@ export default function Hero() {
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         className="text-5xl md:text-7xl lg:text-8xl font-serif text-black leading-[1.1] mb-8 tracking-tight"
                     >
-                        Know more. <br className="hidden md:block" /> Read less.
+                        Stay on top of everything you <br className="hidden md:block" /> read, watch, and listen to.
                     </motion.h1>
                     
                     <motion.p
@@ -35,7 +35,7 @@ export default function Hero() {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
                         className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl font-sans" itemProp="description">
-                        Stop the manual scroll. Siftl distills your favorite newsletters, podcasts, and YouTube channels into a single briefing, delivered exactly on your schedule.
+                        Siftl follows your newsletters, podcasts, and YouTube channels and delivers the highlights in one clean email, on your schedule.
                     </motion.p>
                 </div>
 

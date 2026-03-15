@@ -19,11 +19,11 @@ const newsreader = Newsreader({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Siftl: Newsletters, podcasts, and YouTube in one daily briefing",
-  description: "Stop the manual scroll. Siftl distills your favorite newsletters, podcasts, and YouTube channels into a single briefing, delivered exactly on your schedule.",
+  title: "Stay on top of everything you read, watch, and listen to.",
+  description: "Siftl follows your newsletters, podcasts, and YouTube channels and delivers the highlights in one clean email, on your schedule.",
   openGraph: {
-    title: "Siftl: Newsletters, podcasts, and YouTube in one daily briefing",
-    description: "Stop the manual scroll. Siftl distills your favorite newsletters, podcasts, and YouTube channels into a single briefing, delivered exactly on your schedule.",
+    title: "Stay on top of everything you read, watch, and listen to.",
+    description: "Siftl follows your newsletters, podcasts, and YouTube channels and delivers the highlights in one clean email, on your schedule.",
     url: SITE_URL,
     siteName: 'Siftl',
     locale: 'en_US',
