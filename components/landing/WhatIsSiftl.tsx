@@ -26,13 +26,16 @@ export default function WhatIsSiftl() {
                     </h2>
                     <div className="flex flex-col items-center justify-center">
                         <meta itemProp="name" content="Siftl" />
-                        <p className="text-3xl md:text-5xl lg:text-6xl font-serif font-normal text-[#1A1A1A] tracking-tight leading-snug md:leading-[1.12] mb-8">
-                            Siftl is an <strong className="font-serif font-semibold text-black">AI powered briefing engine</strong> that extracts insights from <span className="text-gray-500">essays, podcasts, and videos</span> and delivers a <strong className="font-serif font-semibold text-black relative inline-block">
-                                daily intelligence email.
-                                <svg aria-hidden="true" className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-3 md:h-4 text-[#FF5700]/40 -z-10" viewBox="0 0 100 15" preserveAspectRatio="none">
-                                    <path d="M2,8 Q40,-2 98,6 Q50,12 5,8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="transparent" className="opacity-90" />
+                        <h3 className="text-3xl md:text-5xl lg:text-6xl font-serif font-semibold text-black tracking-tighter leading-[1.1] mb-6 max-w-4xl mx-auto">
+                            Your automated research analyst.
+                        </h3>
+                        <p className="text-xl md:text-2xl lg:text-3xl font-serif font-normal text-gray-600 tracking-tight leading-relaxed md:leading-[1.4] mb-8 max-w-3xl mx-auto">
+                            It works behind the scenes to watch and read everything for you, simplify complex ideas into clear insights, and protect your time from the <span className="relative inline-block text-black font-medium">
+                                endless stream of information.
+                                <svg aria-hidden="true" className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-3 md:h-4 text-[#FF5700]/30 -z-10" viewBox="0 0 100 15" preserveAspectRatio="none">
+                                    <path d="M2,8 Q40,-2 98,6 Q50,12 5,8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="transparent" />
                                 </svg>
-                            </strong>
+                            </span>
                         </p>
                     </div>
                 </motion.div>
@@ -49,24 +52,24 @@ export default function WhatIsSiftl() {
                         <div className="w-12 h-12 rounded-xl bg-[#FF5700]/5 flex items-center justify-center border border-[#FF5700]/10 text-[#FF5700] mb-5 group-hover:scale-110 transition-transform duration-300">
                             <BrainCircuit className="w-6 h-6" />
                         </div>
-                        <h3 className="font-serif font-medium text-lg text-[#1A1A1A] mb-2">AI Engine</h3>
-                        <p className="text-sm text-gray-500 max-w-[220px] leading-relaxed">Autonomous analysis of complex multi-modal information.</p>
+                        <h3 className="font-serif font-medium text-lg text-[#1A1A1A] mb-2">Smart Monitoring</h3>
+                        <p className="text-sm text-gray-500 max-w-[220px] leading-relaxed">Stays up to date with your favorite newsletters, podcasts, and videos.</p>
                     </div>
 
                     <div className="group flex flex-col items-center text-center p-8 rounded-2xl bg-white/40 border border-gray-100/50 hover:border-[#FF5700]/20 hover:bg-white hover:shadow-xl hover:shadow-[#FF5700]/5 hover:-translate-y-1 transition-all duration-300">
                         <div className="w-12 h-12 rounded-xl bg-[#FF5700]/5 flex items-center justify-center border border-[#FF5700]/10 text-[#FF5700] mb-5 group-hover:scale-110 transition-transform duration-300">
                             <Radio className="w-6 h-6" />
                         </div>
-                        <h3 className="font-serif font-medium text-lg text-[#1A1A1A] mb-2">Multi-Modal Extract</h3>
-                        <p className="text-sm text-gray-500 max-w-[220px] leading-relaxed">Synthesizes long-form essays, podcasts, and video transcripts.</p>
+                        <h3 className="font-serif font-medium text-lg text-[#1A1A1A] mb-2">Insight Extraction</h3>
+                        <p className="text-sm text-gray-500 max-w-[220px] leading-relaxed">Turns hours of content into clear points you can read in seconds.</p>
                     </div>
 
                     <div className="group flex flex-col items-center text-center p-8 rounded-2xl bg-white/40 border border-gray-100/50 hover:border-[#FF5700]/20 hover:bg-white hover:shadow-xl hover:shadow-[#FF5700]/5 hover:-translate-y-1 transition-all duration-300">
                         <div className="w-12 h-12 rounded-xl bg-[#FF5700]/5 flex items-center justify-center border border-[#FF5700]/10 text-[#FF5700] mb-5 group-hover:scale-110 transition-transform duration-300">
                             <Mail className="w-6 h-6" />
                         </div>
-                        <h3 className="font-serif font-medium text-lg text-[#1A1A1A] mb-2">Intelligence Delivery</h3>
-                        <p className="text-sm text-gray-500 max-w-[220px] leading-relaxed">A single, high-signal daily briefing delivered to your inbox.</p>
+                        <h3 className="font-serif font-medium text-lg text-[#1A1A1A] mb-2">Unified Daily Briefing</h3>
+                        <p className="text-sm text-gray-500 max-w-[220px] leading-relaxed">Gives you everything you need in one clean email, on your schedule.</p>
                     </div>
                 </motion.div>
 

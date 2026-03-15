@@ -25,16 +25,16 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-5xl md:text-7xl lg:text-8xl font-serif text-black leading-[1.1] mb-8 tracking-tight"
+                        className="text-[2.6rem] leading-[1.1] md:text-6xl lg:text-7xl font-serif text-black tracking-tighter mb-8"
                     >
-                        Stay on top of everything you <br className="hidden md:block" /> read, watch, and listen to.
+                        Stay on top of everything you read, watch, and listen to.
                     </motion.h1>
-                    
+
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
-                        className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl font-sans" itemProp="description">
+                        className="text-[17px] md:text-xl text-gray-600 mb-10 leading-relaxed max-w-[350px] sm:max-w-md md:max-w-2xl font-sans balance" itemProp="description">
                         Siftl follows your newsletters, podcasts, and YouTube channels and delivers the highlights in one clean email, on your schedule.
                     </motion.p>
                 </div>
@@ -43,7 +43,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.5 }}
-                    className="flex flex-col md:flex-row items-center justify-center gap-6 mt-4 md:mt-2"
+                    className="flex flex-col md:flex-row items-center justify-center gap-6 mt-8 md:mt-2"
                 >
                     <button
                         onClick={triggerLogin}

@@ -19,10 +19,10 @@ const newsreader = Newsreader({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Stay on top of everything you read, watch, and listen to.",
+  title: "Siftl - Stay on top of everything you read, watch, and listen to.",
   description: "Siftl follows your newsletters, podcasts, and YouTube channels and delivers the highlights in one clean email, on your schedule.",
   openGraph: {
-    title: "Stay on top of everything you read, watch, and listen to.",
+    title: "Siftl - Stay on top of everything you read, watch, and listen to.",
     description: "Siftl follows your newsletters, podcasts, and YouTube channels and delivers the highlights in one clean email, on your schedule.",
     url: SITE_URL,
     siteName: 'Siftl',
