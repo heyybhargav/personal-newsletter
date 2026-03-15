@@ -36,7 +36,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const newSource = await addSourceToUser(email, {
+        const { source: newSource, error } = await addSourceToUser(email, {
             name,
             url,
             type,
@@ -45,7 +45,14 @@ export async function POST(request: Request) {
             originalUrl: originalUrl || url,
         });
 
-        if (!newSource) {
+        if (error === 'limit_exceeded') {
+            return NextResponse.json({ 
+                error: 'Source limit reached', 
+                message: 'Your current plan limits you to 20 sources. Upgrade to Pro for unlimited sources.' 
+            }, { status: 403 });
+        }
+
+        if (error === 'duplicate') {
             return NextResponse.json({ error: 'Source already exists' }, { status: 409 });
         }
 

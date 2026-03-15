@@ -4,7 +4,7 @@ export interface UserProfile {
   name?: string;
   preferences: UserPreferences;
   sources: Source[];
-  tier?: 'trial' | 'active' | 'expired';
+  tier?: 'trial' | 'active' | 'pro' | 'expired';
   trialEndsAt?: string; // ISO date string
   polarCustomerId?: string; // Polar.sh customer ID for webhook matching
   stats?: {

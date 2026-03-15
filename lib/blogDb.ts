@@ -4,10 +4,24 @@ import { BlogPost } from './blog';
 // In Next.js, process.env is populated automatically.
 // For raw Node scripts (seed-blog-kb.ts), we inject dotenv there instead.
 
-const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '',
-    token: process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '',
-});
+let redisInstance: Redis | null = null;
+
+function getRedis() {
+    if (redisInstance) return redisInstance;
+    
+    const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+    
+    if (!redisUrl) {
+        console.warn('[blogDb] Redis URL is missing in process.env');
+    }
+
+    redisInstance = new Redis({
+        url: redisUrl,
+        token: redisToken,
+    });
+    return redisInstance;
+}
 
 // --- Keys ---
 const BLOG_KEY_PREFIX = 'blog:post:';
@@ -38,6 +52,7 @@ export const KB_KEYS = {
  */
 export async function saveBlogPost(post: BlogPost): Promise<boolean> {
     try {
+        const redis = getRedis();
         const slug = post.slug;
         const timestamp = post.publishedAt ? new Date(post.publishedAt).getTime() : Date.now();
 
@@ -76,7 +91,7 @@ export async function saveBlogPost(post: BlogPost): Promise<boolean> {
  */
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     try {
-        return await redis.get<BlogPost>(`${BLOG_KEY_PREFIX}${slug}`);
+        return await getRedis().get<BlogPost>(`${BLOG_KEY_PREFIX}${slug}`);
     } catch (error) {
         console.error(`Error fetching blog post ${slug}:`, error);
         return null;
@@ -89,12 +104,12 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
 export async function getBlogPosts(offset: number = 0, limit: number = 10): Promise<BlogPost[]> {
     try {
         // Get slugs from sorted set, newest first
-        const slugs = await redis.zrange<string[]>(BLOG_INDEX_KEY, offset, offset + limit - 1, { rev: true });
+        const slugs = await getRedis().zrange<string[]>(BLOG_INDEX_KEY, offset, offset + limit - 1, { rev: true });
         if (!slugs || slugs.length === 0) return [];
 
         // Fetch full post metadata using mget for performance
         const keys = slugs.map(slug => `${BLOG_KEY_PREFIX}${slug}`);
-        const posts = await redis.mget<BlogPost[]>(...keys);
+        const posts = await getRedis().mget<BlogPost[]>(...keys);
 
         // Filter out nulls
         return posts.filter((post): post is BlogPost => post !== null);
@@ -109,7 +124,7 @@ export async function getBlogPosts(offset: number = 0, limit: number = 10): Prom
  */
 export async function isSlugTaken(slug: string): Promise<boolean> {
     try {
-        const isMember = await redis.sismember(TOPICS_SET_KEY, slug);
+        const isMember = await getRedis().sismember(TOPICS_SET_KEY, slug);
         return isMember === 1; // Upstash sismember returns 1 or 0
     } catch (error) {
         return false;
@@ -122,9 +137,9 @@ export async function getKnowledgeBaseDoc<T>(key: string): Promise<T | null> {
     try {
         if (key === KB_KEYS.TOPICS_PUBLISHED) {
             // Lrange for Lists
-            return await redis.lrange(key, 0, -1) as any;
+            return await getRedis().lrange(key, 0, -1) as any;
         }
-        return await redis.get<T>(key);
+        return await getRedis().get<T>(key);
     } catch (error) {
         console.error(`Error fetching KB doc ${key}:`, error);
         return null;
@@ -133,7 +148,7 @@ export async function getKnowledgeBaseDoc<T>(key: string): Promise<T | null> {
 
 export async function updateKnowledgeBaseDoc<T>(key: string, data: T): Promise<boolean> {
     try {
-        await redis.set(key, data);
+        await getRedis().set(key, data);
         return true;
     } catch (error) {
         console.error(`Error updating KB doc ${key}:`, error);

@@ -197,6 +197,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
         setAddingRec(pack.id);
 
         let successCount = 0;
+        let limitReached = false;
 
         for (const source of pack.sources) {
             try {
@@ -211,6 +212,12 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                         originalUrl: source.originalUrl,
                     })
                 });
+                
+                if (res.status === 403) {
+                    limitReached = true;
+                    break;
+                }
+
                 const data = await res.json();
                 if (res.ok && data.source) {
                     successCount++;
@@ -221,7 +228,14 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
         }
 
         setAddingRec(null);
-        if (successCount > 0) {
+        if (limitReached) {
+            setToast({ 
+                message: 'Plan limit reached', 
+                description: 'Your current plan limits you to 20 sources. Upgrade to Pro for unlimited sources.', 
+                type: 'error' 
+            });
+            mutate('/api/sources');
+        } else if (successCount > 0) {
             setToast({ message: `Added ${successCount} sources`, description: `From ${pack.name}`, type: 'success' });
             mutate('/api/sources');
             fetchRecommendations();
@@ -250,8 +264,19 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                 // Remove from local list to avoid duplicates immediately
                 setRecommendations(prev => (prev as RecommendedSource[]).filter(r => r.id !== rec.id));
                 mutate('/api/sources');
+            } else if (res.status === 403) {
+                const data = await res.json();
+                setToast({ 
+                    message: 'Plan limit reached', 
+                    description: data.message || 'Upgrade to Pro for unlimited sources.', 
+                    type: 'error' 
+                });
+            } else {
+                const data = await res.json();
+                setToast({ message: 'Failed to add', description: data.error, type: 'error' });
             }
-        } catch (error) {
+        } catch (error: any) {
+            setToast({ message: 'Error adding source', description: error.message, type: 'error' });
             console.error('Error adding recommendation:', error);
         } finally {
             setAddingRec(null);
@@ -411,9 +436,18 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                 setToast({ message: 'Source added', type: 'success' });
             } else {
                 const data = await res.json();
-                setDetectionError(data.error || 'Failed to add source');
+                if (res.status === 403) {
+                    setToast({ 
+                        message: 'Plan limit reached', 
+                        description: data.message || 'Upgrade to Pro for unlimited sources.', 
+                        type: 'error' 
+                    });
+                } else {
+                    setDetectionError(data.error || 'Failed to add source');
+                }
             }
         } catch (error: any) {
+            setToast({ message: 'Error adding source', description: error.message, type: 'error' });
             setDetectionError(error.message);
         } finally {
             // Revalidate to get the real ID and sync with backend

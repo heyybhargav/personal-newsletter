@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 
 // Load .env.local
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 
 const redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '',

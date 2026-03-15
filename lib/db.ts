@@ -11,6 +11,12 @@ const redis = new Redis({
 // --- Keys ---
 const USER_KEY_PREFIX = 'user:';
 const ALL_USERS_SET = 'users:index'; // Set of all registered emails
+const PLAN_LIMITS = {
+    trial: 20,
+    active: 20,
+    pro: 1000,
+    expired: 0
+};
 
 // --- Helpers ---
 const getUserKey = (email: string) => `${USER_KEY_PREFIX}${email}:config`;
@@ -79,7 +85,7 @@ export function getTrialDaysRemaining(user: UserProfile): number {
 
 export async function updateUserTier(
     email: string,
-    tier: 'trial' | 'active' | 'expired',
+    tier: 'trial' | 'active' | 'pro' | 'expired',
     polarCustomerId?: string
 ): Promise<void> {
     const user = await getUser(email);
@@ -229,14 +235,25 @@ async function enforceArchiveTTL(email: string, secondsTtl: number | null): Prom
 
 // --- Source Operations (Scoped to User) ---
 
-export async function addSourceToUser(email: string, source: Omit<Source, 'id' | 'addedAt'>): Promise<Source | null> {
+export async function addSourceToUser(
+    email: string, 
+    source: Omit<Source, 'id' | 'addedAt'>
+): Promise<{ source: Source | null, error?: 'duplicate' | 'limit_exceeded' }> {
     const user = await getUser(email) || await createUser(email);
 
-    // Avoid duplicates — normalize URLs for comparison
+    // 1. Check Plan Limits
+    const tier = user.tier || 'trial';
+    const limit = PLAN_LIMITS[tier as keyof typeof PLAN_LIMITS] || 20;
+    
+    if (user.sources.length >= limit) {
+        return { source: null, error: 'limit_exceeded' };
+    }
+
+    // 2. Avoid duplicates — normalize URLs for comparison
     const normalizeUrl = (u: string) => u.trim().toLowerCase().replace(/\/$/, '');
     const isDuplicate = user.sources.some(s => normalizeUrl(s.url) === normalizeUrl(source.url));
     if (isDuplicate) {
-        return null; // Signal to caller that source was not added
+        return { source: null, error: 'duplicate' };
     }
 
     const newSource: Source = {
@@ -248,7 +265,7 @@ export async function addSourceToUser(email: string, source: Omit<Source, 'id' |
     user.sources.push(newSource);
     await saveUser(user);
 
-    return newSource;
+    return { source: newSource };
 }
 
 export async function removeSourceFromUser(email: string, sourceId: string): Promise<void> {
@@ -299,7 +316,10 @@ export async function savePreferences(legacyPrefs: any) {
 }
 
 // Legacy wrappers for sources
-export async function addSource(source: any) { return addSourceToUser(ADMIN_EMAIL, source); }
+export async function addSource(source: any) { 
+    const res = await addSourceToUser(ADMIN_EMAIL, source);
+    return res.source; 
+}
 export async function removeSource(id: string) { return removeSourceFromUser(ADMIN_EMAIL, id); }
 // --- Starter Pack Operations ---
 const STARTER_PACKS_KEY = 'admin:starter_packs';

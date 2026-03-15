@@ -85,8 +85,12 @@ export async function POST(request: NextRequest) {
             case 'subscription.updated':
                 const status = event.data.status;
                 if (status === 'active' || status === 'trialing') {
-                    console.log(`[Polar Webhook] Marking ${emailToUpdate} as ACTIVE`);
-                    await updateUserTier(emailToUpdate, 'active');
+                    const productName = event.data.product?.name || '';
+                    const isPro = productName.toLowerCase().includes('pro');
+                    const tier = isPro ? 'pro' : 'active';
+                    
+                    console.log(`[Polar Webhook] Marking ${emailToUpdate} as ${tier.toUpperCase()} (Product: ${productName})`);
+                    await updateUserTier(emailToUpdate, tier);
                 } else if (status === 'canceled' || status === 'incomplete_expired' || status === 'past_due') {
                     console.log(`[Polar Webhook] Marking ${emailToUpdate} as EXPIRED (status: ${status})`);
                     await updateUserTier(emailToUpdate, 'expired');

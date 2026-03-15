@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
     return {
         name: 'Siftl',
         short_name: 'Siftl',
-        description: 'Your AI-curated daily executive briefing. Less scrolling, more knowing.',
+        description: 'Siftl watches, reads, and listens for you—simplifying complex ideas into clear insights, delivered in one clean daily briefing.',
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
@@ -24,6 +24,11 @@ export default function manifest(): MetadataRoute.Manifest {
                 src: '/icon.svg',
                 sizes: 'any',
                 type: 'image/svg+xml',
+            },
+            {
+                src: '/apple-icon.png',
+                sizes: '180x180',
+                type: 'image/png',
             },
         ],
     }

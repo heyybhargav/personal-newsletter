@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 
 // Load env FIRST
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 
 import { getBlogPosts, saveBlogPost, getKnowledgeBaseDoc, KB_KEYS } from '../lib/blogDb';
 import { GoogleGenAI } from '@google/genai';
