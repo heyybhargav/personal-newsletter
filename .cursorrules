@@ -96,3 +96,7 @@ Signal utilizes a very specific, premium design language.
 - **NO AUTOMATED DEPLOYS**: Never run `git push` or trigger a production deployment (e.g., Vercel) without explicit verbal approval from the user.
 - **Verification Prerequisite**: All changes must be verified locally (via `npm run dev`) before even proposing a deployment.
 - **Commit Transparency**: Always describe the exact changes in the commit message if a push is eventually authorized.
+## 10. Branding & Asset Management
+- **Icon Strategy**: Always use dynamic PNG generation via `app/icon.tsx` and `app/apple-icon.tsx`. Google Search snippets and older mobile browsers have poor support for root-level `.svg` icons and often ignore them.
+- **Backup Storage**: Original vector branding assets (SVGs) should NOT live in the `app/` root to avoid Next.js build conflicts. Move them to `public/assets/branding/` for safe storage.
+- **Favicon Compatibility**: Avoid using `.ico` extensions for files that are actually SVGs. True PNG or ICO formats are required for standard browser compliance.

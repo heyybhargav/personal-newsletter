@@ -29,15 +29,6 @@ export const metadata: Metadata = {
     locale: 'en_US',
     type: 'website',
   },
-  icons: {
-    icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: 'any' },
-    ],
-    apple: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
-  },
   // Next.js will automatically use app/icon.svg and app/apple-icon.tsx
   applicationName: 'Siftl',
   appleWebApp: {
