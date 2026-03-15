@@ -27,7 +27,7 @@ export default function Hero() {
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         className="text-[2.6rem] leading-[1.1] md:text-6xl lg:text-7xl font-serif text-black tracking-tighter mb-8"
                     >
-                        Stay on top of everything you read, watch, and listen to.
+                        Stay on top of everything you <br className="hidden md:block" /> read, watch, and listen to.
                     </motion.h1>
 
                     <motion.p

@@ -26,7 +26,7 @@ export default function WhatIsSiftl() {
                     </h2>
                     <div className="flex flex-col items-center justify-center">
                         <meta itemProp="name" content="Siftl" />
-                        <h3 className="text-3xl md:text-5xl lg:text-6xl font-serif font-semibold text-black tracking-tighter leading-[1.1] mb-6 max-w-4xl mx-auto">
+                        <h3 className="text-2xl md:text-4xl lg:text-5xl font-serif font-medium text-black tracking-tighter leading-[1.1] mb-6 max-w-4xl mx-auto">
                             Your automated research analyst.
                         </h3>
                         <p className="text-xl md:text-2xl lg:text-3xl font-serif font-normal text-gray-600 tracking-tight leading-relaxed md:leading-[1.4] mb-8 max-w-3xl mx-auto">
