@@ -36,18 +36,15 @@ export default function ArchiveClient({ initialArchives }: ArchiveClientProps) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-8 sm:pb-12"
+                className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-16 pb-8 sm:pb-12"
             >
-                <Link href="/" className="text-gray-400 hover:text-black mb-6 flex items-center gap-2 text-sm font-medium transition-colors">
-                    <span>←</span> Return to Home
-                </Link>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
                     <motion.div>
                         <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
                             Briefing Archive
                         </h1>
-                        <p className="text-base sm:text-xl text-gray-500 font-light mt-4 sm:mt-6 max-w-lg leading-relaxed font-serif">
-                            Your complete history of intelligence coverage. Note: Subscriptions only retain data for 30 days after cancellation.
+                        <p className="text-base sm:text-xl text-gray-500 font-light mt-4 sm:mt-6 max-w-lg leading-relaxed font-sans">
+                            Your complete history of intelligence coverage.
                         </p>
                     </motion.div>
                 </div>
@@ -87,7 +84,7 @@ export default function ArchiveClient({ initialArchives }: ArchiveClientProps) {
                         </div>
 
                         <h3 className="font-serif text-3xl sm:text-4xl mb-4 text-[#1A1A1A] tracking-tight">Awaiting Intel</h3>
-                        <p className="text-gray-500 max-w-md mx-auto mb-8 font-serif text-lg leading-relaxed">
+                        <p className="text-gray-500 max-w-md mx-auto mb-8 font-sans text-lg leading-relaxed">
                             Siftl is actively monitoring your curated sources. Your first executive briefing will be synthesized and archived here after your next scheduled delivery.
                         </p>
 

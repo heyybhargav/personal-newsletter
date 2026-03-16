@@ -108,22 +108,29 @@ async function searchYouTube(query: string): Promise<SearchResult[]> {
 
     let match;
     while ((match = channelRegex.exec(html)) !== null) {
-        const [_, channelId, title, thumbUrl] = match;
+        let [_, channelId, title, thumbUrl] = match;
 
         if (uniqueChannels.has(channelId)) continue;
         uniqueChannels.add(channelId);
 
-        let fullThumbUrl = thumbUrl;
-        if (fullThumbUrl.startsWith('//')) {
-            fullThumbUrl = 'https:' + fullThumbUrl;
-        }
+        // Standard unescaping for URLs and titles from raw HTML
+        const unescape = (str: string) => {
+            return str
+                .replace(/\\u0026/g, '&')
+                .replace(/\\/g, '')
+                .replace(/&amp;/g, '&');
+        };
+
+        const cleanThumbUrl = unescape(thumbUrl).startsWith('//') 
+            ? 'https:' + unescape(thumbUrl) 
+            : unescape(thumbUrl);
 
         results.push({
-            title: title,
+            title: title.replace(/\\u0026/g, '&').replace(/&amp;/g, '&'),
             description: 'YouTube Channel',
             url: `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
             type: 'youtube',
-            thumbnail: fullThumbUrl
+            thumbnail: cleanThumbUrl
         });
 
         if (results.length >= 5) break;
@@ -160,7 +167,7 @@ async function searchReddit(query: string): Promise<SearchResult[]> {
     const data = await response.json();
 
     return data.data.children.map((item: any) => ({
-        title: `r/${item.data.display_name_prefixed}`,
+        title: item.data.display_name_prefixed,
         description: item.data.public_description || `Subreddit for ${query}`,
         url: `https://www.reddit.com${item.data.url}.rss`,
         type: 'reddit',

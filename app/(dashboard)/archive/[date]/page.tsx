@@ -22,11 +22,11 @@ function EmailStyleMarkdown({ content }: { content: string }) {
                 .replace(/<h2/g, '<h2 style="font-family: \'Georgia\', serif; font-weight: bold; font-size: 20px; margin: 20px 0 12px 0; color: #000;"')
                 .replace(/<h3/g, '<h3 style="font-family: \'Georgia\', serif; font-weight: bold; font-size: 18px; margin: 18px 0 10px 0; color: #000;"')
                 .replace(/<h4/g, '<h4 style="font-family: \'Georgia\', serif; font-weight: bold; font-size: 17px; margin: 16px 0 8px 0; color: #000;"')
-                .replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; hyphens: auto;">')
+                .replace(/<p>/g, '<p style="margin: 0 0 18px 0; font-family: \'Inter\', sans-serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; hyphens: auto;">')
                 .replace(/<a /g, '<a style="color: #2563eb; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; display: inline; word-break: normal; overflow-wrap: break-word;" target="_blank" rel="noopener noreferrer" ')
                 .replace(/<ul>/g, '<ul style="padding-left: 20px; margin-bottom: 18px; list-style-type: disc;">')
                 .replace(/<ol>/g, '<ol style="padding-left: 20px; margin-bottom: 18px; list-style-type: decimal;">')
-                .replace(/<li>/g, '<li style="margin-bottom: 8px; font-family: \'Georgia\', serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; padding-left: 4px;">')
+                .replace(/<li>/g, '<li style="margin-bottom: 8px; font-family: \'Inter\', sans-serif; font-size: 17px; line-height: 1.6; color: #333; overflow-wrap: break-word; padding-left: 4px;">')
                 .replace(/<blockquote>/g, '<blockquote style="border-left: 4px solid #3b82f6; background: #f9f9f9; padding: 12px 16px; margin: 24px 0; color: #444; border-radius: 0 4px 4px 0; overflow-wrap: break-word;">');
 
             setHtml(formatted);
@@ -150,7 +150,7 @@ export default function ArchivedBriefingView() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="max-w-none"
                             >
-                                <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content bg-white p-6 sm:p-8 sm:px-10 rounded-2xl border border-gray-100 shadow-sm">
+                                <div className="text-gray-800 leading-relaxed font-sans text-[17px] markdown-content bg-white p-6 sm:p-8 sm:px-10 rounded-2xl border border-gray-100 shadow-sm">
                                     <EmailStyleMarkdown content={briefing.narrative} />
                                 </div>
 
@@ -191,7 +191,7 @@ export default function ArchivedBriefingView() {
                                     >
                                         <h4 className="text-xl sm:text-2xl font-serif font-bold text-[#1A1A1A] mb-6">{section.title}</h4>
 
-                                        <div className="text-gray-800 leading-relaxed font-serif text-[17px] markdown-content bg-white p-6 sm:p-8 rounded-2xl border border-gray-100 shadow-sm">
+                                        <div className="text-gray-800 leading-relaxed font-sans text-[17px] markdown-content bg-white p-6 sm:p-8 rounded-2xl border border-gray-100 shadow-sm">
                                             <EmailStyleMarkdown content={section.summary || ''} />
                                         </div>
 

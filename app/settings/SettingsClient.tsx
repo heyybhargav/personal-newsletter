@@ -8,9 +8,14 @@ import { AlertBanner } from '@/components/AlertBanner';
 interface SettingsClientProps {
     initialSettings: any;
     models: { id: string, name: string }[];
+    config: {
+        checkoutUrlPersonal: string;
+        checkoutUrlPro: string;
+        customerPortalUrl: string;
+    };
 }
 
-export default function SettingsClient({ initialSettings, models }: SettingsClientProps) {
+export default function SettingsClient({ initialSettings, models, config }: SettingsClientProps) {
     const [email, setEmail] = useState(initialSettings.email || '');
     const [deliveryTime, setDeliveryTime] = useState(initialSettings.deliveryTime || '08:00');
     const [timezone, setTimezone] = useState(initialSettings.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -114,14 +119,11 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-8 sm:pb-12"
+                className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-16 pb-8 sm:pb-12"
             >
-                <Link href="/" className="text-gray-400 hover:text-black mb-6 flex items-center gap-2 text-sm font-medium transition-colors">
-                    <span>←</span> Return to Home
-                </Link>
                 <div>
                     <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-medium tracking-tight text-[#1A1A1A]">Settings</h1>
-                    <p className="text-base sm:text-xl text-gray-500 font-light mt-4 font-serif">Delivery time, timezone, and AI model.</p>
+                    <p className="text-base sm:text-xl text-gray-500 font-light mt-4 font-sans">Delivery time, timezone, and AI model.</p>
                 </div>
                 <div className="h-px w-full bg-gray-200/60 mt-8 sm:mt-12"></div>
             </motion.div>
@@ -142,9 +144,9 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-3">
                                         <h4 className="text-2xl font-serif font-bold text-white tracking-tight">
-                                            {tier === 'active' ? 'Siftl Pro' : 'Siftl Trial'}
+                                            {tier === 'pro' ? 'Siftl Pro' : tier === 'active' ? 'Siftl Personal' : 'Siftl Trial'}
                                         </h4>
-                                        {tier === 'active' && (
+                                        {(tier === 'active' || tier === 'pro') && (
                                             <span className="bg-white/5 border border-white/10 text-gray-300 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase -translate-y-[2px]">ACTIVE</span>
                                         )}
                                         {tier === 'trial' && (
@@ -154,24 +156,32 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                                             <span className="bg-transparent border border-[#FF5700]/40 text-[#FF5700] text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">EXPIRED</span>
                                         )}
                                     </div>
-                                    <p className="text-gray-400 text-sm font-serif max-w-sm">
-                                        {tier === 'active'
-                                            ? 'Unlimited daily briefings powered by elite synthetic intelligence'
-                                            : `You have ${trialDaysRemaining} day${trialDaysRemaining === 1 ? '' : 's'} remaining in your free trial.`}
+                                    <p className="text-gray-400 text-sm font-sans max-w-sm">
+                                        {tier === 'pro'
+                                            ? 'Professional intelligence coverage with unlimited sources and deep synthesis.'
+                                            : tier === 'active'
+                                                ? 'Unlimited daily briefings powered by elite synthetic intelligence.'
+                                                : `You have ${trialDaysRemaining} day${trialDaysRemaining === 1 ? '' : 's'} remaining in your free trial.`}
                                     </p>
                                 </div>
-                                <div className="relative z-10">
-                                    {tier === 'trial' || tier === 'expired' ? (
-                                        <Link
-                                            href="/subscribe"
-                                            className="inline-block px-6 py-3 bg-[#FF5700] hover:bg-[#E64600] text-white font-bold tracking-widest uppercase text-xs rounded-xl transition-all"
-                                        >
-                                            Activate Pro
-                                        </Link>
-                                    ) : (
+                                <div className="relative z-10 flex flex-col items-end gap-3 min-w-[160px]">
+                                    {(tier === 'trial' || tier === 'expired' || tier === 'active') && (
                                         <a
-                                            href={process.env.NEXT_PUBLIC_POLAR_CUSTOMER_PORTAL || "#"}
-                                            className="inline-block px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-bold tracking-widest text-[10px] uppercase rounded-xl transition-colors backdrop-blur-sm border border-white/10"
+                                            href={tier === 'active' ? config.checkoutUrlPro : config.checkoutUrlPersonal}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-block px-6 py-3 bg-[#FF5700] hover:bg-[#E64600] text-white font-bold tracking-widest uppercase text-[10px] rounded-xl transition-all"
+                                        >
+                                            {tier === 'active' ? 'Upgrade to Pro' : 'Upgrade Plan'}
+                                        </a>
+                                    )}
+                                    
+                                    {(tier === 'active' || tier === 'pro') && (
+                                        <a
+                                            href={config.customerPortalUrl || "#"}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-block px-6 py-3 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-bold tracking-widest text-[10px] uppercase rounded-xl transition-colors backdrop-blur-sm border border-white/10"
                                         >
                                             Manage Billing
                                         </a>
@@ -192,7 +202,7 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                                         type="email"
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
-                                        className="w-full bg-transparent border-0 border-b-2 border-gray-200 rounded-none focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-serif placeholder:text-gray-300 transition-colors focus:outline-none"
+                                        className="w-full bg-transparent border-0 border-b-2 border-gray-200 rounded-none focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-sans placeholder:text-gray-300 transition-colors focus:outline-none"
                                         placeholder="your@email.com"
                                         required
                                     />
@@ -206,7 +216,7 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                                         type="time"
                                         value={deliveryTime}
                                         onChange={e => setDeliveryTime(e.target.value)}
-                                        className="w-full bg-transparent border-0 border-b-2 border-gray-200 rounded-none focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-serif transition-colors focus:outline-none"
+                                        className="w-full bg-transparent border-0 border-b-2 border-gray-200 rounded-none focus:border-[#FF5700] focus:ring-0 px-0 py-3 text-xl font-sans transition-colors focus:outline-none"
                                         required
                                     />
                                 </div>
@@ -225,7 +235,7 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                                         <select
                                             value={llmProvider}
                                             onChange={e => setLlmProvider(e.target.value)}
-                                            className="w-full bg-transparent border-b-2 border-gray-200 py-3 pr-8 text-xl font-serif focus:border-[#FF5700] focus:outline-none appearance-none cursor-pointer"
+                                            className="w-full bg-transparent border-b-2 border-gray-200 py-3 pr-8 text-xl font-sans focus:border-[#FF5700] focus:outline-none appearance-none cursor-pointer"
                                         >
                                             {availableModels.map(m => (
                                                 <option key={m.id} value={m.id}>{m.name}</option>
@@ -244,7 +254,7 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                                         <select
                                             value={timezone}
                                             onChange={e => setTimezone(e.target.value)}
-                                            className="w-full bg-transparent border-b-2 border-gray-200 py-3 pr-8 text-xl font-serif focus:border-[#FF5700] focus:outline-none appearance-none cursor-pointer"
+                                            className="w-full bg-transparent border-b-2 border-gray-200 py-3 pr-8 text-xl font-sans focus:border-[#FF5700] focus:outline-none appearance-none cursor-pointer"
                                             required
                                         >
                                             {/* Common Timezones */}
@@ -323,11 +333,11 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                             </div>
                         </section>
 
-                        <div className="pt-8 flex items-center justify-between">
+                        <div className="pt-8 flex items-center justify-end">
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="bg-[#1A1A1A] text-white px-8 py-4 rounded-full font-medium hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl duration-200 text-lg"
+                                className="bg-[#1A1A1A] text-white px-8 py-4 rounded-full font-medium hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed duration-200 text-lg"
                             >
                                 {saving ? 'Saving...' : 'Save Settings'}
                             </button>
@@ -345,11 +355,11 @@ export default function SettingsClient({ initialSettings, models }: SettingsClie
                             <span className="text-xs font-bold tracking-widest text-[#FF5700] uppercase">The Siftl Advantage</span>
                         </div>
                         <h3 className="text-3xl font-serif mb-6 text-[#1A1A1A]">Reclaim your attention.</h3>
-                        <p className="text-gray-600 leading-relaxed font-serif text-lg">
+                        <p className="text-gray-600 leading-relaxed font-sans text-lg">
                             Siftl is designed to be the quietest part of your internet experience. We monitor your selected sources 24/7, aggressively filter out PR fluff and noise, and synthesize the actionable insights into one concise executive briefing.
                         </p>
                         <hr className="my-8 border-t border-[#FF5700]/20 w-24 mx-auto" />
-                        <p className="text-gray-600 leading-relaxed font-serif text-lg">
+                        <p className="text-gray-600 leading-relaxed font-sans text-lg">
                             By reading Siftl instead of doomscrolling feeds, you save <b>hours every week</b> while staying better informed. No algorithms. No engagement traps. Just what matters, delivered exactly when you want it.
                         </p>
                     </div>

@@ -59,7 +59,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-lg text-gray-400 font-serif leading-relaxed"
+                        className="text-lg text-gray-400 font-sans leading-relaxed"
                     >
                         {post.subtitle}
                     </motion.p>
@@ -97,7 +97,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                                     <ReactMarkdown
                                         key={paraIdx}
                                         components={{
-                                            p: ({ node, ...props }) => <p className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]" {...props} />,
+                                            p: ({ node, ...props }) => <p className="text-[17px] md:text-lg font-sans text-[#2A2A2A] leading-[1.75]" {...props} />,
                                             a: ({ node, ...props }) => <a className="text-[#FF5700] hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
                                             strong: ({ node, ...props }) => <strong className="font-semibold text-[#1A1A1A]" {...props} />
                                         }}
@@ -110,7 +110,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                                         {section.listItems.map((item, itemIdx) => (
                                             <li
                                                 key={itemIdx}
-                                                className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]"
+                                                className="text-[17px] md:text-lg font-sans text-[#2A2A2A] leading-[1.75]"
                                             >
                                                 <ReactMarkdown
                                                     components={{
@@ -139,7 +139,7 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                             <div>
                                 <p className="text-xs font-bold tracking-[0.2em] text-[#FF5700] uppercase mb-2">Ready to try it?</p>
-                                <p className="text-base font-serif text-gray-700 leading-relaxed">
+                                <p className="text-base font-sans text-gray-700 leading-relaxed">
                                     Set up your briefing in under a minute. First 7 days free.
                                 </p>
                             </div>

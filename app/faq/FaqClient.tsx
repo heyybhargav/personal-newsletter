@@ -82,11 +82,11 @@ export default function FaqClient() {
                                     {faq.question}
                                 </h2>
                                 {/* INVERTED PYRAMID: Direct 1-sentence answer first */}
-                                <p className="text-[17px] md:text-lg font-serif font-medium text-[#FF5700] leading-[1.6] mb-4">
+                                <p className="text-[17px] md:text-lg font-sans font-medium text-[#FF5700] leading-[1.6] mb-4">
                                     {faq.answer}
                                 </p>
                                 {/* Elaboration */}
-                                <p className="text-[17px] md:text-lg font-serif text-[#2A2A2A] leading-[1.75]">
+                                <p className="text-[17px] md:text-lg font-sans text-[#2A2A2A] leading-[1.75]">
                                     {faq.details}
                                 </p>
                             </motion.article>
@@ -103,7 +103,7 @@ export default function FaqClient() {
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                             <div>
                                 <p className="text-xs font-bold tracking-[0.2em] text-[#FF5700] uppercase mb-2">Ready to try it?</p>
-                                <p className="text-base font-serif text-gray-700 leading-relaxed">
+                                <p className="text-base font-sans text-gray-700 leading-relaxed">
                                     Stop doomscrolling. Set up your briefing in under a minute.
                                 </p>
                             </div>

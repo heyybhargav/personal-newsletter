@@ -41,15 +41,15 @@ export default function PrivacyClient() {
                 </p>
             </section>
 
-            <h2>4. Data Retention and Deletion</h2>
+            <h2 className="text-xl font-serif font-semibold text-[#1A1A1A]">4. Data Retention and Deletion</h2>
             <p>
                 We only keep what we need to serve you. Your original emails remain in your Google account (assuming you use a Gmail integration) entirely under your control. We store the generated briefings for your historical web dashboard.
                 If you choose to delete your Siftl account, all associated briefing data, preferences, and OAuth tokens we hold are permanently purged from our databases.
             </p>
 
-            <h2>5. Contact Us</h2>
+            <h2 className="text-xl font-serif font-semibold text-[#1A1A1A]">5. Contact Us</h2>
             <p>
-                For any questions regarding this privacy policy or your data, please contact us directly at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+                For any questions regarding this privacy policy or your data, please contact us directly at <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#FF5700] hover:underline font-medium">{CONTACT_EMAIL}</a>.
             </p>
         </LegalLayout>
     );

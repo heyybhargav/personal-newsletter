@@ -77,7 +77,6 @@ export default function PricingClient() {
 
                             {/* THE SIGNAL (Right Side) */}
                             <div className="p-10 md:p-16 bg-[#1A1A1A] text-white relative flex flex-col justify-between overflow-hidden">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF5700] opacity-5 blur-[100px] rounded-full"></div>
 
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-2 mb-12">
@@ -121,7 +120,6 @@ export default function PricingClient() {
                 {/* SECTION 2: HERO & ROI PRICING CARD */}
                 <div className="w-full max-w-7xl mx-auto relative z-10 mb-32">
                     {/* Ambient Background Glow (Subtle Fire) */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#FF5700] opacity-[0.03] blur-[120px] rounded-full pointer-events-none"></div>
 
                     <header className="text-center mb-24 px-4">
                         <h1 className="text-4xl md:text-6xl font-serif font-normal text-[#1A1A1A] tracking-tighter mb-6">
@@ -140,7 +138,7 @@ export default function PricingClient() {
                         <div
                             onClick={(e) => handleCardClick(e, 'trial')}
                             className={`rounded-2xl p-8 md:p-10 border transition-colors duration-500 flex flex-col group/card cursor-pointer relative overflow-hidden ${activeTier === 'trial'
-                                ? 'border-[#1A1A1A] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.4)]'
+                                ? 'border-[#1A1A1A] bg-[#1A1A1A]'
                                 : 'bg-white/50 backdrop-blur-sm border-gray-100 hover:border-[#FF5700]/20 shadow-sm'
                                 }`}
                         >
@@ -214,7 +212,7 @@ export default function PricingClient() {
                         <div
                             onClick={(e) => handleCardClick(e, 'basic')}
                             className={`rounded-2xl p-8 md:p-10 transition-colors duration-500 relative overflow-hidden group border flex flex-col cursor-pointer ${activeTier === 'basic'
-                                ? 'border-[#1A1A1A] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.4)] z-20'
+                                ? 'border-[#1A1A1A] bg-[#1A1A1A] z-20'
                                 : 'bg-white/50 backdrop-blur-sm border-gray-100 hover:border-[#FF5700]/20 shadow-sm'
                                 }`}
                         >
@@ -238,7 +236,7 @@ export default function PricingClient() {
                             </AnimatePresence>
 
                             <div className="relative z-10 flex flex-col h-full">
-                                <div className="absolute top-4 right-4 bg-[#FF5700] text-white text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full shadow-lg shadow-[#FF5700]/20 font-sans">
+                                <div className="absolute top-4 right-4 bg-[#FF5700] text-white text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 rounded-full font-sans">
                                     Popular
                                 </div>
 
@@ -277,7 +275,7 @@ export default function PricingClient() {
                                         <button
                                             onClick={(e) => { e.stopPropagation(); window.open(POLAR_CHECKOUT_URL_PERSONAL, '_blank'); }}
                                             className={`w-full h-14 px-6 text-center font-medium tracking-wide text-[16px] rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${activeTier === 'basic'
-                                                ? 'bg-[#FDFBF7] hover:bg-white text-[#1A1A1A] shadow-[0_10px_20px_-10px_rgba(255,255,255,0.1)]'
+                                                ? 'bg-[#FDFBF7] hover:bg-white text-[#1A1A1A]'
                                                 : 'bg-[#1A1A1A] hover:bg-black text-white'
                                                 }`}
                                         >
@@ -294,7 +292,7 @@ export default function PricingClient() {
                         <div
                             onClick={(e) => handleCardClick(e, 'pro')}
                             className={`rounded-2xl p-8 md:p-10 border transition-colors duration-500 flex flex-col group/card cursor-pointer relative overflow-hidden ${activeTier === 'pro'
-                                ? 'border-[#1A1A1A] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.4)]'
+                                ? 'border-[#1A1A1A] bg-[#1A1A1A]'
                                 : 'bg-white/50 backdrop-blur-sm border-gray-100 hover:border-[#FF5700]/20 shadow-sm'
                                 }`}
                         >
@@ -427,7 +425,7 @@ function FeatureItem({ text, icon, dark = false }: { text: string, icon: React.R
 function FaqItem({ question, answer }: { question: string, answer: string }) {
     return (
         <div className="py-6 border-b border-gray-200/60 last:border-0 group">
-            <h4 className="font-serif text-xl text-[#1A1A1A] mb-3 group-hover:text-[#FF5700] transition-colors duration-300">{question}</h4>
+            <h4 className="font-sans text-xl text-[#1A1A1A] mb-3 group-hover:text-[#FF5700] transition-colors duration-300">{question}</h4>
             <p className="text-gray-500 leading-relaxed text-[16px] max-w-2xl">{answer}</p>
         </div>
     );

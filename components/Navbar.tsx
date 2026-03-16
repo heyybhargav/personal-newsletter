@@ -49,24 +49,24 @@ export default function Navbar({
     if (PUBLIC_NAV_PAGES.some(p => pathname === p || pathname.startsWith(p + '/'))) return null;
 
     return (
-        <div className="sticky top-0 z-40 shadow-sm">
-            <nav className="bg-[#FDFBF7] border-b border-gray-200/50 backdrop-blur-md relative z-20">
+        <div className="sticky top-0 z-40">
+            <nav className="bg-[#FDFBF7] backdrop-blur-md relative z-20">
                 <div className="max-w-5xl mx-auto px-6 lg:px-8">
-                    <div className="flex justify-between h-20">
+                    <div className="flex justify-between h-20 lg:h-24 pt-4 lg:pt-0">
                         <div className="flex items-center">
                             <div className="flex-shrink-0 flex items-center">
                                 <Link href="/">
                                     <span className="font-serif font-bold text-2xl tracking-tight text-[#1A1A1A]">Siftl.</span>
                                 </Link>
                             </div>
-                            <div className="hidden sm:ml-12 sm:flex sm:space-x-8">
+                            <div className="hidden sm:ml-16 sm:flex sm:space-x-10 h-full">
                                 {user && navLinks.map((link) => (
                                     <Link
                                         key={link.path}
                                         href={link.path}
-                                        className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full transition-colors cursor-pointer ${isActive(link.path)
-                                            ? 'border-black text-gray-900'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                        className={`inline-flex items-center px-1 pt-2 border-b-2 text-[13px] font-bold uppercase tracking-widest h-full transition-colors cursor-pointer ${isActive(link.path)
+                                            ? 'border-[#FF5700] text-[#1A1A1A]'
+                                            : 'border-transparent text-gray-400 hover:text-black hover:border-gray-200'
                                             }`}
                                     >
                                         {link.name}
@@ -78,7 +78,6 @@ export default function Navbar({
                         <div className="hidden sm:ml-6 sm:flex sm:items-center">
                             {user ? (
                                 <div className="flex items-center gap-4">
-                                    <span className="text-sm text-gray-500 hidden lg:block">{user.email}</span>
                                     <button
                                         onClick={handleLogout}
                                         className="text-sm font-medium text-gray-500 hover:text-black transition-colors cursor-pointer"

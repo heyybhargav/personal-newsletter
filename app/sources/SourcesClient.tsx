@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
     Youtube, Mic, Newspaper, MessageSquare, Mail, FileText, Hash, Github, Twitter, Rss, Bookmark,
     Inbox, CheckCircle, AlertTriangle, ArrowRight, X, Loader2, Plus, Sparkles, TrendingUp,
-    Zap, Globe, Atom, Palette, Bot, RefreshCw
+    Zap, Globe, Atom, Palette, Bot, RefreshCw, Search, ChevronRight, ChevronLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useSWR, { mutate } from 'swr';
@@ -54,6 +54,26 @@ import { SourceIcon } from '@/components/SourceIcon';
 import { Toast } from '@/components/Toast';
 
 
+
+const SearchAnimation = () => (
+    <div className="flex flex-col gap-4 py-4 animate-in fade-in duration-500">
+        {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white/50 relative overflow-hidden">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg animate-pulse" />
+                <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-100 rounded w-1/3 animate-pulse" />
+                    <div className="h-3 bg-gray-50 rounded w-2/3 animate-pulse" />
+                </div>
+                {/* Scanning line effect */}
+                <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-50/30 to-transparent w-full"
+                    animate={{ x: ['-100%', '100%'] }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                />
+            </div>
+        ))}
+    </div>
+);
 
 interface SourcesClientProps {
     initialSources: Source[];
@@ -529,17 +549,14 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="max-w-3xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-8 sm:pb-12"
+                className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 sm:pt-16 pb-8 sm:pb-12"
             >
-                <Link href="/" className="text-gray-400 hover:text-black mb-6 flex items-center gap-2 text-sm font-medium transition-colors">
-                    <span>←</span> Return to Home
-                </Link>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
                     <motion.div>
                         <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif font-medium tracking-tight leading-[0.9]">
                             Sources
                         </h1>
-                        <p className="text-base sm:text-xl text-gray-500 font-light mt-4 sm:mt-6 max-w-lg leading-relaxed font-serif">
+                        <p className="text-base sm:text-xl text-gray-500 font-light mt-4 sm:mt-6 max-w-lg leading-relaxed font-sans">
                             Curate high-signal streams. All configured streams are synthesized into your daily briefing.
                         </p>
                     </motion.div>
@@ -572,7 +589,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                     {loading ? (
                         <div className="py-24 text-center">
                             <div className="inline-block w-8 h-8 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
-                            <p className="text-gray-400 font-serif">Loading intelligence streams...</p>
+                            <p className="text-gray-400 font-sans">Loading intelligence streams...</p>
                         </div>
                     ) : sources.length === 0 ? (
                         <div className="py-12">
@@ -797,50 +814,66 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}
                                 transition={{ duration: 0.15 }}
-                                className="bg-white w-full sm:max-w-2xl h-[85vh] sm:h-[650px] flex flex-col shadow-2xl shadow-black/10 ring-1 ring-black/5 rounded-t-2xl sm:rounded-2xl duration-200"
+                                className="bg-white w-full sm:max-w-2xl h-[85vh] sm:h-[600px] flex flex-col shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] ring-1 ring-black/5 rounded-t-2xl sm:rounded-3xl overflow-hidden duration-200"
                             >
-                                {/* Fixed Top Section: Header + Large Input */}
-                                <div className="flex-none bg-white p-5 sm:p-8 pb-0 z-20 rounded-t-2xl">
-                                    <div className="flex justify-between items-start mb-4 sm:mb-6">
-                                        <div>
-                                            <h2 className="text-2xl sm:text-3xl font-serif font-medium text-[#1A1A1A]">New Source</h2>
+                                                          {/* Fixed Top Section: Header + Large Input - Editorial Breathing Room */}
+                                <div className="flex-none bg-white p-6 sm:p-10 pb-6 z-20 rounded-t-2xl sm:rounded-t-3xl border-b border-gray-50">
+                                    <div className="flex justify-between items-center mb-8 sm:mb-10">
+                                        <div className="flex items-center gap-3">
+                                            {detectedSource && (
+                                                <button
+                                                    onClick={() => {
+                                                        setDetectedSource(null);
+                                                        setSampleItems([]);
+                                                    }}
+                                                    className="flex items-center gap-2 text-[10px] font-bold text-[#FF5700] uppercase tracking-[0.2em] hover:opacity-80 transition-all group/back"
+                                                >
+                                                    <ChevronLeft className="w-4 h-4 transition-transform group-hover/back:-translate-x-1" />
+                                                    <span>Back</span>
+                                                </button>
+                                            )}
+                                            {!detectedSource && (
+                                                <h2 className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.3em] font-sans">Add New Source</h2>
+                                            )}
                                         </div>
-                                        <button onClick={resetModal} className="text-gray-400 hover:text-black transition p-2 -mr-2 bg-gray-50 hover:bg-gray-100 rounded-full">
+                                        <button onClick={resetModal} className="text-gray-400 hover:text-black transition p-2 -mr-2 bg-gray-50/50 hover:bg-gray-100 rounded-full">
                                             <span className="sr-only">Close</span>
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            <X className="w-5 h-5" />
                                         </button>
                                     </div>
-
-                                    {/* Large Editorial Input (Fixed) */}
-                                    <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                                        <div className="text-gray-400 flex-none">
-                                            <svg className="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+ 
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-gray-400 flex-none relative">
+                                            <Search className={`w-6 h-6 transition-colors ${isSearching || detecting ? 'text-[#FF5700]' : ''}`} />
+                                            {(isSearching || detecting) && (
+                                                <motion.div
+                                                    layoutId="search-pulse"
+                                                    className="absolute -inset-2 rounded-full bg-orange-100/30 -z-10"
+                                                    animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0.1, 0.5] }}
+                                                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                                                />
+                                            )}
                                         </div>
                                         <div className="relative flex-1">
                                             <input
                                                 type="text"
                                                 value={inputUrl}
                                                 onChange={(e) => setInputUrl(e.target.value)}
-                                                placeholder="Paste URL or search..."
-                                                className="w-full bg-transparent border-none text-xl sm:text-2xl font-serif text-[#1A1A1A] placeholder:text-gray-300 focus:outline-none focus:ring-0 px-0 pr-8"
+                                                placeholder="Search or paste link..."
+                                                className="w-full bg-transparent border-none text-2xl sm:text-3xl font-sans text-[#1A1A1A] placeholder:text-gray-300 focus:outline-none focus:ring-0 px-0"
                                                 autoFocus
                                                 spellCheck={false}
                                             />
-                                            {detecting && (
-                                                <div className="absolute right-0 top-1/2 -translate-y-1/2">
-                                                    <div className="w-5 h-5 border-2 border-gray-200 border-t-[#FF5700] rounded-full animate-spin"></div>
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Scrollable Results Area */}
-                                <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-6">
+                                <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 sm:py-3 scrollbar-premium">
                                     {/* Intro Text / Helper (only when empty) */}
                                     {!inputUrl && !detectedSource && (
-                                        <div className="h-full flex flex-col items-center justify-center opacity-60 pb-10">
-                                            <p className="font-serif text-gray-400 text-lg text-center max-w-sm leading-relaxed">
+                                        <div className="h-full flex flex-col items-center justify-center opacity-80 pb-10">
+                                            <p className="font-sans text-gray-500 text-lg text-center max-w-sm leading-relaxed">
                                                 Search for YouTube channels, subreddits, podcasts, or paste any RSS link.
                                             </p>
                                         </div>
@@ -853,34 +886,39 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                         </div>
                                     )}
 
+                                    {/* Searching Animation */}
+                                    {(isSearching || detecting) && !detectedSource && (
+                                        <SearchAnimation />
+                                    )}
+
                                     {/* Search Results List - Editorial Style */}
-                                    {searchResults.length > 0 && !detectedSource && (
-                                        <div className="animate-in slide-in-from-bottom-2">
-                                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-                                                Found {searchResults.length} sources
+                                    {searchResults.length > 0 && !detectedSource && !isSearching && !detecting && (
+                                        <div className="animate-in slide-in-from-bottom-2 duration-500">
+                                            <h3 className="text-[11px] font-bold text-[#FF5700] uppercase tracking-[0.25em] mb-4 ml-1">
+                                                {searchResults.length} Results
                                             </h3>
-                                            <div className="space-y-3 pb-4">
+                                            <div className="space-y-1.5 pb-4">
                                                 {searchResults.map((result, idx) => (
                                                     <button
                                                         key={idx}
                                                         onClick={() => handleSelectResult(result)}
-                                                        className="w-full flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:border-gray-300 hover:shadow-sm transition-all text-left group bg-white"
+                                                        className="w-full flex items-center gap-4 p-3.5 border border-transparent hover:border-gray-100 hover:bg-gray-50/50 hover:backdrop-blur-sm rounded-2xl transition-all duration-300 text-left group relative"
                                                     >
-                                                        <div className="w-12 h-12 bg-gray-50 flex-none flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all rounded-lg overflow-hidden border border-gray-100">
-                                                            {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : <SourceIcon type={result.type} className="w-6 h-6" />}
+                                                        <div className="w-11 h-11 bg-white flex-none flex items-center justify-center text-lg transition-all rounded-xl overflow-hidden border border-gray-100 shadow-sm group-hover:shadow-md group-hover:scale-105 duration-300">
+                                                            {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : <SourceIcon type={result.type} className="w-5 h-5 opacity-60" />}
                                                         </div>
-                                                        <div className="flex-1 min-w-0">
+                                                        <div className="flex-1 min-w-0 pr-6">
                                                             <div className="font-serif text-lg font-medium text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">
                                                                 {result.title}
                                                             </div>
-                                                            <div className="flex items-center gap-2 text-xs text-gray-500 font-mono mt-0.5">
-                                                                <span className={`uppercase tracking-wider ${getSourceTypeColor(result.type as SourceType)}`}>{result.type === 'twitter' ? 'X' : result.type}</span>
+                                                            <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold tracking-wider mt-0.5">
+                                                                <span className={`uppercase ${getSourceTypeColor(result.type as SourceType)} opacity-90`}>{result.type === 'twitter' ? 'X' : result.type}</span>
                                                                 <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                                                <span className="truncate max-w-[200px]">{result.description}</span>
+                                                                <span className="truncate max-w-[220px] font-medium italic opacity-90">{result.description}</span>
                                                             </div>
                                                         </div>
-                                                        <div className="text-gray-300 group-hover:text-[#FF5700] transition-colors transform group-hover:translate-x-1 flex-none">
-                                                            →
+                                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-200 group-hover:text-[#FF5700] transition-all duration-300 transform group-hover:translate-x-1 opacity-0 group-hover:opacity-100">
+                                                            <ChevronRight className="w-5 h-5 stroke-[1.5]" />
                                                         </div>
                                                     </button>
                                                 ))}
@@ -888,24 +926,24 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                         </div>
                                     )}
 
-                                    {/* Detected Source Preview */}
+                                    {/* Detected Source Preview - Editorial Style */}
                                     {detectedSource && (
-                                        <div className="animate-in slide-in-from-bottom-4">
-                                            <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
-                                                <div className="flex items-start gap-4 sm:gap-6">
-                                                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white border border-gray-100 flex-none flex items-center justify-center text-2xl sm:text-3xl shadow-sm rounded-lg overflow-hidden">
+                                        <div className="animate-in slide-in-from-bottom-4 duration-500">
+                                            <div className="bg-gray-50/50 backdrop-blur-sm p-5 sm:p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
+                                                <div className="flex items-center gap-5 sm:gap-6">
+                                                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white border border-gray-100 flex-none flex items-center justify-center text-3xl shadow-md rounded-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
                                                         {detectedSource.favicon ? (
                                                             <img src={detectedSource.favicon} alt="" className="w-full h-full object-cover" />
                                                         ) : (
-                                                            <SourceIcon type={detectedSource.type} className="w-8 h-8" />
+                                                            <SourceIcon type={detectedSource.type} className="w-10 h-10 opacity-40" />
                                                         )}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                                                            <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-wider ${getSourceTypeColor(detectedSource.type)} bg-white`}>
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-widest ${getSourceTypeColor(detectedSource.type)} bg-white/80 backdrop-blur-sm border-gray-100`}>
                                                                 {detectedSource.type === 'twitter' ? 'X' : detectedSource.type}
                                                             </span>
-                                                            <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                                                            <span className="text-[10px] text-green-600 font-bold uppercase tracking-[0.15em] flex items-center gap-1.5 opacity-80">
                                                                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                                                                 Ready to add
                                                             </span>
@@ -914,42 +952,50 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                                             type="text"
                                                             value={editableName}
                                                             onChange={(e) => setEditableName(e.target.value)}
-                                                            className="w-full text-xl sm:text-2xl font-serif font-bold bg-transparent border-b border-transparent hover:border-gray-200 focus:border-black focus:outline-none transition-colors p-0 truncate"
+                                                            className="w-full text-2xl font-serif font-medium bg-transparent border-b border-transparent hover:border-gray-200 focus:border-[#FF5700] focus:outline-none transition-all duration-300 p-0 truncate text-gray-900"
                                                         />
-                                                        <p className="text-xs sm:text-sm text-gray-400 mt-1 font-mono truncate">{detectedSource.feedUrl}</p>
-
-                                                        {/* Preview Items */}
-                                                        {sampleItems.length > 0 && (
-                                                            <ul className="mt-4 space-y-2 border-l-2 border-gray-100 pl-4">
-                                                                {sampleItems.slice(0, 3).map((item, i) => (
-                                                                    <li key={i} className="text-sm text-gray-500 font-serif line-clamp-1">
-                                                                        "{item.title}"
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        )}
+                                                        <p className="text-[10px] text-gray-500 mt-1.5 font-bold tracking-wider truncate opacity-80 uppercase">{new URL(detectedSource.feedUrl).hostname}</p>
                                                     </div>
                                                 </div>
+
+                                                {/* Sample Items - Refined */}
+                                                {sampleItems.length > 0 && (
+                                                    <div className="mt-8 pt-6 border-t border-gray-100/50">
+                                                        <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-4 ml-1">Latest Content</h4>
+                                                        <ul className="space-y-2.5">
+                                                            {sampleItems.slice(0, 2).map((item, i) => (
+                                                                <li key={i} className="flex items-center gap-3 text-sm text-gray-600 font-sans opacity-90 group/item">
+                                                                    <div className="w-1 h-1 rounded-full bg-gray-200 flex-none" />
+                                                                    <span className="line-clamp-1 italic">"{item.title}"</span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Fixed Actions Bottom Bar */}
-                                <div className="p-4 sm:p-6 border-t border-gray-100 bg-white flex-none flex justify-end gap-3 z-20 rounded-b-2xl">
+                                {/* Fixed Actions Bottom Bar - Editorial Style */}
+                                <div className="p-4 sm:p-5 border-t border-gray-100 bg-gray-50/50 backdrop-blur-md flex-none flex items-center justify-end gap-6 z-20 rounded-b-2xl sm:rounded-b-3xl">
                                     <button
                                         onClick={resetModal}
-                                        className="px-5 sm:px-6 py-2.5 text-gray-500 font-medium hover:text-black hover:bg-gray-50 rounded-full transition-colors text-sm sm:text-base"
+                                        className="text-[11px] font-bold text-gray-500 hover:text-black transition-colors tracking-[0.2em] uppercase"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleAdd}
                                         disabled={!detectedSource || detecting}
-                                        className="bg-[#1A1A1A] text-white px-6 sm:px-8 py-2.5 rounded-full font-medium hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl duration-200 flex items-center gap-2 text-sm sm:text-base"
+                                        className={`px-8 py-2.5 rounded-full font-bold text-[11px] tracking-[0.2em] uppercase transition-all duration-500 shadow-sm flex items-center gap-2 ${
+                                            detectedSource && !detecting
+                                            ? 'bg-black text-white hover:bg-[#FF5700] hover:scale-105 shadow-black/10'
+                                            : 'bg-gray-200/50 text-gray-500 cursor-not-allowed opacity-60'
+                                        }`}
                                     >
                                         {detecting ? 'Detecting...' : detectedSource ? 'Confirm Source' : 'Add Source'}
-                                        {!detecting && detectedSource && <span>↵</span>}
+                                        {!detecting && detectedSource && <ChevronRight className="w-3 h-3 stroke-[3]" />}
                                     </button>
                                 </div>
                             </motion.div>

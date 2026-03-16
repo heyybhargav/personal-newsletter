@@ -59,7 +59,6 @@ export default function SubscribePage() {
         <div className="min-h-[calc(100vh-80px)] py-12 bg-[#FDFBF7] text-[#1A1A1A] font-sans relative overflow-hidden flex flex-col items-center justify-center selection:bg-[#FF5700] selection:text-white">
 
             {/* Ambient Background Glow (Subtle Fire) */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FF5700] opacity-[0.04] blur-[100px] rounded-full pointer-events-none"></div>
 
             <div className="max-w-xl w-full px-6 relative z-20 flex flex-col items-center">
                 <div className="text-center mb-6">
@@ -67,7 +66,7 @@ export default function SubscribePage() {
                         The trial concludes.<br />
                         <span className="text-gray-400">The intelligence continues.</span>
                     </h1>
-                    <p className="text-lg text-gray-500 font-serif max-w-md mx-auto">
+                    <p className="text-lg text-gray-500 font-sans max-w-md mx-auto">
                         Secure your unfair advantage with unlimited access to premium synthetic intelligence.
                     </p>
                 </div>
@@ -97,7 +96,7 @@ export default function SubscribePage() {
 
                     {stats && stats.totalSources > 0 && (
                         <div className="bg-[#FDFBF7] border border-gray-200/60 rounded-xl p-3 mb-4 text-center">
-                            <p className="leading-relaxed font-serif text-[15px] text-gray-600">
+                            <p className="leading-relaxed font-sans text-[15px] text-gray-600">
                                 Your <strong className="text-[#1A1A1A]">{stats.totalSources} curated sources</strong> are preserved in cold storage. Subscribe to reignite your feed instantly.
                             </p>
                         </div>
@@ -126,7 +125,7 @@ function FeatureItem({ text }: { text: string }) {
     return (
         <li className="flex items-center gap-4">
             <div className="w-1.5 h-1.5 rounded-full bg-gray-200 flex-shrink-0 group-hover:bg-[#FF5700] transition-colors duration-300"></div>
-            <span className="text-gray-600 font-serif text-[15px]">{text}</span>
+            <span className="text-gray-600 font-sans text-[15px]">{text}</span>
         </li>
     );
 }

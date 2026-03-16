@@ -34,5 +34,11 @@ export default async function SettingsPage() {
 
     const availableModels = models.map(m => ({ id: m.id, name: m.name }));
 
-    return <SettingsClient initialSettings={initialSettings} models={availableModels} />;
+    const config = {
+        checkoutUrlPersonal: process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_PERSONAL || "",
+        checkoutUrlPro: process.env.NEXT_PUBLIC_POLAR_CHECKOUT_URL_PRO || "",
+        customerPortalUrl: process.env.NEXT_PUBLIC_POLAR_CUSTOMER_PORTAL || ""
+    };
+
+    return <SettingsClient initialSettings={initialSettings} models={availableModels} config={config} />;
 }
