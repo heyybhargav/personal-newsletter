@@ -52,17 +52,21 @@ function generateFooterHTML(): string {
 
   return `
     <tr>
-      <td class="footer-bg" style="padding: 40px 30px; background-color: ${bgColor}; background-image: linear-gradient(${bgColor}, ${bgColor}); text-align: center;" bgcolor="${bgColor}">
+      <td class="footer-bg" style="padding: 30px 30px 10px 30px; background-color: ${bgColor}; background-image: linear-gradient(${bgColor}, ${bgColor}); text-align: center;" bgcolor="${bgColor}">
         <p class="footer-text" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; font-weight: bold; color: ${textColor}; margin: 0; letter-spacing: 1px; text-transform: uppercase;">
           <span style="color: ${textColor} !important;">Siftl</span>
         </p>
         <p class="footer-subtext" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: ${subTextColor}; margin: 15px 0 0 0; line-height: 1.5;">
-          <span style="color: ${subTextColor} !important;">Everything you need to know, without the noise.<br>Reply to this email with feedback. We read everything.</span>
+          <span style="color: ${subTextColor} !important;">Everything you need to know.<br>Reply to this email with feedback. Everything is read.</span>
         </p>
         <p class="footer-muted" style="font-family: 'Inter', -apple-system, sans-serif; font-size: 11px; color: ${mutedColor}; margin: 20px 0 0 0;">
           <a href="${SITE_URL}/settings" style="color: ${mutedColor} !important; text-decoration: underline;">Pause briefings.</a>
         </p>
       </td>
+    </tr>
+    <!-- Ultimate bottom seal: prevents white strip in all clients -->
+    <tr>
+      <td class="footer-bg" style="height: 40px; background-color: #111111;" bgcolor="#111111">&nbsp;</td>
     </tr>
   `;
 }
@@ -352,7 +356,7 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
       <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
         <tr>
           <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden;">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden; background-color: #111111;" bgcolor="#111111">
               <!-- Header -->
               ${generateHeaderHTML('Siftl', 'Your Intelligence Progress', undefined, true)}
               <tr>
@@ -382,12 +386,12 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
   }
 }
 
-export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL}', context?: { isTrial?: boolean, trialDays?: number }): Promise<void> {
-  const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to; // Fallback
-
+export async function sendWelcomeEmail(to: string, baseUrl: string = SITE_URL, context?: { isTrial?: boolean, trialDays?: number, name?: string }): Promise<void> {
+  const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to;
   const subject = "Bhargav from Siftl: Welcome! Let's set up your briefing.";
-
   const link = `${baseUrl}/sources`;
+  const name = context?.name;
+  const firstName = name ? name.split(' ')[0] : 'there';
 
   const html = `
     <!DOCTYPE html>
@@ -399,8 +403,8 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
       <style>
         .step-container { margin-bottom: 30px; }
         .step-number { font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; font-weight: bold; color: #ff5700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .step-title { font-family: 'Merriweather', serif; font-size: 18px; font-weight: 700; color: #111; margin: 0 0 5px 0; }
-        .step-desc { font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; line-height: 1.5; color: #666; margin: 0; }
+        .step-title { font-family: 'Inter', -apple-system, sans-serif; font-size: 18px; font-weight: 700; color: #111; margin: 0 0 5px 0; }
+        .step-desc { font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin: 0; }
         .cta-button { display: inline-block; background-color: #111; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
 
         /* General Dark Mode CSS (Android/iOS) */
@@ -408,6 +412,9 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
           .header-bg, .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
           .header-text, .footer-text, .header-subtitle, .footer-subtext, .header-meta, .footer-muted { color: #999999 !important; }
         }
+
+        /* Standard body background fix */
+        body, .body { background-color: #111111 !important; margin: 0; padding: 0; }
 
         /* Gmail-Specific Inversion Overrides */
         u + .body .header-bg, u + .body .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
@@ -419,7 +426,7 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
       <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
         <tr>
           <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
-            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden;">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden; background-color: #111111;" bgcolor="#111111">
               
               <!-- Header -->
               ${generateHeaderHTML('Siftl', 'The quiet side of the internet', undefined, true)}
@@ -427,40 +434,48 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = '${SITE_URL
               <!-- Body -->
               <tr>
                 <td style="padding: 40px; background-color: #ffffff;">
-                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; line-height: 1.6; color: #111; margin-bottom: 30px;">
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 30px;">
+                    Hey ${firstName},
+                  </p>
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 30px;">
                     ${context?.isTrial ? `Welcome to your ${context.trialDays}-day free trial of Siftl.` : 'Welcome to the quiet side of the internet.'}
                   </p>
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 40px;">
-                    ${context?.isTrial ? `You have full access for the next ${context.trialDays} days. Here is how to get the most out of it:` : 'You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Siftl:'}
+                    ${context?.isTrial ? `Full access is available for the next ${context.trialDays} days. Here is how to get the most out of it:` : 'You’ve joined a small group of readers who prefer insight over noise. Here is how to get the most out of Siftl:'}
                   </p>
 
                   <!-- Steps -->
                   <div class="step-container">
                     <p class="step-number">01 Curate</p>
                     <h3 class="step-title">Connect your world.</h3>
-                    <p class="step-desc">Pick from the curated <strong>Starter Packs</strong> (Tech, AI, Finance) or add your own favorite links. We'll monitor them for you.</p>
+                    <p class="step-desc">Pick from the curated <strong>Starter Packs</strong> (Tech, AI, Finance) or add favorite links. Siftl monitors them for you.</p>
                   </div>
 
                   <div class="step-container">
                     <p class="step-number">02 Schedule</p>
                     <h3 class="step-title">Set your time.</h3>
-                    <p class="step-desc">Your inbox, your schedule. We send your briefing exactly when you want it. No sooner, no later.</p>
+                    <p class="step-desc">Your inbox, your schedule. Briefings are sent exactly when you want them. No sooner, no later.</p>
                   </div>
 
                   <div class="step-container" style="margin-bottom: 0;">
                     <p class="step-number">03 Siftl</p>
                     <h3 class="step-title">Receive the Siftl.</h3>
-                    <p class="step-desc">We extract the key updates from all your sources. You get the information without the clicking.</p>
+                    <p class="step-desc">Key updates are extracted from all followed sources. You get the information without the clicking.</p>
                   </div>
 
                   <div style="margin: 40px 0 10px 0; text-align: center;">
                       <a href="${link}" class="cta-button">
                         Connect Your Sources &rarr;
                       </a>
-                      <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-top: 20px; margin-bottom: 0;">
+                      <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; color: #888; text-align: center; margin-top: 20px; margin-bottom: 0;">
                         Connect your sources now to start receiving your briefing from tomorrow.
                       </p>
                   </div>
+
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-top: 40px; margin-bottom: 0;">
+                    Best,<br>
+                    Bhargav
+                  </p>
                 </td>
               </tr>
 
@@ -516,5 +531,92 @@ export async function sendAdminAlertEmail(stage: string, error: string, details?
     console.log(`[Alert] Admin alert sent for ${stage}`);
   } catch (err: any) {
     console.error('[Alert] Failed to send admin alert:', err);
+  }
+}
+export async function sendOnboardingReminderEmail(to: string, name?: string, baseUrl: string = SITE_URL): Promise<void> {
+  const fromEmail = process.env.SENDER_EMAIL || process.env.USER_EMAIL || to;
+  const subject = "Bhargav from Siftl: Quick question about your briefing";
+  const link = `${baseUrl}/sources`;
+  const firstName = name ? name.split(' ')[0] : 'there';
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Merriweather:wght@300;400;700;900&amp;display=swap" rel="stylesheet">
+      <style>
+        .cta-button { display: inline-block; background-color: #111; color: #ffffff !important; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; font-weight: bold; letter-spacing: 0.5px; }
+
+        /* General Dark Mode CSS (Android/iOS) */
+        @media (prefers-color-scheme: dark) {
+          .header-bg, .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+          .header-text, .footer-text, .header-subtitle, .footer-subtext, .header-meta, .footer-muted { color: #999999 !important; }
+        }
+
+        /* Gmail-Specific Inversion Overrides */
+        u + .body .header-bg, u + .body .footer-bg { background-color: #111111 !important; background-image: linear-gradient(#111111, #111111) !important; }
+        u + .body .header-text, u + .body .footer-text, u + .body .header-subtitle, u + .body .footer-subtext, u + .body .header-meta, u + .body .footer-muted { color: #999999 !important; }
+      </style>
+    </head>
+    <body class="body" style="margin: 0; padding: 0; background-color: #111111; -webkit-font-smoothing: antialiased;">
+      <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: collapse; background-color: #111111;" bgcolor="#111111">
+        <tr>
+          <td align="center" style="vertical-align: top; background-color: #111111;" bgcolor="#111111">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 500px; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; overflow: hidden; background-color: #111111;" bgcolor="#111111">
+              <!-- Header -->
+              ${generateHeaderHTML('Siftl', 'Setting up your stream', undefined, true)}
+              <tr>
+                <td style="padding: 40px; background-color: #ffffff;">
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 25px;">
+                    Hey ${firstName},
+                  </p>
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 25px;">
+                    I noticed you signed up for Siftl yesterday but haven't added any sources yet. 
+                  </p>
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 35px;">
+                    The power of Siftl is in the quiet. Adding your sources is a <strong>one-time effort</strong> that takes less than 30 seconds. You can just paste any link, like YouTube, or X handle, or even just search for a name, and Siftl will find the source for you.
+                  </p>
+                  
+                  <div style="text-align: center; margin-bottom: 10px;">
+                    <a href="${link}" class="cta-button">Add your sources</a>
+                  </div>
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; color: #888; text-align: center; margin-bottom: 30px;">
+                    Takes about 30 seconds.
+                  </p>
+
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; line-height: 1.6; color: #666; font-style: italic;">
+                    If you're stuck or want a recommendation, just reply to this email. I read everything.
+                  </p>
+                  
+                  <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.6; color: #444; margin-top: 35px; margin-bottom: 0;">
+                    Best,<br>
+                    Bhargav
+                  </p>
+                </td>
+              </tr>
+              <!-- Footer -->
+              ${generateFooterHTML()}
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+
+  const msg = {
+    to,
+    from: { email: fromEmail, name: process.env.SENDER_NAME || 'Siftl' },
+    subject,
+    html,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log(`[Email] Onboarding reminder sent to ${to}`);
+  } catch (error: any) {
+    console.error('[Email] Error sending onboarding reminder:', error);
   }
 }

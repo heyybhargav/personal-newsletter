@@ -41,7 +41,7 @@ export async function POST(request: Request) {
             // Send Welcome Email
             try {
                 const origin = request.headers.get('origin') || SITE_URL;
-                await sendWelcomeEmail(email, origin, { isTrial: true, trialDays: 7 });
+                await sendWelcomeEmail(email, origin, { isTrial: true, trialDays: 7, name });
             } catch (emailError) {
                 console.error('[Auth] Failed to send welcome email:', emailError);
                 // Continue with login even if email fails

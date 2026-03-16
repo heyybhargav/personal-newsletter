@@ -14,6 +14,7 @@ export interface UserProfile {
   };
   createdAt: string;
   lastDigestAt?: string;
+  onboardingReminderSent?: boolean;
 }
 
 export interface UserPreferences {

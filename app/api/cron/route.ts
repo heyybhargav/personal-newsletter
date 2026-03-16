@@ -41,8 +41,27 @@ export async function GET(request: NextRequest) {
             if (targetEmail && email !== targetEmail) continue;
 
             const user = await getUser(email);
-            if (!user || !user.sources.length) {
-                results.push({ email, status: 'skipped', detail: 'no_sources' });
+            if (!user) continue;
+
+            // --- Onboarding Reminder Logic ---
+            const signupDate = new Date(user.createdAt);
+            const hoursSinceSignup = (Date.now() - signupDate.getTime()) / (1000 * 60 * 60);
+            
+            if (user.sources.length === 0 && hoursSinceSignup > 24 && !user.onboardingReminderSent) {
+                console.log(`[Cron Dispatcher] 💡 Sending onboarding reminder to ${email}`);
+                // Use a separate async block to avoid blocking the main loop
+                (async () => {
+                    const { sendOnboardingReminderEmail } = await import('@/lib/email');
+                    const { saveUser } = await import('@/lib/db');
+                    await sendOnboardingReminderEmail(email, user.name, baseUrl);
+                    user.onboardingReminderSent = true;
+                    await saveUser(user);
+                })().catch(err => console.error(`[Cron Reminder] Failed for ${email}:`, err));
+            }
+
+            // If they have no sources, they can't get a regular digest, so skip rest of loop
+            if (user.sources.length === 0) {
+                results.push({ email, status: 'skipped', detail: 'no_sources (reminder sent if due)' });
                 continue;
             }
 
