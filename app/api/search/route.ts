@@ -11,13 +11,25 @@ interface SearchResult {
     thumbnail?: string;
 }
 
+// Simple in-memory cache for search results to make repeat searches "cracked" fast
+const searchCache = new Map<string, { data: SearchResult[], timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
-    const type = searchParams.get('type');
+    const type = searchParams.get('type') || 'all';
 
-    if (!query || !type) {
-        return NextResponse.json({ error: 'Missing query or type' }, { status: 400 });
+    if (!query) {
+        return NextResponse.json({ error: 'Missing query' }, { status: 400 });
+    }
+
+    // Check cache
+    const cacheKey = `${query}:${type}`;
+    const cached = searchCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        console.log(`[Search] Cache hit for: "${cacheKey}"`);
+        return NextResponse.json({ results: cached.data });
     }
 
     try {
@@ -76,13 +88,21 @@ export async function GET(request: Request) {
                     results = await searchBlogs(query);
                     break;
                 case 'twitter':
-                case 'instagram':
-                    const socialResults = await searchSocial(query);
-                    results = socialResults.filter(r => r.type === type);
+                    results = await searchSocial(query);
+                    results = results.filter(r => r.type === 'twitter');
                     break;
                 default:
                     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
             }
+        }
+
+        // Store in cache
+        searchCache.set(cacheKey, { data: results, timestamp: Date.now() });
+
+        // Clean up old cache entries if map is getting huge
+        if (searchCache.size > 500) {
+            const firstKey = searchCache.keys().next().value;
+            if (firstKey) searchCache.delete(firstKey);
         }
 
         return NextResponse.json({ results });
@@ -196,14 +216,17 @@ async function searchBlogs(query: string): Promise<SearchResult[]> {
                     const feedUrl = feed.feedId?.replace('feed/', '') || '';
                     if (feedUrl.includes('youtube.com') || feedUrl.includes('reddit.com') || feedUrl.includes('itunes.apple.com')) continue;
 
-                    // Determine type based on URL patterns
-                    // Determine type based on URL patterns
-                    let type = 'rss';
-                    if (feedUrl.includes('substack.com')) type = 'substack';
-                    else if (feedUrl.includes('medium.com')) type = 'medium';
-                    else if (feedUrl.includes('nitter') || feed.website?.includes('twitter.com') || feed.website?.includes('x.com')) type = 'twitter';
-                    else if (feedUrl.includes('rsshub') && (feedUrl.includes('instagram') || feed.website?.includes('instagram.com'))) type = 'instagram';
-                    else if (feed.description?.toLowerCase().includes('newsletter')) type = 'newsletter';
+                    // Use our robust detectSource utility to identify the platform, 
+                    // which handles custom domains for Substack, Medium, etc.
+                    const detected = detectSource(feedUrl);
+                    let type = detected?.type || 'rss';
+
+                    // Extra detection: Feedly metadata often contains platform clues
+                    if (type === 'rss' || type === 'blog') {
+                        const metadata = (feed.title + ' ' + feed.description + ' ' + feedUrl).toLowerCase();
+                        if (metadata.includes('substack')) type = 'substack';
+                        else if (metadata.includes('medium')) type = 'medium';
+                    }
 
                     results.push({
                         title: feed.title || 'Unknown Feed',
@@ -212,8 +235,6 @@ async function searchBlogs(query: string): Promise<SearchResult[]> {
                         type,
                         thumbnail: feed.iconUrl || feed.visualUrl || (feed.website ? `https://www.google.com/s2/favicons?domain=${new URL(feed.website).hostname}&sz=64` : '')
                     });
-
-                    if (results.length >= 5) break;
                 }
             }
         }
@@ -221,31 +242,34 @@ async function searchBlogs(query: string): Promise<SearchResult[]> {
         console.log('[Search] Feedly search failed, trying fallback:', e);
     }
 
-    // Fallback: If Feedly returned nothing, try Substack-specific search
-    if (results.length === 0) {
-        try {
-            // Try querying for the term as a Substack publication
-            const substackUrl = `https://${query.toLowerCase().replace(/\s+/g, '')}.substack.com`;
-            const checkRes = await fetch(substackUrl, {
-                method: 'HEAD',
-                signal: AbortSignal.timeout(3000),
-                redirect: 'follow'
-            });
-            if (checkRes.ok) {
-                results.push({
-                    title: query,
-                    description: 'Substack Newsletter',
-                    url: `${substackUrl}/feed`,
-                    type: 'substack',
-                    thumbnail: `https://www.google.com/s2/favicons?domain=${query.toLowerCase().replace(/\s+/g, '')}.substack.com&sz=64`
-                });
-            }
-        } catch {
-            // Substack check failed silently
-        }
-    }
+    // Prioritize Substack and Medium within the blog bucket (Substack first)
+    results.sort((a, b) => {
+        const priorityTypes = ['substack', 'medium'];
+        const aPriority = priorityTypes.indexOf(a.type);
+        const bPriority = priorityTypes.indexOf(b.type);
+        
+        if (aPriority !== -1 && bPriority === -1) return -1;
+        if (aPriority === -1 && bPriority !== -1) return 1;
+        if (aPriority !== -1 && bPriority !== -1) return aPriority - bPriority;
+        return 0;
+    });
 
-    return results;
+    // Deduplicate: If multiple results have the same base domain or handles, pick the highest quality one
+    const seen = new Set<string>();
+    const deduplicated = results.filter(r => {
+        try {
+            const domain = new URL(r.url).hostname.replace('www.', '');
+            // Simple deduplication for same-author results
+            const key = `${r.type}:${domain}:${r.title.slice(0, 10).toLowerCase()}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        } catch {
+            return true;
+        }
+    });
+
+    return deduplicated;
 }
 
 async function searchSocial(query: string): Promise<SearchResult[]> {
@@ -272,69 +296,10 @@ async function searchSocial(query: string): Promise<SearchResult[]> {
         return null;
     })();
 
-    // 2. Instagram Search (via Bridges)
-    // We race multiple instances to find one that works
-    const instagramBridges = [
-        `https://rsshub.app/instagram/user/${handle}`,
-        `https://rsshub.feeddd.org/instagram/user/${handle}`,
-        `https://pixelfed.social/users/${handle}.atom`,
-        `https://rsshub.rss.style/instagram/user/${handle}`
-    ];
-
-    const instagramPromise = (async (): Promise<SearchResult | null> => {
-        try {
-            // Race to find the first working bridge
-            const validBridge = await Promise.any(instagramBridges.map(async (url) => {
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 4000);
-
-                try {
-                    const res = await fetch(url, {
-                        method: 'GET',
-                        signal: controller.signal,
-                        headers: {
-                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                            'Accept': 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8'
-                        }
-                    });
-                    clearTimeout(timeout);
-
-                    if (!res.ok) throw new Error(`Status ${res.status}`);
-
-                    const contentType = res.headers.get('content-type');
-                    const text = await res.text();
-
-                    // Simple validation
-                    if (text.length > 50 && (text.includes('<rss') || text.includes('<feed') || contentType?.includes('xml'))) {
-                        return url;
-                    }
-                    throw new Error('Invalid content');
-                } catch (e) {
-                    clearTimeout(timeout);
-                    throw e;
-                }
-            }));
-
-            return {
-                title: `@${handle} (Instagram)`,
-                description: `Instagram Feed via Bridge`,
-                url: validBridge,
-                type: 'instagram',
-                thumbnail: 'https://www.google.com/s2/favicons?domain=instagram.com&sz=128'
-            };
-        } catch {
-            return null;
-        }
-    })();
-
-    const [twitterResult, instagramResult] = await Promise.all([
-        twitterPromise,
-        instagramPromise
-    ]);
+    const twitterResult = await twitterPromise;
 
     const results: SearchResult[] = [];
     if (twitterResult) results.push(twitterResult);
-    if (instagramResult) results.push(instagramResult);
 
     return results;
 }

@@ -14,8 +14,6 @@ export type SourceType =
     | 'blog'
     | 'news'
     | 'custom'
-    | 'instagram'
-    | 'twitter'
     | 'x'
     | 'rss';
 
@@ -103,15 +101,17 @@ const detectionRules: DetectionRule[] = [
         patterns: [
             /([\w-]+)\.substack\.com/i,
             /substack\.com\/@([\w-]+)/i,
+            /newsletter\.[\w-]+\.[\w.]+/i, // e.g. newsletter.example.com
+            /([\w-]+)\.substack\.com/i,
         ],
         extractFeedUrl: (url, match) => {
-            if (match) {
+            if (match && match[1] && url.includes('substack.com')) {
                 const name = match[1];
                 return `https://${name}.substack.com/feed`;
             }
             return url;
         },
-        extractName: (url, match) => match ? match[1].replace(/-/g, ' ') : 'Substack Newsletter',
+        extractName: (url, match) => (match && match[1]) ? match[1].replace(/-/g, ' ') : 'Substack',
         getFavicon: (url) => {
             const match = url.match(/([\w-]+)\.substack\.com/i);
             return match ? `https://${match[1]}.substack.com/favicon.ico` : 'https://substack.com/favicon.ico';
@@ -125,9 +125,11 @@ const detectionRules: DetectionRule[] = [
             /medium\.com\/@([\w-]+)/i,
             /medium\.com\/([\w-]+)/i,
             /([\w-]+)\.medium\.com/i,
+            /towardsdatascience\.com/i,
+            /uxdesign\.cc/i,
         ],
         extractFeedUrl: (url, match) => {
-            if (match) {
+            if (match && match[1] && url.includes('medium.com')) {
                 if (url.includes('@')) {
                     return `https://medium.com/feed/@${match[1]}`;
                 }
@@ -135,7 +137,7 @@ const detectionRules: DetectionRule[] = [
             }
             return url;
         },
-        extractName: (url, match) => match ? match[1].replace(/-/g, ' ') : 'Medium',
+        extractName: (url, match) => (match && match[1]) ? match[1].replace(/-/g, ' ') : 'Medium',
         getFavicon: () => 'https://medium.com/favicon.ico',
     },
 
@@ -196,8 +198,7 @@ const detectionRules: DetectionRule[] = [
             const reserved = ['home', 'explore', 'notifications', 'messages', 'search', 'compose', 'settings'];
             const match = url.match(/twitter\.com\/([a-zA-Z0-9_]+)/) ||
                 url.match(/x\.com\/([a-zA-Z0-9_]+)/) ||
-                url.match(/nitter\.net\/([a-zA-Z0-9_]+)/) ||
-                url.match(/nitter\.privacydev\.net\/([a-zA-Z0-9_]+)/);
+                url.match(/nitter\.[a-z\.]+\/([a-zA-Z0-9_]+)/);
             if (match && match[1] && !reserved.includes(match[1].toLowerCase())) {
                 return `https://syndication.twitter.com/srv/timeline-profile/screen-name/${match[1]}`;
             }
@@ -210,24 +211,6 @@ const detectionRules: DetectionRule[] = [
             return match ? `@${match[1]}` : 'X User';
         },
         getFavicon: () => 'https://www.google.com/s2/favicons?domain=x.com&sz=64'
-    },
-
-    // Instagram (via RSSHub)
-    {
-        type: 'instagram',
-        patterns: [
-            /instagram\.com\/([\w\.]+)/i,
-            /rsshub\..+\/instagram\/user\/([\w\.]+)/i, // Catch-all for any RSSHub instance
-        ],
-        extractFeedUrl: (url, match) => {
-            if (match) {
-                // RSSHub bridge
-                return `https://rsshub.app/instagram/user/${match[1]}`;
-            }
-            return url;
-        },
-        extractName: (url, match) => match ? `@${match[1]}` : 'Instagram',
-        getFavicon: () => 'https://www.google.com/s2/favicons?domain=instagram.com&sz=128',
     },
 
     // Generic RSS/Atom feed detection
@@ -341,7 +324,6 @@ export function getSourceTypeColor(type: SourceType): string {
         blog: 'bg-indigo-100 text-indigo-700 border-indigo-200',
         news: 'bg-sky-100 text-sky-700 border-sky-200',
         custom: 'bg-teal-100 text-teal-700 border-teal-200',
-        instagram: 'bg-pink-100 text-pink-700 border-pink-200',
         rss: 'bg-slate-100 text-slate-700 border-slate-200',
     };
     return colors[type] || 'bg-gray-100 text-gray-700 border-gray-200';

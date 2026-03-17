@@ -64,19 +64,37 @@ export async function GET(request: Request) {
             // User will see a warning that we couldn't preview content
         }
 
-        // Step 2.5: If YouTube, try to fetch high-res channel avatar via oembed
+        // Step 2.5: If YouTube, try to fetch channel avatar
         if (detected.type === 'youtube' && feedUrl.includes('channel_id=')) {
             try {
                 const channelId = new URL(feedUrl).searchParams.get('channel_id');
                 if (channelId) {
-                    const oembedRes = await fetch(
-                        `https://www.youtube.com/oembed?url=https://www.youtube.com/channel/${channelId}&format=json`,
-                        { signal: AbortSignal.timeout(5000) }
-                    );
-                    if (oembedRes.ok) {
-                        const data = await oembedRes.json();
-                        if (data.thumbnail_url) {
-                            detected.favicon = data.thumbnail_url;
+                    // Try scraping the channel page for og:image first (more reliable than oEmbed for channels)
+                    const channelUrl = `https://www.youtube.com/channel/${channelId}`;
+                    const channelRes = await fetch(channelUrl, {
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        },
+                        signal: AbortSignal.timeout(5000)
+                    });
+                    
+                    if (channelRes.ok) {
+                        const html = await channelRes.text();
+                        const ogImageMatch = html.match(/<meta property="og:image" content="([^"]+)">/);
+                        if (ogImageMatch) {
+                            detected.favicon = ogImageMatch[1];
+                        } else {
+                            // Fallback to oEmbed if scraping fails
+                            const oembedRes = await fetch(
+                                `https://www.youtube.com/oembed?url=${channelUrl}&format=json`,
+                                { signal: AbortSignal.timeout(5000) }
+                            );
+                            if (oembedRes.ok) {
+                                const data = await oembedRes.json();
+                                if (data.thumbnail_url) {
+                                    detected.favicon = data.thumbnail_url;
+                                }
+                            }
                         }
                     }
                 }

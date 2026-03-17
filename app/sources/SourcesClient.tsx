@@ -60,15 +60,15 @@ const SearchAnimation = () => (
         {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-center gap-4 p-4 border border-gray-100 rounded-xl bg-white/50 relative overflow-hidden">
                 <div className="w-12 h-12 bg-gray-100 rounded-lg animate-pulse" />
-                <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-100 rounded w-1/3 animate-pulse" />
-                    <div className="h-3 bg-gray-50 rounded w-2/3 animate-pulse" />
+                <div className="flex-1 space-y-2.5">
+                    <div className="h-3.5 bg-gray-100 rounded-full w-2/5 animate-pulse" />
+                    <div className="h-2.5 bg-gray-50 rounded-full w-3/5 animate-pulse" />
                 </div>
-                {/* Scanning line effect */}
+                {/* Refined scanning line effect */}
                 <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-50/30 to-transparent w-full"
-                    animate={{ x: ['-100%', '100%'] }}
-                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                    className="absolute inset-x-0 top-0 h-full bg-gradient-to-r from-transparent via-orange-100/10 to-transparent"
+                    animate={{ x: ['-200%', '200%'] }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
                 />
             </div>
         ))}
@@ -98,6 +98,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
     // Toast State
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; description?: string } | null>(null);
     const [recentlyAddedId, setRecentlyAddedId] = useState<string | null>(null);
+    const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set());
 
     // Smart Detection State
     const [inputUrl, setInputUrl] = useState('');
@@ -377,7 +378,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                 // If it's text, search
                 searchUniversal(trimmed);
             }
-        }, 600); // 600ms debounce
+        }, 300); // reduced from 600ms to 300ms for "cracked" feel
 
         return () => clearTimeout(timer);
     }, [inputUrl, detectUrl, searchUniversal, detectedSource]);
@@ -390,8 +391,9 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
         if (result.type === 'youtube') type = 'youtube';
         else if (result.type === 'podcast') type = 'podcast';
         else if (result.type === 'reddit') type = 'reddit';
-        else if (result.type === 'twitter') type = 'twitter';
-        else if (result.type === 'instagram') type = 'instagram';
+        else if (result.type === 'twitter') type = 'x';
+        else if (result.type === 'substack') type = 'substack';
+        else if (result.type === 'medium') type = 'medium';
         else if (result.type === 'news') type = 'rss'; // Map news to RSS
 
         const optimisticSource: DetectedSource = {
@@ -905,7 +907,19 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                                         className="w-full flex items-center gap-4 p-3.5 border border-transparent hover:border-gray-100 hover:bg-gray-50/50 hover:backdrop-blur-sm rounded-2xl transition-all duration-300 text-left group relative"
                                                     >
                                                         <div className="w-11 h-11 bg-white flex-none flex items-center justify-center text-lg transition-all rounded-xl overflow-hidden border border-gray-100 shadow-sm group-hover:shadow-md group-hover:scale-105 duration-300">
-                                                            {result.thumbnail ? <img src={result.thumbnail} className="w-full h-full object-cover" /> : <SourceIcon type={result.type} className="w-5 h-5 opacity-60" />}
+                                                            {result.thumbnail && !brokenImages.has(result.thumbnail) ? (
+                                                                <img 
+                                                                    src={result.thumbnail} 
+                                                                    className="w-full h-full object-cover" 
+                                                                    onError={() => {
+                                                                        const newBroken = new Set(brokenImages);
+                                                                        newBroken.add(result.thumbnail!);
+                                                                        setBrokenImages(newBroken);
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <SourceIcon type={result.type} className="w-5 h-5 opacity-60" />
+                                                            )}
                                                         </div>
                                                         <div className="flex-1 min-w-0 pr-6">
                                                             <div className="font-serif text-lg font-medium text-gray-900 group-hover:text-[#FF5700] transition-colors truncate">
@@ -932,8 +946,17 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
                                             <div className="bg-gray-50/50 backdrop-blur-sm p-5 sm:p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
                                                 <div className="flex items-center gap-5 sm:gap-6">
                                                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white border border-gray-100 flex-none flex items-center justify-center text-3xl shadow-md rounded-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
-                                                        {detectedSource.favicon ? (
-                                                            <img src={detectedSource.favicon} alt="" className="w-full h-full object-cover" />
+                                                        {detectedSource.favicon && !brokenImages.has(detectedSource.favicon) ? (
+                                                            <img 
+                                                                src={detectedSource.favicon} 
+                                                                alt="" 
+                                                                className="w-full h-full object-cover" 
+                                                                onError={() => {
+                                                                    const newBroken = new Set(brokenImages);
+                                                                    newBroken.add(detectedSource.favicon!);
+                                                                    setBrokenImages(newBroken);
+                                                                }}
+                                                            />
                                                         ) : (
                                                             <SourceIcon type={detectedSource.type} className="w-10 h-10 opacity-40" />
                                                         )}

@@ -253,6 +253,8 @@ const getSourceTypeEmoji = (type: string) => {
   switch (type) {
     case 'youtube': return '📺';
     case 'podcast': return '🎙️';
+    case 'substack': return '📧';
+    case 'medium': return '📝';
     case 'news': return '📰';
     case 'reddit': return '💬';
     default: return '🔖';
