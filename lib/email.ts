@@ -164,7 +164,7 @@ async function generateUnifiedEmailHTML(briefing: UnifiedBriefing, date: string,
                 <td style="padding: 15px 30px; background: #FFF8F0; text-align: center; border-top: 1px solid #FFE0C0;">
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 13px; color: #B45309; margin: 0; font-weight: 500;">
                     📡 Free trial: ${trialContext.trialDaysRemaining} day${trialContext.trialDaysRemaining === 1 ? '' : 's'} remaining &middot; 
-                    <a href="${SITE_URL}/subscribe" style="color: #FF5700; font-weight: bold; text-decoration: none;">Subscribe now</a>
+                    <a href="${SITE_URL}/pricing" style="color: #FF5700; font-weight: bold; text-decoration: none;">Subscribe now</a>
                   </p>
                 </td>
               </tr>
@@ -324,11 +324,11 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
   } else if (type === 'expired') {
     subject = 'Your Siftl trial has ended';
     title = 'Your trial has ended';
-    message = `Your trial is over, but your ${stats.totalSources} sources are saved perfectly. Subscribe for $4/mo to resume your daily briefings immediately.`;
+    message = `Your trial is over, but your ${stats.totalSources} sources are saved perfectly. Subscribe for $5/mo to resume your daily briefings immediately.`;
   } else if (type === 'miss_you') {
     subject = 'We miss you — Siftl';
     title = 'Still want your briefings?';
-    message = `It's been a week since your trial ended. Your ${stats.totalSources} sources are still waiting for you. Come back and resume your signal for $4/mo.`;
+    message = `It's been a week since your trial ended. Your ${stats.totalSources} sources are still waiting for you. Come back and resume your signal for $5/mo.`;
   }
 
   const html = `
@@ -363,7 +363,7 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
                 <td style="padding: 40px; text-align: center; background-color: #ffffff;">
                   <h2 style="font-family: 'Merriweather', serif; font-size: 24px; font-weight: 700; color: #111; margin: 0 0 20px 0;">${title}</h2>
                   <p style="font-family: 'Inter', -apple-system, sans-serif; font-size: 17px; line-height: 1.6; color: #444; margin-bottom: 40px;">${message}</p>
-                  <a href="${SITE_URL}/subscribe" class="cta-button">Subscribe to Siftl →</a>
+                  <a href="${SITE_URL}/pricing" class="cta-button">Subscribe to Siftl →</a>
                 </td>
               </tr>
               <!-- Footer -->

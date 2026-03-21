@@ -10,7 +10,7 @@ const PROTECTED_PATHS = ['/', '/settings', '/sources', '/archive', '/api/sources
 const PUBLIC_PATHS = ['/login', '/blog', '/faq', '/api/auth', '/api/cron', '/api/webhook', '/api/debug', '/opengraph-image', '/icon.svg'];
 
 // Paths that expired users can still access (they need these to subscribe)
-const EXPIRED_ALLOWED_PATHS = ['/subscribe', '/api/webhook', '/api/auth'];
+const EXPIRED_ALLOWED_PATHS = ['/subscribe', '/pricing', '/api/webhook', '/api/auth'];
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;

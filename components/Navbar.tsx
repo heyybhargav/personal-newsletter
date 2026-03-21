@@ -152,7 +152,7 @@ export default function Navbar({
             </nav>
 
             {/* Server-rendered Banner (No Layout Shift) */}
-            {pathname !== '/subscribe' && (
+            {pathname !== '/subscribe' && pathname !== '/pricing' && (
                 <div className="relative z-10">
                     {tier === 'trial' && (
                         <div className="relative bg-[#1A1A1A] border-b border-[#FF5700]/20 text-center px-4 py-3 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 shadow-[0_4px_20px_-10px_rgba(255,87,0,0.3)] overflow-hidden group">
@@ -160,7 +160,7 @@ export default function Navbar({
                             <span className="text-[13px] font-medium text-gray-300 relative z-10">
                                 <strong className="text-white">Free trial:</strong> {trialDaysRemaining} day{trialDaysRemaining === 1 ? '' : 's'} remaining.
                             </span>
-                            <Link href="/subscribe" className="text-[12px] font-bold tracking-widest uppercase text-white hover:text-white inline-flex items-center gap-2 bg-[#FF5700] hover:bg-[#E64600] px-4 py-1.5 rounded-full transition-all relative z-10">
+                            <Link href="/pricing" className="text-[12px] font-bold tracking-widest uppercase text-white hover:text-white inline-flex items-center gap-2 bg-[#FF5700] hover:bg-[#E64600] px-4 py-1.5 rounded-full transition-all relative z-10">
                                 Subscribe now <span aria-hidden="true">&rarr;</span>
                             </Link>
                         </div>
@@ -173,7 +173,7 @@ export default function Navbar({
                             <span className="text-[13px] font-medium text-gray-300 relative z-10">
                                 <strong className="text-white">Trial Expired:</strong> Your daily intelligence briefings are paused.
                             </span>
-                            <Link href="/subscribe" className="text-[12px] font-bold tracking-widest uppercase text-white hover:text-white inline-flex items-center gap-2 bg-[#FF5700] hover:bg-[#E64600] px-4 py-1.5 rounded-full transition-all relative z-10">
+                            <Link href="/pricing" className="text-[12px] font-bold tracking-widest uppercase text-white hover:text-white inline-flex items-center gap-2 bg-[#FF5700] hover:bg-[#E64600] px-4 py-1.5 rounded-full transition-all relative z-10">
                                 Activate Pro <span aria-hidden="true">&rarr;</span>
                             </Link>
                         </div>
