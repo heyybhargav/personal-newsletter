@@ -4,7 +4,7 @@
 Vercel's Hobby plan imposes a strict 60-second limit on Serverless Functions execution (e.g., `/api/cron`). Generating personalized emails involves heavy operations:
 1. Fetching multiple RSS feeds.
 2. Generating a narrative briefing via the Gemini LLM API.
-3. Sending the email via SendGrid.
+3. Sending the email via SendPulse.
 
 These steps can take ~10-15 seconds per user. Processing all users sequentially within a single cron execution quickly hits the 60-second limit and kills the process, leaving users scheduled for the same exact minute unserved. The `cron-job.org` utility pings exactly once per minute; if 08:00 users fail, the 08:01 ping skips them because they no longer strictly match `08:01`.
 
@@ -22,7 +22,7 @@ Triggered exactly on the minute by `cron-job.org`, this endpoint takes less than
 A dedicated internal endpoint that accepts a single user email payload:
 - Fetches RSS feeds for the provided user.
 - Queries Gemini for the digest layout.
-- Sends the finished email context to SendGrid.
+- Sends the finished email context to SendPulse.
 - Safely completes its task within 15 seconds independently.
 
 By distributing the workloads to parallel workers, this completely avoids Vercel's sequential 60-second limit and guarantees precise-time dispatching.

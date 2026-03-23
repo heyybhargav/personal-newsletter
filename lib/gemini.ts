@@ -199,24 +199,31 @@ SUBJECT: [Extremely curiosity-driven. Must be a "magnetic" hook. NO MARKDOWN.]
 PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject. NO MARKDOWN.]
 ---NARRATIVE_START---
 
+**KEY TAKEAWAYS**
+
+[MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
+- Provide 2-3 rapid-fire, ultra-concise bullet points (maximum 10-12 words per point).
+- This is the "TL;DR for the executive" section. Use punchy fragments and avoid fillers.
+- Use standard markdown bullets (-).
+
 **THE LEAD ANALYSIS**
 
 [MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
 - Pick the most profound technical discovery. Build a deep-dive analysis.
 - **STRUCTURE**: Start with a 1-2 sentence context-setting paragraph explaining what this analysis is about and the core takeaway. THEN, transition into the **Q&A Format** with exactly 3 to 4 deeply probing questions.
 - **Q&A RULES:**
-  1. DO NOT use bullet points or lists for the questions.
+  1. The questions themselves MUST be standalone, strict, value-driven takeaways formulated as a question (e.g., "**How does Apple's sudden pivot actually save $2B in R&D?**"). Do NOT use generic questions. DO NOT use numbers.
   2. **Bold** the question text completely.
   3. **CRITICAL MARKDOWN RULE**: You must leave a completely blank line (double newline) between the bolded question and the start of the answer paragraph. Do not start the answer immediately below the question without a blank line space.
   4. The next question MUST also have a blank line (double-newline) separating it from the previous answer paragraph.
-- **MANDATORY LINKS**: You MUST include at least **two** different inline hyperlinked source [claims](LINK) naturally within the answers.
-- **ZERO TOLERANCE FOR DUPLICATION**: Whatever happens in the Lead Analysis MUST NOT show up in the Siftl section.
+- **MANDATORY LINKS**: You MUST include at least **two** different inline hyperlinked source [claims](LINK) naturally within the paragraphs.
+- **ZERO TOLERANCE FOR DUPLICATION**: Whatever happens in the Lead Analysis MUST NOT show up in the Signal section.
 
 **THE SIGNAL**
 
 [MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
 - For every other high-signal item, provide a **dense paragraph (3-5 sentences)** along with its own short punchy title.
-- Format: **Bold the title** → then the multi-sentence explanation.
+- Format: **Bold the title, formatted as a strict, value-driven takeaway question or statement** (e.g. "**How Tandem OLED extends battery life by 30%**") → then the multi-sentence explanation. No bullet points. No numbers.
 - You must leave a completely blank line (double newline) between the bolded title and the start of the explanation paragraph.
 - **CRITICAL**: Every block MUST contain an inline hyperlinked source [text](LINK) woven naturally into the analysis.
 - **ABSOLUTE EXCLUSIVITY**: If an item was in the Lead, skip it here. Every block here must cover *different* items from the input.
@@ -235,13 +242,6 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
      </a>
   </div>
 - *If no videos exist, skip this section entirely. DO NOT HALLUCINATE ONE.*
-
-**KEY TAKEAWAYS**
-
-[MANDATORY: START CONTENT ON A NEW LINE AFTER TWO NEWLINES]
-- Provide 2-3 rapid-fire, ultra-concise bullet points (maximum 10-12 words per point).
-- This is the "TL;DR for the executive" section. Use punchy fragments and avoid fillers.
-- Use standard markdown bullets (-).
 </output_format>
 
 <strict_rules>
@@ -255,37 +255,37 @@ PREHEADER: [A sharp, intriguing sentence that deepens the mystery of the subject
 SUBJECT: Why Apple killed the micro-LED pipeline
 PREHEADER: A supply chain constraint that changes the entire wearable roadmap.
 ---NARRATIVE_START---
-**THE LEAD ANALYSIS**
-
-Apple's ambitious decade-long micro-LED project has officially been scrapped. This cancellation reveals the brutal realities of mass-manufacturing next-generation displays and signals a definitive shift back to OLED architectures for the entire wearable market.
-
-**Why did Apple completely abandon their multi-billion dollar micro-LED project?**
-
-The core issue wasn't the display technology itself, but rather the yield rates on the massive transfer process. [According to the supply chain leaks](https://example.com/apple), they simply couldn't get the defect rate low enough to justify the manufacturing cost at the mass scale required for the Apple Watch. 
-
-**What does this mean for the future of their display architecture?**
-
-It forces a strategic pivot back to OLED, specifically tandem OLED architectures. By utilizing tandem structures, they can achieve the necessary peak brightness levels required for outdoor watch visibility without the crushing R&D burn rate of micro-LED scaling. 
-
-**Who are the immediate winners and losers in the supply chain shift?**
-
-Suppliers who invested heavily in micro-LED transfer equipment are facing massive write-downs, while legacy OLED manufacturers are seeing an unexpected resurgence in long-term contracts for consumer wearables.
-
-**THE SIGNAL**
-
-**Why Tandem OLED is the new wearable standard**
-
-Tandem OLED architectures are emerging as the immediate bridge technology for high-end consumer hardware. Rather than inventing entirely new display paradigms, manufacturers are stacking existing OLED substrates. This fundamentally solves the brightness-decay issue native to organic compounds without requiring a [completely new manufacturing pipeline](https://example.com/oled).
-
-**The M4 Neural Engine's memory breakthrough**
-
-The M4 Neural Engine features a totally reworked memory bus designed specifically to prevent bottlenecking during continuous LLM inference. Instead of raw compute cores, the architecture prioritizes memory bandwidth, ensuring the unified RAM pool can feed the NPU without stalling the main processor clock cycles.
-
 **KEY TAKEAWAYS**
 
 - Apple's micro-LED pivot cements tandem OLED as the dominant wearable display tech.
 - M4 architecture proves memory bandwidth is the actual LLM inference bottleneck.
 - Hardware supply chains prioritize scalable yield rates over theoretical perfection.
+
+**THE LEAD ANALYSIS**
+
+Apple's ambitious decade-long micro-LED project has officially been scrapped. This cancellation reveals the brutal realities of mass-manufacturing next-generation displays and signals a definitive shift back to OLED architectures for the entire wearable market.
+
+**Why did micro-LED's mass-scale transfer yield rates ultimately fail the economics test?**
+
+The core issue wasn't the display technology itself, but rather the yield rates on the massive transfer process. [According to the supply chain leaks](https://example.com/apple), they simply couldn't get the defect rate low enough to justify the manufacturing cost at the mass scale required for the Apple Watch. 
+
+**How does pivoting specifically to Tandem OLED definitively solve the outdoor brightness challenge?**
+
+It forces a strategic pivot back to OLED, specifically tandem OLED architectures. By utilizing tandem structures, they can achieve the necessary peak brightness levels required for outdoor watch visibility without the crushing R&D burn rate of micro-LED scaling. 
+
+**Why are legacy OLED manufacturers the immediate financial winners in this supply chain shift?**
+
+Suppliers who invested heavily in micro-LED transfer equipment are facing massive write-downs, while legacy OLED manufacturers are seeing an unexpected resurgence in long-term contracts for consumer wearables.
+
+**THE SIGNAL**
+
+**How Tandem OLED limits the need for new, expensive manufacturing pipelines**
+
+Tandem OLED architectures are emerging as the immediate bridge technology for high-end consumer hardware. Rather than inventing entirely new display paradigms, manufacturers are stacking existing OLED substrates. This fundamentally solves the brightness-decay issue native to organic compounds without requiring a [completely new manufacturing pipeline](https://example.com/oled).
+
+**Why the M4 Neural Engine prioritizes memory bandwidth over raw compute for local AI**
+
+The M4 Neural Engine features a totally reworked memory bus designed specifically to prevent bottlenecking during continuous LLM inference. Instead of raw compute cores, the architecture prioritizes memory bandwidth, ensuring the unified RAM pool can feed the NPU without stalling the main processor clock cycles.
 </example_output>`;
 
         const prompt = `### INPUT DATA

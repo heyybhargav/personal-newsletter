@@ -30,7 +30,7 @@ export default function PrivacyClient() {
                 <ul className="list-disc pl-6 space-y-2">
                     <li><strong>Compute & Database:</strong> Vercel (Hosting), Upstash (Redis & QStash).</li>
                     <li><strong>Intelligence:</strong> Google Gemini (for complex reasoning), Groq/Meta Llama (for high-speed synthesis).</li>
-                    <li><strong>Communication:</strong> SendGrid (for brief delivery).</li>
+                    <li><strong>Communication:</strong> SendPulse (for brief delivery).</li>
                 </ul>
             </section>
 

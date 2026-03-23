@@ -13,7 +13,7 @@ Instead of a traditional always-on server (like an old Linux box running 24/7), 
 | **The Brain (AI)** | **Groq (Llama 3.3 70B)** | The "Executive Editor" that writes the digests. Extremely fast logic. |
 | **The Memory (DB)** | **Upstash Redis** | A specialized high-speed database that stores User Preferences & Source Lists. |
 | **The Engine (Backend)** | **Next.js (Serverless)** | Handles all logic: `cron` jobs, `subscribe` API, and data fetching. |
-| **The Courier** | **SendGrid / Resend** | Delivers the emails reliably. |
+| **The Courier** | **SendPulse** | Delivers the emails reliably. |
 
 ## Data Flow
 

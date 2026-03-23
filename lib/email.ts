@@ -1,11 +1,71 @@
-import sgMail from '@sendgrid/mail';
 import { DigestSection, ContentItem } from './types';
 import { UnifiedBriefing } from './gemini';
 import { format } from 'date-fns';
 import { SITE_URL, CONTACT_EMAIL, SENDER_NAME } from './config';
 
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+let sendpulseToken: string | null = null;
+let tokenExpiresAt: number = 0;
+
+async function getSendPulseToken(): Promise<string> {
+  if (sendpulseToken && Date.now() < tokenExpiresAt) {
+    return sendpulseToken;
+  }
+
+  const res = await fetch('https://api.sendpulse.com/oauth/access_token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      grant_type: 'client_credentials',
+      client_id: process.env.SENDPULSE_API_ID,
+      client_secret: process.env.SENDPULSE_API_SECRET,
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to get SendPulse token: ${text}`);
+  }
+
+  const data = await res.json();
+  sendpulseToken = data.access_token;
+  // SendPulse tokens usually expire in 3600 seconds. Buffer by 5 minutes.
+  tokenExpiresAt = Date.now() + (data.expires_in - 300) * 1000;
+  return sendpulseToken as string;
+}
+
+async function sendPulseEmail(msg: any) {
+  const token = await getSendPulseToken();
+  
+  const spMsg = {
+    email: {
+      html: Buffer.from(msg.html || '', 'utf-8').toString('base64'),
+      text: msg.text || 'Please view this email in an HTML compatible client.',
+      subject: msg.subject,
+      from: {
+        name: msg.from.name,
+        email: msg.from.email
+      },
+      to: [
+        {
+          email: msg.to
+        }
+      ]
+    }
+  };
+
+  const res = await fetch('https://api.sendpulse.com/smtp/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(spMsg),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to send email via SendPulse: ${text}`);
+  }
 }
 
 // ============================================================================
@@ -208,13 +268,10 @@ export async function sendUnifiedDigestEmail(to: string, briefing: UnifiedBriefi
   };
 
   try {
-    await sgMail.send(msg);
+    await sendPulseEmail(msg);
     console.log(`[Email] Unified digest sent to ${to}`);
   } catch (error: any) {
     console.error('[Email] Error sending unified digest:', error);
-    if (error.response) {
-      console.error('[Email] SendGrid response:', error.response.body);
-    }
     throw error;
   }
 }
@@ -296,13 +353,10 @@ export async function sendDigestEmail(to: string, sections: DigestSection[]): Pr
   };
 
   try {
-    await sgMail.send(msg);
+    await sendPulseEmail(msg);
     console.log(`Digest email sent to ${to}`);
   } catch (error: any) {
     console.error('Error sending email:', error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
     throw error;
   }
 }
@@ -379,7 +433,7 @@ export async function sendTrialNudgeEmail(to: string, type: 'expiring_soon' | 'e
   };
 
   try {
-    await sgMail.send(msg);
+    await sendPulseEmail(msg);
     console.log(`[Email] Trial nudge (${type}) sent to ${to}`);
   } catch (error: any) {
     console.error(`[Email] Error sending trial nudge to ${to}:`, error);
@@ -492,13 +546,10 @@ export async function sendWelcomeEmail(to: string, baseUrl: string = SITE_URL, c
   };
 
   try {
-    await sgMail.send(msg);
+    await sendPulseEmail(msg);
     console.log(`[Email] Welcome email sent to ${to}`);
   } catch (error: any) {
     console.error('[Email] Error sending welcome email:', error);
-    if (error.response) {
-      console.error('[Email] SendGrid response:', error.response.body);
-    }
     // Don't throw, just log. We don't want to block login if email fails.
   }
 }
@@ -527,7 +578,7 @@ export async function sendAdminAlertEmail(stage: string, error: string, details?
   };
 
   try {
-    await sgMail.send(msg);
+    await sendPulseEmail(msg);
     console.log(`[Alert] Admin alert sent for ${stage}`);
   } catch (err: any) {
     console.error('[Alert] Failed to send admin alert:', err);
@@ -614,7 +665,7 @@ export async function sendOnboardingReminderEmail(to: string, name?: string, bas
   };
 
   try {
-    await sgMail.send(msg);
+    await sendPulseEmail(msg);
     console.log(`[Email] Onboarding reminder sent to ${to}`);
   } catch (error: any) {
     console.error('[Email] Error sending onboarding reminder:', error);

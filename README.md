@@ -6,7 +6,7 @@ A personalized daily email digest that aggregates content from your favorite sou
 
 - 📚 Multi-source RSS aggregation (YouTube, podcasts, news, Reddit)
 - 🤖 AI-powered summarization using Gemini
-- 📧 Beautiful HTML email delivery via SendGrid
+- 📧 Beautiful HTML email delivery via SendPulse
 - ⏰ Automated daily scheduling with Vercel Cron
 - 🎨 Modern, responsive web interface
 - 💰 100% free - uses only free tier services
@@ -17,15 +17,15 @@ A personalized daily email digest that aggregates content from your favorite sou
 - **Styling**: Tailwind CSS
 - **Database**: JSON file storage
 - **AI**: Google Gemini API (free tier)
-- **Email**: SendGrid (free tier, 100/day)
+- **Email**: SendPulse (free tier, 12000/month)
 - **Hosting**: Vercel (free tier)
 - **Scheduling**: Vercel Cron (Hourly global check)
 
 ## Prerequisites
 
 1. Groq API key (for AI)
-2. SendGrid API key (for email)
-3. Verified sender email in SendGrid
+2. SendPulse API ID & Secret (for email)
+3. Verified sender email in SendPulse
 
 ## Local Development
 
@@ -38,7 +38,8 @@ A personalized daily email digest that aggregates content from your favorite sou
 3. Create `.env.local` file:
    ```env
    GEMINI_API_KEY=your_gemini_key
-   SENDGRID_API_KEY=your_sendgrid_key
+   SENDPULSE_API_ID=your_sendpulse_id
+   SENDPULSE_API_SECRET=your_sendpulse_secret
    USER_EMAIL=your_email@example.com
    DELIVERY_TIME=08:00
    ```
@@ -52,12 +53,13 @@ A personalized daily email digest that aggregates content from your favorite sou
 
 ## Deployment
 
-### 1. SendGrid Setup
+### 1. SendPulse Setup
 
-1. Go to [SendGrid Sender Authentication](https://app.sendgrid.com/settings/sender_auth)
-2. Click "Verify a Single Sender"
-3. Enter your email and verify it
-4. Use this verified email in your environment variables
+1. Go to [SendPulse Sender Authentication](https://login.sendpulse.com/emailservice/settings/)
+2. Go to "Sender emails" and add your email.
+3. Enter your email and verify it.
+4. Go to API section and enable REST API. Copy the ID and Secret.
+5. Use this verified email and credentials in your environment variables.
 
 ### 2. Deploy to Vercel
 
@@ -70,7 +72,8 @@ Or manually:
 3. Import your repository
 4. Add environment variables:
    - `GEMINI_API_KEY`
-   - `SENDGRID_API_KEY`
+   - `SENDPULSE_API_ID`
+   - `SENDPULSE_API_SECRET`
    - `USER_EMAIL`
    - `DELIVERY_TIME`
 5. Deploy!
