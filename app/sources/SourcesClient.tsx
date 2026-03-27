@@ -252,7 +252,7 @@ export default function SourcesClient({ initialSources, initialTier, initialTria
         if (limitReached) {
             setToast({ 
                 message: 'Plan limit reached', 
-                description: 'Your current plan limits you to 20 sources. Upgrade to Pro for unlimited sources.', 
+                description: 'You have reached the maximum number of sources allowed for your plan. Upgrade to Pro for unlimited sources.', 
                 type: 'error' 
             });
             mutate('/api/sources');

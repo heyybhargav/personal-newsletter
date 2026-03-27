@@ -48,7 +48,7 @@ export async function POST(request: Request) {
         if (error === 'limit_exceeded') {
             return NextResponse.json({ 
                 error: 'Source limit reached', 
-                message: 'Your current plan limits you to 20 sources. Upgrade to Pro for unlimited sources.' 
+                message: 'You have reached the maximum number of sources allowed for your current plan. Upgrade to Pro or an Active Pass for unlimited sources.' 
             }, { status: 403 });
         }
 

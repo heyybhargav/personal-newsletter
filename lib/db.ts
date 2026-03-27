@@ -13,7 +13,7 @@ const USER_KEY_PREFIX = 'user:';
 const ALL_USERS_SET = 'users:index'; // Set of all registered emails
 const PLAN_LIMITS = {
     trial: 20,
-    active: 20,
+    active: 1000,
     pro: 1000,
     expired: 0
 };
